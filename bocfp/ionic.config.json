@@ -1,0 +1,7 @@
+{
+  "name": "bocfp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
