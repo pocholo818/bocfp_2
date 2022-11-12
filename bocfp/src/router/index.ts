@@ -1,15 +1,39 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 
+import HomePage from '@/views/HomePage.vue'
+
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '',
-    redirect: '/folder/Inbox'
+    path: '/',
+    redirect: '/child'
   },
   {
-    path: '/folder/:id',
-    component: () => import ('../views/FolderPage.vue')
-  }
+    path: '/',
+    component: HomePage,
+    children: [
+      {
+        path: '/child',
+        component: () => import('@/views/ChildPage.vue')
+      },
+      // {
+      //   path: '/child',
+      //   component: () => import('@/views/ChildPage.vue')
+      // },
+      // {
+      //   path: '/child',
+      //   component: () => import('@/views/ChildPage.vue')
+      // },
+    ]
+  },
+  // {
+  //   path: '/register',
+  //   component: () => import('@/views/RegisterPage.vue'),
+  // },
+    {
+    path: '/:pathMatch(.*)*',
+    redirect: '/'
+  },
 ]
 
 const router = createRouter({
