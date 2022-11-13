@@ -21,7 +21,8 @@
       <ion-card-content>
         <p>ID: 1</p>
         <p>Sex: M</p>
-        <p>BDate: 2000-06-01</p>
+        <p>BirthDate: 2000-06-01</p>
+        <p>Guardian Contact Number: 09999999999</p>
         <p>Purok: 11</p><br>
 
         <div style="text-align:center;">
