@@ -15,13 +15,31 @@
         </ion-list>
 
       </ion-content>
+      <ion-button color="danger"><ion-icon :icon="logOutOutline"></ion-icon>Logout</ion-button>
     </ion-menu>
     <ion-router-outlet id="main-content"></ion-router-outlet>
   </ion-split-pane>
 </template>
 
 <script lang="ts">
-import { IonContent, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonMenu, IonMenuToggle, IonNote, IonRouterOutlet, IonSplitPane } from '@ionic/vue';
+// ionic stuff
+import { IonContent, 
+  IonIcon, 
+  IonItem, 
+  IonLabel, 
+  IonList, 
+  IonListHeader, 
+  IonMenu, 
+  IonMenuToggle, 
+  IonNote, 
+  IonRouterOutlet, 
+  IonSplitPane,
+} from '@ionic/vue';
+// icons
+import { 
+  logOutOutline,
+  eyeOutline
+} from 'ionicons/icons';
 import { defineComponent, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { personOutline, personSharp } from 'ionicons/icons';
@@ -36,6 +54,7 @@ export default defineComponent({
     IonNote, 
     IonRouterOutlet, 
     IonSplitPane,
+    IonIcon
   },
   setup() {
     const selectedIndex = ref(0);
@@ -62,6 +81,8 @@ export default defineComponent({
       appPages,
       personOutline,
       personSharp,
+      logOutOutline,
+      eyeOutline,
       isSelected: (url: string) => url === route.path ? 'selected' : ''
     }
   }
