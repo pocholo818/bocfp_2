@@ -15,12 +15,12 @@
             <ion-item @click="selectedIndex = i" router-direction="root" :router-link="pages.url" lines="none" detail="false" class="hydrated" :class="{ selected: selectedIndex === i }">
               <ion-icon slot="start" :ios="pages.iosIcon" :md="pages.mdIcon"></ion-icon>
               <ion-label>{{ pages.title }}</ion-label>
-            </ion-item><br>
+            </ion-item>
 
-            <ion-item>
+            <!-- <ion-item>
               <ion-icon slot="start" :ios="pages.iosIcon" :md="pages.mdIcon"></ion-icon>
               <a href="/child_view"><ion-label>Child View</ion-label></a>
-            </ion-item>
+            </ion-item> -->
           </ion-menu-toggle>
         </ion-list>
 
