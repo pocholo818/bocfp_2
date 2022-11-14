@@ -26,10 +26,16 @@ const routes: Array<RouteRecordRaw> = [
       // },
     ]
   },
-  // {
-  //   path: '/register',
-  //   component: () => import('@/views/RegisterPage.vue'),
-  // },
+    {
+      path: '/child_view',
+      component: () => import('@/views/ChildPage_View.vue'),
+    },
+    {
+      path: '/child_edit',
+      component: () => import('@/views/ChildPage_Edit.vue'),
+    },
+
+    // if wrong
     {
     path: '/:pathMatch(.*)*',
     redirect: '/'

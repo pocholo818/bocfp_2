@@ -5,7 +5,7 @@
 
         <!-- image -->
         <img src="@/assets/images/logo.png" alt="Barangay Old Cabalan Logo" 
-          style="width: 65%; height: auto; margin-left: auto; margin-right: auto; display: block;">
+          style="width: 55%; height: auto; margin-left: auto; margin-right: auto; display: block;">
 
         <ion-list id="inbox-list">
           <ion-list-header>Barangay Old Cabalan</ion-list-header>
@@ -15,6 +15,11 @@
             <ion-item @click="selectedIndex = i" router-direction="root" :router-link="pages.url" lines="none" detail="false" class="hydrated" :class="{ selected: selectedIndex === i }">
               <ion-icon slot="start" :ios="pages.iosIcon" :md="pages.mdIcon"></ion-icon>
               <ion-label>{{ pages.title }}</ion-label>
+            </ion-item><br>
+
+            <ion-item>
+              <ion-icon slot="start" :ios="pages.iosIcon" :md="pages.mdIcon"></ion-icon>
+              <a href="/child_view"><ion-label>Child View</ion-label></a>
             </ion-item>
           </ion-menu-toggle>
         </ion-list>

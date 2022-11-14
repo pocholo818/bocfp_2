@@ -21,13 +21,13 @@
       <ion-card-content>
         <p>ID: 1</p>
         <p>Sex: M</p>
-        <p>BirthDate: 2000-06-01</p>
+        <p>Birth Date: 2000-06-01</p>
         <p>Guardian Contact Number: 09999999999</p>
         <p>Purok: 11</p><br>
 
         <div style="text-align:center;">
-        <ion-button color="success" style="width: 32%;"><ion-icon  :icon="eyeOutline"></ion-icon></ion-button>
-        <ion-button color="warning" style="width: 32%;"><ion-icon :icon="createOutline"></ion-icon></ion-button>
+        <a href="/child_view"><ion-button color="success" style="width: 32%;"><ion-icon  :icon="eyeOutline"></ion-icon></ion-button></a>
+        <a href="/child_edit"><ion-button color="warning" style="width: 32%;"><ion-icon :icon="createOutline"></ion-icon></ion-button></a>
         <ion-button color="danger" style="width: 32%;"><ion-icon :icon="trashOutline"></ion-icon></ion-button>
       </div>
       </ion-card-content>
