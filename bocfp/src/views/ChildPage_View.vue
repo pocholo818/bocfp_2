@@ -1,7 +1,17 @@
 
 <template>
     <ion-page>
-      <HeaderBar title="Child View" />
+      <!-- <HeaderBar title="Child View" /> -->
+      <!-- <HeaderBar2 title="Child Edit" /> -->
+
+      <ion-header>
+            <ion-toolbar style="">
+            <ion-buttons slot="start">
+                <ion-back-button default-href="/child" text="Back"></ion-back-button>
+            </ion-buttons>
+            </ion-toolbar>
+        </ion-header>
+
         <!-- content -->
         <ion-content>
             <ion-card>
@@ -14,12 +24,12 @@
                 <ion-list>
                     <ion-item>
                         <ion-label position="floating">First Name</ion-label>
-                        <ion-input placeholder="Enter First Name" value="Arataki"></ion-input>
+                        <ion-input placeholder="Enter First Name" value="Arataki" disabled></ion-input>
                     </ion-item>
 
                     <ion-item>
                         <ion-label position="floating">Last Name</ion-label>
-                        <ion-input placeholder="Enter Last Name" value="Itto"></ion-input>
+                        <ion-input placeholder="Enter Last Name" value="Itto" disabled></ion-input>
                     </ion-item>
 
                     <ion-item>
@@ -34,17 +44,17 @@
 
                     <ion-item>
                         <ion-label position="floating">Guardian</ion-label>
-                        <ion-input placeholder="Enter Guardian Name" value="Kuki Shinobu"></ion-input>
+                        <ion-input placeholder="Enter Guardian Name" value="Kuki Shinobu" disabled></ion-input>
                     </ion-item>
 
                     <ion-item>
                         <ion-label position="floating">Contact Number</ion-label>
-                        <ion-input type="tel" placeholder="Enter Contact Number" maxlength="11" value="09999999999"></ion-input>
+                        <ion-input type="tel" placeholder="Enter Contact Number" maxlength="11" value="09999999999" disabled></ion-input>
                     </ion-item>
 
                     <ion-item>
                         <ion-label position="floating">Purok Number</ion-label>
-                        <ion-input type="tel" placeholder="Enter Contact Number" maxlength="2" value="11"></ion-input>
+                        <ion-input type="tel" placeholder="Enter Contact Number" maxlength="2" value="11" disabled></ion-input>
                     </ion-item>
                 </ion-list>
                 </ion-card-content>
@@ -102,9 +112,10 @@
         IonCardSubtitle,
         IonCardHeader,
         IonCardContent,
+        IonButtons, IonHeader, IonToolbar, IonBackButton
 
     } from '@ionic/vue';
-    import HeaderBar from '@/components/HeaderBar.vue';
+    // import HeaderBar from '@/components/HeaderBar.vue';
     // import {
     //   IonContent,
     //   IonPage,
@@ -113,7 +124,7 @@
     export default defineComponent({
       name: 'ChildPage',
       components: {
-        HeaderBar,
+        // HeaderBar,
         IonInput,
         IonList,
         IonCard,
@@ -121,6 +132,7 @@
         IonCardSubtitle,
         IonCardHeader,
         IonCardContent,
+        IonButtons, IonHeader, IonToolbar, IonBackButton
       },
         setup() {
         return {
@@ -135,9 +147,9 @@
   
   </script>
   
-  <!-- <style scoped>
-    ion-button{
-      --border-width: 100%;
+  <style scoped>
+    ion-toolbar{
+        --background: #168554;
+        --color: white;
     }
-  </style> -->
-  
+</style>

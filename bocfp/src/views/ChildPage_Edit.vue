@@ -1,7 +1,16 @@
-
 <template>
     <ion-page>
-      <HeaderBar title="Child Edit" />
+      <!-- <HeaderBar title="Child Edit" /> -->
+      <!-- <HeaderBar2 title="Child Edit" /> -->
+
+        <ion-header>
+            <ion-toolbar style="">
+            <ion-buttons slot="start">
+                <ion-back-button default-href="/child" text="Back"></ion-back-button>
+            </ion-buttons>
+            </ion-toolbar>
+        </ion-header>
+
         <!-- content -->
         <ion-content>
             <ion-card>
@@ -24,12 +33,12 @@
 
                     <ion-item>
                         <ion-label position="floating">Sex</ion-label>
-                        <ion-input placeholder="Enter Sex" value="M" disabled></ion-input>
+                        <ion-input placeholder="Enter Sex" value="M"></ion-input>
                     </ion-item>
 
                     <ion-item>
                         <ion-label position="floating">Birth Date</ion-label>
-                        <ion-input placeholder="Enter Birth Date" value="2000-06-01" disabled></ion-input>
+                        <ion-input placeholder="Enter Birth Date" value="2000-06-01"></ion-input>
                     </ion-item>
 
                     <ion-item>
@@ -75,18 +84,19 @@
         IonCardSubtitle,
         IonCardHeader,
         IonCardContent,
+        IonButtons, IonHeader, IonToolbar, IonBackButton
 
     } from '@ionic/vue';
-    import HeaderBar from '@/components/HeaderBar.vue';
+    // import HeaderBar from '@/components/HeaderBar.vue';
     // import {
     //   IonContent,
     //   IonPage,
     // } from '@ionic/vue';
   
     export default defineComponent({
-      name: 'ChildPage',
+      name: 'ChildPage2',
       components: {
-        HeaderBar,
+        // HeaderBar,
         IonInput,
         IonList,
         IonCard,
@@ -94,6 +104,7 @@
         IonCardSubtitle,
         IonCardHeader,
         IonCardContent,
+        IonButtons, IonHeader, IonToolbar, IonBackButton
       },
         setup() {
         return {
@@ -108,9 +119,10 @@
   
   </script>
   
-  <!-- <style scoped>
-    ion-button{
-      --border-width: 100%;
+
+  <style scoped>
+    ion-toolbar{
+        --background: #168554;
+        --color: white;
     }
-  </style> -->
-  
+</style>
