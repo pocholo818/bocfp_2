@@ -32,6 +32,15 @@
       </div>
       </ion-card-content>
     </ion-card>
+
+      <!-- Add button -->
+      <a href="/child_add">
+        <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+          <ion-fab-button @click="setOpen(true)" class="theme">
+            <ion-icon :icon="addOutline"></ion-icon>
+          </ion-fab-button>
+        </ion-fab>
+      </a>
         
       </ion-content>
     </ion-page>
@@ -44,7 +53,8 @@
   import { 
     eyeOutline, 
     createOutline,
-    trashOutline
+    trashOutline,
+    addOutline
   } from 'ionicons/icons';
   // ionic stuff
   import { 
@@ -54,6 +64,9 @@
     IonCardHeader,
     IonCardContent,
     IonInput,
+    IonFab,
+    IonFabButton,
+    IonButton,
     IonIcon
   } from '@ionic/vue';
   import HeaderBar from '@/components/HeaderBar.vue';
@@ -74,11 +87,24 @@
       IonInput,
       IonIcon
     },
+
+      data(){
+        return{
+          isOpen: false
+        };
+      },
+      methods: {
+        setOpen(isOpen: boolean){
+          this.isOpen = isOpen;
+        },
+      },
+
       setup() {
       return {
         eyeOutline,
         createOutline,
-        trashOutline
+        trashOutline,
+        addOutline
       }
     }
   });
@@ -91,4 +117,9 @@
   ion-button{
     --border-width: 100%;
   }
+
+  .theme{
+    --background: #168554;
+    color: white;
+}
 </style>

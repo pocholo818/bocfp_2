@@ -34,4 +34,9 @@ export default defineComponent({
         --background: #168554;
         --color: white;
     }
+
+    .theme{
+    --background: #168554;
+    color: white;
+    }
 </style>

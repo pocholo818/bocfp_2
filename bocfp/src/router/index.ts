@@ -34,6 +34,10 @@ const routes: Array<RouteRecordRaw> = [
       path: '/child_edit',
       component: () => import('@/views/ChildPage_Edit.vue'),
     },
+    {
+      path: '/child_add',
+      component: () => import('@/views/ChildPage_Add.vue'),
+    },
 
     // if wrong
     {

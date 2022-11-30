@@ -226,4 +226,5 @@ ion-note {
 ion-item.selected {
   --color: #168554;
 }
+
 </style>
