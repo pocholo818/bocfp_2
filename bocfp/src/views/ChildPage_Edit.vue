@@ -52,8 +52,8 @@
                     </ion-item>
 
                     <ion-item>
-                        <ion-label position="floating">Purok Number</ion-label>
-                        <ion-input type="tel" placeholder="Enter Contact Number" maxlength="2" value="11"></ion-input>
+                        <ion-label position="floating">Address</ion-label>
+                        <ion-input type="tel" placeholder="Enter Contact Number" value="2075th Narra Lane Old Cabalan Olongapo City, Zambales"></ion-input>
                     </ion-item>
                 </ion-list>
                 </ion-card-content>

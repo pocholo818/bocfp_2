@@ -23,7 +23,7 @@
         <p>Sex: M</p>
         <p>Birth Date: 2000-06-01</p>
         <p>Guardian Contact Number: 09999999999</p>
-        <p>Purok: 11</p><br>
+        <p>Address: 2075th Narra Lane Old Cabalan Olongapo City, Zambales</p><br>
 
         <div style="text-align:center;">
         <a href="/child_view"><ion-button color="success" style="width: 32%;"><ion-icon  :icon="eyeOutline"></ion-icon></ion-button></a>
