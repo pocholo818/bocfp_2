@@ -4,6 +4,7 @@ const cors = require("cors")
 
 const port = 5000;
 app.use(cors())
+app.use(express.json());
 
 // 
 const mysql = require('mysql')
@@ -28,6 +29,14 @@ app.post('/child/:id', (req, res) => {
         if (err) throw err
         res.json(rows)
       })
+});
+app.post('/child', (req, res) => {
+    const {fname, lname, bdate, sex, guardian, contact, address} = req.body;
+    connection.query(`INSERT INTO child (fname, lname, bdate, sex, guardian, contact, address) 
+        VALUES ('${fname}', '${lname}', '${bdate}', '${sex}', '${guardian}', '${contact}', '${address}')`, (err, rows, fields) => {
+        if (err) throw err
+      })
+    res.send("success")
 });
 
 const start = async () => {
