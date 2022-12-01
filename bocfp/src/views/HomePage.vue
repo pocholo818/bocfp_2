@@ -1,34 +1,36 @@
 <template>
-  <ion-split-pane content-id="main-content">
-    <ion-menu content-id="main-content" type="overlay">
-      <ion-content>
+  <ion-page>
+    <ion-split-pane content-id="main-content">
+      <ion-menu content-id="main-content" type="overlay">
+        <ion-content>
 
-        <!-- image -->
-        <img src="@/assets/images/logo.png" alt="Barangay Old Cabalan Logo" 
-          style="width: 55%; height: auto; margin-left: auto; margin-right: auto; display: block;">
+          <!-- image -->
+          <img src="@/assets/images/logo.png" alt="Barangay Old Cabalan Logo" 
+            style="width: 55%; height: auto; margin-left: auto; margin-right: auto; display: block;">
 
-        <ion-list id="inbox-list">
-          <ion-list-header>Barangay Old Cabalan</ion-list-header>
-          <ion-note>bofcp@gmail.com</ion-note>
+          <ion-list id="inbox-list">
+            <ion-list-header>Barangay Old Cabalan</ion-list-header>
+            <ion-note>bofcp@gmail.com</ion-note>
 
-          <ion-menu-toggle auto-hide="false" v-for="(pages, i) in appPages" :key="i">
-            <ion-item @click="selectedIndex = i" router-direction="root" :router-link="pages.url" lines="none" detail="false" class="hydrated" :class="{ selected: selectedIndex === i }">
-              <ion-icon slot="start" :ios="pages.iosIcon" :md="pages.mdIcon"></ion-icon>
-              <ion-label>{{ pages.title }}</ion-label>
-            </ion-item>
+            <ion-menu-toggle auto-hide="false" v-for="(pages, i) in appPages" :key="i">
+              <ion-item @click="selectedIndex = i" router-direction="root" :router-link="pages.url" lines="none" detail="false" class="hydrated" :class="{ selected: selectedIndex === i }">
+                <ion-icon slot="start" :ios="pages.iosIcon" :md="pages.mdIcon"></ion-icon>
+                <ion-label>{{ pages.title }}</ion-label>
+              </ion-item>
 
-            <!-- <ion-item>
-              <ion-icon slot="start" :ios="pages.iosIcon" :md="pages.mdIcon"></ion-icon>
-              <a href="/child_view"><ion-label>Child View</ion-label></a>
-            </ion-item> -->
-          </ion-menu-toggle>
-        </ion-list>
+              <!-- <ion-item>
+                <ion-icon slot="start" :ios="pages.iosIcon" :md="pages.mdIcon"></ion-icon>
+                <a href="/child_view"><ion-label>Child View</ion-label></a>
+              </ion-item> -->
+            </ion-menu-toggle>
+          </ion-list>
 
-      </ion-content>
-      <ion-button color="danger"><ion-icon :icon="logOutOutline"></ion-icon>Logout</ion-button>
-    </ion-menu>
-    <ion-router-outlet id="main-content"></ion-router-outlet>
-  </ion-split-pane>
+        </ion-content>
+        <ion-button color="danger"><ion-icon :icon="logOutOutline"></ion-icon>Logout</ion-button>
+      </ion-menu>
+      <ion-router-outlet id="main-content"></ion-router-outlet>
+    </ion-split-pane>
+  </ion-page>
 </template>
 
 <script lang="ts">
@@ -77,6 +79,18 @@ export default defineComponent({
         iosIcon: personOutline,
         mdIcon: personSharp
       },
+      // {
+      //   title: 'Child Add',
+      //   url: '/child_add',
+      //   iosIcon: personOutline,
+      //   mdIcon: personSharp
+      // },
+      // {
+      //   title: 'Childsss',
+      //   url: '/childsss',
+      //   iosIcon: personOutline,
+      //   mdIcon: personSharp
+      // },
     ];
     
     const path = window.location.pathname.split('folder/')[1];
@@ -156,6 +170,7 @@ ion-menu.md ion-item {
   --padding-start: 10px;
   --padding-end: 10px;
   border-radius: 4px;
+  background: transparent;
 }
 
 ion-menu.md ion-item.selected {
@@ -226,5 +241,4 @@ ion-note {
 ion-item.selected {
   --color: #168554;
 }
-
 </style>

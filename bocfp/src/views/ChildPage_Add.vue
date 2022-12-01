@@ -1,12 +1,9 @@
 <template>
     <ion-page>
-      <!-- <HeaderBar title="Child Edit" /> -->
-      <!-- <HeaderBar2 title="Child Edit" /> -->
-
         <ion-header>
             <ion-toolbar style="">
             <ion-buttons slot="start">
-                <ion-back-button default-href="/child" text="Back"></ion-back-button>
+              <ion-back-button router-link="/child" text="Back"></ion-back-button>
             </ion-buttons>
             </ion-toolbar>
         </ion-header>
@@ -82,7 +79,8 @@
         IonList,
         IonCard,
         IonCardContent,
-        IonButtons, IonHeader, IonToolbar, IonBackButton
+        IonBackButton,
+        IonButtons, IonHeader, IonToolbar
 
     } from '@ionic/vue';
     // import HeaderBar from '@/components/HeaderBar.vue';
@@ -99,7 +97,8 @@
         IonList,
         IonCard,
         IonCardContent,
-        IonButtons, IonHeader, IonToolbar, IonBackButton
+        IonBackButton,
+        IonButtons, IonHeader, IonToolbar
       },
         setup() {
         return {
