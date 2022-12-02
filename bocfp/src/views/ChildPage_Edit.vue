@@ -37,8 +37,12 @@
                         </ion-item>
 
                         <ion-item>
-                            <ion-label position="floating">Birth Date</ion-label>
-                            <ion-input placeholder="Enter Birth Date" v-model="childDetails.bdate"></ion-input>
+                            <ion-label>Birth Date:</ion-label>
+                            <ion-datetime-button datetime="dateOfBirth"></ion-datetime-button>
+
+                            <ion-modal :keep-contents-mounted="true" class="datetime-modal">
+                                <ion-datetime id="dateOfBirth" displayFormat="YYYY.MM.DD" presentation="date" v-model="childDetails.bdate" readonly></ion-datetime>
+                            </ion-modal>
                         </ion-item>
 
                         <ion-item>
@@ -87,7 +91,8 @@ import {
     IonCardHeader,
     IonCardContent,
     IonButtons, IonHeader, IonToolbar, IonBackButton,
-    toastController, useIonRouter
+    toastController, useIonRouter,
+    IonDatetime, IonDatetimeButton, IonModal
 } from '@ionic/vue';
 import { useRoute } from 'vue-router';
 import { IonRouter } from '@ionic/core/components';
@@ -108,7 +113,8 @@ export default defineComponent({
         IonCardSubtitle,
         IonCardHeader,
         IonCardContent,
-        IonButtons, IonHeader, IonToolbar, IonBackButton
+        IonButtons, IonHeader, IonToolbar, IonBackButton,
+        IonDatetime, IonDatetimeButton, IonModal
     },
 
     data() {
@@ -167,7 +173,7 @@ export default defineComponent({
                         contact: "",
                         address: ""
                     }
-                    this.ionRouter.push("/child");  
+                    this.ionRouter.push("/child");
                 })
                 .catch((error) => {
                     toast.message = error

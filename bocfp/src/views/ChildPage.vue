@@ -71,7 +71,7 @@
     methods: {
       setOpen(isOpen: boolean){
         this.isOpen = isOpen;
-      },
+      }
     },
     // get data
     mounted() {
