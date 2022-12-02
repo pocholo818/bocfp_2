@@ -7,7 +7,7 @@
         <ion-header>
             <ion-toolbar style="">
                 <ion-buttons slot="start">
-                    <!-- <ion-back-button router-link="/child" text="Back"></ion-back-button> -->
+                    <!-- replace all ion-back-button -->
                     <ion-button router-link="/child"><ion-icon :icon="arrowBack"></ion-icon>&nbsp;Back</ion-button>
                 </ion-buttons>
             </ion-toolbar>
