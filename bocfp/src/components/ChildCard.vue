@@ -87,6 +87,7 @@ export default defineComponent({
               })
                 .then((data) => {
                   toast.message = 'Success!'
+                  this.$emit('deleted')
                 })
                 .catch((error) => {
                   toast.message = error
@@ -99,8 +100,6 @@ export default defineComponent({
       });
 
       await alert.present();
-
-      const { role } = await alert.onDidDismiss();
     }
   },
   props: {
