@@ -46,7 +46,7 @@
 
                             <ion-modal :keep-contents-mounted="true" class="datetime-modal">
                                 <ion-datetime id="dateOfBirth" displayFormat="YYYY.MM.DD" presentation="date"
-                                    v-model="childDetails.bdate"></ion-datetime>
+                                    v-model="childDetails.bdate" class="dateStyle"></ion-datetime>
                             </ion-modal>
                         </ion-item>
 

@@ -38,6 +38,10 @@ const routes: Array<RouteRecordRaw> = [
       path: '/child_add',
       component: () => import('@/views/ChildPage_Add.vue'),
     },
+    {
+      path: '/record_add/:id',
+      component: () => import('@/views/RecordAdd.vue'),
+    },
 
     // if wrong
     {

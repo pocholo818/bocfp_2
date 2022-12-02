@@ -30,6 +30,13 @@ app.get('/child/:id', (req, res) => {
     res.json(rows[0])
   })
 });
+// get record
+app.get('/record/:id', (req, res) => {
+  connection.query(`SELECT * FROM record WHERE id=${req.params.id}`, (err, rows, fields) => {
+    if (err) throw err
+    res.json(rows)
+  })
+});
 
 // POST
 // add new child
@@ -38,6 +45,33 @@ app.post('/child', (req, res) => {
 
   connection.query(`INSERT INTO child (fname, lname, bdate, sex, guardian, contact, address) 
         VALUES ('${fname}', '${lname}', '${bdate}', '${sex}', '${guardian}', '${contact}', '${address}')`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+});
+// add new record
+app.post('/record/:id', (req, res) => {
+  const { height, weight } = req.body;
+  const { id } = req.params;
+
+  const bmi = weight/(height*height);
+  let remark;
+
+  if(bmi <= 18.4){
+    remark = "Underweight";
+  }
+  else if(bmi >= 18.5){
+    remark = "Normal";
+  }
+  else if(bmi >= 25.0){
+    remark = "Overweight";
+  }
+  else if(bmi >= 30.0){
+    remark = "Overweight";
+  }
+
+  connection.query(`INSERT INTO record (id, height, weight, remark) 
+        VALUES ('${id}','${height}', '${weight}', '${remark}')`, (err, rows, fields) => {
     if (err) throw err
   })
   res.send("success")

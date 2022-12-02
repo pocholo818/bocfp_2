@@ -174,7 +174,7 @@ ion-menu.md ion-item {
 }
 
 ion-menu.md ion-item.selected {
-  --background: black;
+  --background: white;
 }
 
 ion-menu.md ion-item.selected ion-icon {

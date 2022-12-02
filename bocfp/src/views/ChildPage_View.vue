@@ -42,7 +42,8 @@
                             <ion-datetime-button datetime="dateOfBirth"></ion-datetime-button>
 
                             <ion-modal :keep-contents-mounted="true" class="datetime-modal">
-                                <ion-datetime id="dateOfBirth" displayFormat="YYYY.MM.DD" presentation="date" v-model="childDetails.bdate" readonly></ion-datetime>
+                                <ion-datetime id="dateOfBirth" displayFormat="YYYY.MM.DD" presentation="date"
+                                    v-model="childDetails.bdate" class="dateStyle" readonly></ion-datetime>
                             </ion-modal>
                         </ion-item>
 
@@ -69,27 +70,21 @@
 
             <ion-card>
                 <ion-card-header>
-                    <ion-card-title>Record</ion-card-title>
+                    <div style="display: flex; justify-content: space-between; align-items: center">
+                        <ion-card-title>Record</ion-card-title>
+                        <ion-button class="theme" :router-link="('/record_add/'+ childId)">+</ion-button>
+                    </div>
                     <ion-card-subtitle>Data Gathered</ion-card-subtitle>
                 </ion-card-header>
 
                 <ion-card-content>
                     <ion-list>
-                        <ion-item>
+                        <ion-item v-for="record in childRecords" :key="record.recordId">
                             <ion-label>
-                                <h2>2022-11-15</h2>
-                                <p>Height: 172cm</p>
-                                <p>Weight: 58kg</p>
-                                <p>Remark: Normal</p>
-                            </ion-label>
-                        </ion-item>
-
-                        <ion-item>
-                            <ion-label>
-                                <h2>2022-11-15</h2>
-                                <p>Height: 172cm</p>
-                                <p>Weight: 58kg</p>
-                                <p>Remark: Normal</p>
+                                <h2>{{ record.date.split("T")[0] }}</h2>
+                                <p>Height: {{ record.height }}cm</p>
+                                <p>Weight: {{ record.weight }}kg</p>
+                                <p>Remark: {{ record.remark }}</p>
                             </ion-label>
                         </ion-item>
                     </ion-list>
@@ -119,9 +114,9 @@ import {
     IonCardSubtitle,
     IonCardHeader,
     IonCardContent,
-    IonButtons, 
-    IonHeader, 
-    IonToolbar, 
+    IonButtons,
+    IonHeader,
+    IonToolbar,
     IonBackButton,
     IonDatetime, IonDatetimeButton, IonModal
 
@@ -150,7 +145,8 @@ export default defineComponent({
     data() {
         return {
             childId: "",
-            childDetails: {}
+            childDetails: {},
+            childRecords: {}
         }
     },
     setup() {
@@ -172,7 +168,22 @@ export default defineComponent({
             .then((json) => {
                 this.childDetails = json
             })
+        this.fetchRecord()
+    },
+    methods: {
+        fetchRecord(){
+            fetch('http://localhost:5000/record/' + this.childId)
+            .then((response) => response.json())
+            .then((json) => {
+                this.childRecords = json
+            })
+        }
+    },
+    watch: {
+    $route() {
+      this.$nextTick(this.fetchRecord);
     }
+  }
 });
 
 
