@@ -109,8 +109,6 @@ app.put('/record/:id', (req, res) => {
   const { id } = req.params;
   let remark = bmi(height, weight)
 
-  console.log(remark);
-
   connection.query(`UPDATE record SET height = '${height}', weight = '${weight}', remark = '${remark}'
       WHERE record_id=${id}`, (err, rows, fields) => {
     if (err) throw err
