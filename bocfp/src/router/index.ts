@@ -40,7 +40,11 @@ const routes: Array<RouteRecordRaw> = [
     },
     {
       path: '/record_add/:id',
-      component: () => import('@/views/RecordAdd.vue'),
+      component: () => import('@/views/Record_Add.vue'),
+    },
+    {
+      path: '/record_edit/:id',
+      component: () => import('@/views/Record_Edit.vue'),
     },
 
     // if wrong

@@ -7,7 +7,8 @@
         <ion-header>
             <ion-toolbar style="">
                 <ion-buttons slot="start">
-                    <ion-back-button router-link="/child" text="Back"></ion-back-button>
+                    <!-- <ion-back-button router-link="/child" text="Back"></ion-back-button> -->
+                    <ion-button router-link="/child"><ion-icon :icon="arrowBack"></ion-icon>&nbsp;Back</ion-button>
                 </ion-buttons>
             </ion-toolbar>
         </ion-header>
@@ -72,7 +73,7 @@
                 <ion-card-header>
                     <div style="display: flex; justify-content: space-between; align-items: center">
                         <ion-card-title>Record</ion-card-title>
-                        <ion-button class="theme" :router-link="('/record_add/'+ childId)">+</ion-button>
+                        <ion-button class="theme" :router-link="('/record_add/' + childId)">+</ion-button>
                     </div>
                     <ion-card-subtitle>Data Gathered</ion-card-subtitle>
                 </ion-card-header>
@@ -82,9 +83,20 @@
                         <ion-item v-for="record in childRecords" :key="record.recordId">
                             <ion-label>
                                 <h2>{{ record.date.split("T")[0] }}</h2>
+                                <p>Record ID: {{ record.record_id }}</p>
                                 <p>Height: {{ record.height }}cm</p>
                                 <p>Weight: {{ record.weight }}kg</p>
                                 <p>Remark: {{ record.remark }}</p>
+
+                                <ion-label>
+                                    <div style="text-align:center;">
+                                        <ion-button color="warning" style="width: 49%;"
+                                            :router-link="('/record_edit/' + record.record_id)"><ion-icon
+                                                :icon="createOutline"></ion-icon></ion-button>
+                                        <ion-button color="danger" style="width: 49%;" @click="record_delete"><ion-icon
+                                                :icon="trashOutline"></ion-icon></ion-button>
+                                    </div>
+                                </ion-label>
                             </ion-label>
                         </ion-item>
                     </ion-list>
@@ -103,7 +115,8 @@ import { defineComponent } from 'vue';
 import {
     eyeOutline,
     createOutline,
-    trashOutline
+    trashOutline,
+    arrowBack
 } from 'ionicons/icons';
 // ionic stuff
 import {
@@ -117,8 +130,8 @@ import {
     IonButtons,
     IonHeader,
     IonToolbar,
-    IonBackButton,
-    IonDatetime, IonDatetimeButton, IonModal
+    IonDatetime, IonDatetimeButton, IonModal,
+    alertController, toastController
 
 } from '@ionic/vue';
 import { useRoute } from 'vue-router';
@@ -139,7 +152,7 @@ export default defineComponent({
         IonCardSubtitle,
         IonCardHeader,
         IonCardContent,
-        IonButtons, IonHeader, IonToolbar, IonBackButton,
+        IonButtons, IonHeader, IonToolbar,
         IonDatetime, IonDatetimeButton, IonModal
     },
     data() {
@@ -156,7 +169,8 @@ export default defineComponent({
             router,
             eyeOutline,
             createOutline,
-            trashOutline
+            trashOutline,
+            arrowBack
         }
     },
     mounted() {
@@ -171,19 +185,57 @@ export default defineComponent({
         this.fetchRecord()
     },
     methods: {
-        fetchRecord(){
-            fetch('http://localhost:5000/record/' + this.childId)
-            .then((response) => response.json())
-            .then((json) => {
-                this.childRecords = json
-            })
+        fetchRecord() {
+            fetch('http://localhost:5000/records/' + this.childId)
+                .then((response) => response.json())
+                .then((json) => {
+                    this.childRecords = json
+                })
+        },
+        async record_delete() {
+            const alert = await alertController.create({
+                header: 'Are you sure you want to delete?',
+                buttons: [
+                    {
+                        text: 'Cancel',
+                        role: 'cancel'
+                    },
+                    {
+                        text: 'DELETE',
+                        role: 'confirm',
+                        handler: async () => {
+                            const toast = await toastController.create({
+                                duration: 1500,
+                                position: 'top'
+                            })
+
+                            const childId = + this.childId;
+
+                            fetch('http://localhost:5000/child/' + childId, {
+                                method: 'DELETE'
+                            })
+                                .then((data) => {
+                                    toast.message = 'Success!'
+                                    this.$emit('deleted')
+                                })
+                                .catch((error) => {
+                                    toast.message = error
+                                });
+
+                            await toast.present();
+                        },
+                    },
+                ],
+            });
+
+            await alert.present();
         }
     },
     watch: {
-    $route() {
-      this.$nextTick(this.fetchRecord);
+        $route() {
+            this.$nextTick(this.fetchRecord);
+        }
     }
-  }
 });
 
 

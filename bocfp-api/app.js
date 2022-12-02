@@ -15,6 +15,28 @@ const connection = mysql.createConnection({
   database: 'bocfp'
 })
 
+// funct
+function bmi(height, weight){
+  const bmi = (weight/(height*height))*10000;
+  let remark;
+
+  if(bmi >= 30.0){
+    remark = "Obese";
+  }
+  else if(bmi >= 25.0){
+    remark = "Overweight";
+  }
+  else if(bmi >= 18.5){
+    remark = "Normal";
+  }
+  else if(bmi <= 18.4){
+    remark = "Underweight";
+  }
+
+  return remark;
+  // console.log(remark);
+};
+
 // GET
 // get all child
 app.get('/child', (req, res) => {
@@ -31,10 +53,17 @@ app.get('/child/:id', (req, res) => {
   })
 });
 // get record
-app.get('/record/:id', (req, res) => {
+app.get('/records/:id', (req, res) => {
   connection.query(`SELECT * FROM record WHERE id=${req.params.id}`, (err, rows, fields) => {
     if (err) throw err
     res.json(rows)
+  })
+});
+// get specific record
+app.get('/record/:id', (req, res) => {
+  connection.query(`SELECT * FROM record WHERE record_id=${req.params.id}`, (err, rows, fields) => {
+    if (err) throw err
+    res.json(rows[0])
   })
 });
 
@@ -53,22 +82,7 @@ app.post('/child', (req, res) => {
 app.post('/record/:id', (req, res) => {
   const { height, weight } = req.body;
   const { id } = req.params;
-
-  const bmi = weight/(height*height);
-  let remark;
-
-  if(bmi <= 18.4){
-    remark = "Underweight";
-  }
-  else if(bmi >= 18.5){
-    remark = "Normal";
-  }
-  else if(bmi >= 25.0){
-    remark = "Overweight";
-  }
-  else if(bmi >= 30.0){
-    remark = "Overweight";
-  }
+  let remark = bmi(height, weight)
 
   connection.query(`INSERT INTO record (id, height, weight, remark) 
         VALUES ('${id}','${height}', '${weight}', '${remark}')`, (err, rows, fields) => {
@@ -89,6 +103,20 @@ app.put('/childUpdate/:id', (req, res) => {
   })
   res.send("success")
 });
+// update record
+app.put('/record/:id', (req, res) => {
+  const { height, weight } = req.body;
+  const { id } = req.params;
+  let remark = bmi(height, weight)
+
+  console.log(remark);
+
+  connection.query(`UPDATE record SET height = '${height}', weight = '${weight}', remark = '${remark}'
+      WHERE record_id=${id}`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+});
 
 // DELETE
 // delete child
@@ -96,6 +124,15 @@ app.delete('/child/:id', (req, res) => {
   const { id } = req.params;
 
   connection.query(`DELETE FROM child WHERE id='${id}'`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+});
+// delete record
+app.delete('/record/:id', (req, res) => {
+  const { id } = req.params;
+
+  connection.query(`DELETE FROM record WHERE record_id='${id}'`, (err, rows, fields) => {
     if (err) throw err
   })
   res.send("success")
