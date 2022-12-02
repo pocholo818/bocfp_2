@@ -23,37 +23,37 @@
                 <ion-list>
                     <ion-item>
                         <ion-label position="floating">First Name</ion-label>
-                        <ion-input placeholder="Enter First Name" value="Arataki"></ion-input>
+                        <ion-input placeholder="Enter First Name" v-model="childDetails.fname"></ion-input>
                     </ion-item>
 
                     <ion-item>
                         <ion-label position="floating">Last Name</ion-label>
-                        <ion-input placeholder="Enter Last Name" value="Itto"></ion-input>
+                        <ion-input placeholder="Enter Last Name" v-model="childDetails.lname"></ion-input>
                     </ion-item>
 
                     <ion-item>
                         <ion-label position="floating">Sex</ion-label>
-                        <ion-input placeholder="Enter Sex" value="M"></ion-input>
+                        <ion-input placeholder="Enter Sex" v-model="childDetails.sex"></ion-input>
                     </ion-item>
 
                     <ion-item>
                         <ion-label position="floating">Birth Date</ion-label>
-                        <ion-input placeholder="Enter Birth Date" value="2000-06-01"></ion-input>
+                        <ion-input placeholder="Enter Birth Date" v-model="childDetails.bdate"></ion-input>
                     </ion-item>
 
                     <ion-item>
                         <ion-label position="floating">Guardian</ion-label>
-                        <ion-input placeholder="Enter Guardian Name" value="Kuki Shinobu"></ion-input>
+                        <ion-input placeholder="Enter Guardian Name" v-model="childDetails.guardian"></ion-input>
                     </ion-item>
 
                     <ion-item>
                         <ion-label position="floating">Contact Number</ion-label>
-                        <ion-input type="tel" placeholder="Enter Contact Number" maxlength="11" value="09999999999"></ion-input>
+                        <ion-input type="tel" placeholder="Enter Contact Number" maxlength="11" v-model="childDetails.contact"></ion-input>
                     </ion-item>
 
                     <ion-item>
                         <ion-label position="floating">Address</ion-label>
-                        <ion-input type="tel" placeholder="Enter Contact Number" value="2075th Narra Lane Old Cabalan Olongapo City, Zambales"></ion-input>
+                        <ion-input type="tel" placeholder="Enter Contact Number" v-model="childDetails.address"></ion-input>
                     </ion-item>
                 </ion-list>
                 </ion-card-content>
@@ -84,9 +84,9 @@
         IonCardSubtitle,
         IonCardHeader,
         IonCardContent,
-        IonButtons, IonHeader, IonToolbar, IonBackButton
-
+        IonButtons, IonHeader, IonToolbar, IonBackButton,
     } from '@ionic/vue';
+    import { useRoute } from 'vue-router';
     // import HeaderBar from '@/components/HeaderBar.vue';
     // import {
     //   IonContent,
@@ -106,13 +106,32 @@
         IonCardContent,
         IonButtons, IonHeader, IonToolbar, IonBackButton
       },
-        setup() {
-        return {
-          eyeOutline,
-          createOutline,
-          trashOutline
-        }
-      }
+            data(){
+                return {
+                    childId: "",
+                    childDetails: {}
+            }
+        },
+            setup() {
+                const router = useRoute();
+
+                return {
+                    router,
+                    eyeOutline,
+                    createOutline,
+                    trashOutline
+            }
+    },
+    mounted() {
+        this.childId = this.router.params.id + "";
+        // console.log(this.router.params.id)
+
+        fetch('http://localhost:5000/child/' + this.childId)
+      .then((response) => response.json())
+      .then((json) => { 
+        this.childDetails = json
+      })
+    }
     });
   
     

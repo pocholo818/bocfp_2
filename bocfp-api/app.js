@@ -16,27 +16,44 @@ const connection = mysql.createConnection({
 })
 
 // GET
+// get all child
 app.get('/child', (req, res) => {
   connection.query('SELECT * FROM child', (err, rows, fields) => {
     if (err) throw err
     res.json(rows)
   })
 });
+// get specific child
+app.get('/child/:id', (req, res) => {
+  connection.query(`SELECT * FROM child WHERE id=${req.params.id}`, (err, rows, fields) => {
+      if (err) throw err
+      res.json(rows[0])
+    })
+});
 
 // POST
-app.post('/child/:id', (req, res) => {
-    connection.query(`SELECT * FROM child WHERE id=${req.params.id}`, (err, rows, fields) => {
-        if (err) throw err
-        res.json(rows)
-      })
-});
+// add new child
 app.post('/child', (req, res) => {
     const {fname, lname, bdate, sex, guardian, contact, address} = req.body;
+
     connection.query(`INSERT INTO child (fname, lname, bdate, sex, guardian, contact, address) 
         VALUES ('${fname}', '${lname}', '${bdate}', '${sex}', '${guardian}', '${contact}', '${address}')`, (err, rows, fields) => {
         if (err) throw err
       })
     res.send("success")
+});
+
+// PUT
+// update child
+app.put('/childUpdate/:id', (req, res) => {
+  const {id, fname, lname, bdate, sex, guardian, contact, address} = req.body;
+
+  connection.query(`UPDATE child SET fname = '${fname}', lname = '${lname}', bdate = '${bdate}', 
+      sex ='${sex}', guardian = '${guardian}', contact = '${contact}', address = '${address}'
+      WHERE id=${id}`, (err, rows, fields) => {
+      if (err) throw err
+    })
+  res.send("success")
 });
 
 const start = async () => {

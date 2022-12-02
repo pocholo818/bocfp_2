@@ -13,8 +13,8 @@
       <p>Address: {{ data.address }}</p><br>
 
       <div style="text-align:center;">
-        <ion-button color="success" style="width: 32%;"  router-link="/child_view"><ion-icon  :icon="eyeOutline"></ion-icon></ion-button>
-        <a href="/child_edit"><ion-button color="warning" style="width: 32%;"><ion-icon :icon="createOutline"></ion-icon></ion-button></a>
+        <ion-button color="success" style="width: 32%;" :router-link="'/child_view/' + data.id"><ion-icon  :icon="eyeOutline"></ion-icon></ion-button>
+        <ion-button color="warning" style="width: 32%;" :router-link="'/child_edit/' + data.id"><ion-icon :icon="createOutline"></ion-icon></ion-button>
         <ion-button color="danger" style="width: 32%;"><ion-icon :icon="trashOutline"></ion-icon></ion-button>
       </div>
     </ion-card-content>
@@ -62,7 +62,7 @@
     },
     computed: {
       name() {
-        return this.data.fname + ' ' + this.data.lname
+        return this.data?.fname + ' ' + this.data?.lname
       }
     }
   });

@@ -17,44 +17,44 @@
             <ion-card>
                 <ion-card-header>
                     <ion-card-title>Information</ion-card-title>
-                    <ion-card-subtitle>ID: 1</ion-card-subtitle>
+                    <ion-card-subtitle>ID: {{ childId }}</ion-card-subtitle>
                 </ion-card-header>
 
                 <ion-card-content>
                 <ion-list>
                     <ion-item>
                         <ion-label position="floating">First Name</ion-label>
-                        <ion-input placeholder="Enter First Name" value="Arataki" disabled></ion-input>
+                        <ion-input placeholder="Enter First Name" v-model="childDetails.fname" readonly></ion-input>
                     </ion-item>
 
                     <ion-item>
                         <ion-label position="floating">Last Name</ion-label>
-                        <ion-input placeholder="Enter Last Name" value="Itto" disabled></ion-input>
+                        <ion-input placeholder="Enter Last Name" v-model="childDetails.lname" readonly></ion-input>
                     </ion-item>
 
                     <ion-item>
                         <ion-label position="floating">Sex</ion-label>
-                        <ion-input placeholder="Enter Sex" value="M" disabled></ion-input>
+                        <ion-input placeholder="Enter Sex" v-model="childDetails.sex" readonly></ion-input>
                     </ion-item>
 
                     <ion-item>
                         <ion-label position="floating">Birth Date</ion-label>
-                        <ion-input placeholder="Enter Birth Date" value="2000-06-01" disabled></ion-input>
+                        <ion-input placeholder="Enter Birth Date" v-model="childDetails.bdate" readonly></ion-input>
                     </ion-item>
 
                     <ion-item>
                         <ion-label position="floating">Guardian</ion-label>
-                        <ion-input placeholder="Enter Guardian Name" value="Kuki Shinobu" disabled></ion-input>
+                        <ion-input placeholder="Enter Guardian Name" v-model="childDetails.guardian" readonly></ion-input>
                     </ion-item>
 
                     <ion-item>
                         <ion-label position="floating">Contact Number</ion-label>
-                        <ion-input type="tel" placeholder="Enter Contact Number" maxlength="11" value="09999999999" disabled></ion-input>
+                        <ion-input type="tel" placeholder="Enter Contact Number" maxlength="11" v-model="childDetails.contact" readonly></ion-input>
                     </ion-item>
 
                     <ion-item>
                         <ion-label position="floating">Address</ion-label>
-                        <ion-input type="tel" placeholder="Enter Contact Number" value="2075th Narra Lane Old Cabalan Olongapo City, Zambales" disabled></ion-input>
+                        <ion-input type="tel" placeholder="Enter Contact Number" v-model="childDetails.address" readonly></ion-input>
                     </ion-item>
                 </ion-list>
                 </ion-card-content>
@@ -115,6 +115,7 @@
         IonButtons, IonHeader, IonToolbar, IonBackButton
 
     } from '@ionic/vue';
+    import { useRoute } from 'vue-router';
     // import HeaderBar from '@/components/HeaderBar.vue';
     // import {
     //   IonContent,
@@ -134,13 +135,32 @@
         IonCardContent,
         IonButtons, IonHeader, IonToolbar, IonBackButton
       },
+        data(){
+            return {
+                childId: "",
+                childDetails: {}
+            }
+        },
         setup() {
+            const router = useRoute();
+
         return {
-          eyeOutline,
-          createOutline,
-          trashOutline
+            router,
+            eyeOutline,
+            createOutline,
+            trashOutline
         }
-      }
+      },
+      mounted() {
+        this.childId = this.router.params.id + "";
+        // console.log(this.router.params.id)
+
+        fetch('http://localhost:5000/child/' + this.childId)
+      .then((response) => response.json())
+      .then((json) => { 
+        this.childDetails = json
+      })
+    }
     });
   
     

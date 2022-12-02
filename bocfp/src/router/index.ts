@@ -27,11 +27,11 @@ const routes: Array<RouteRecordRaw> = [
     ]
   },
     {
-      path: '/child_view',
+      path: '/child_view/:id',
       component: () => import('@/views/ChildPage_View.vue'),
     },
     {
-      path: '/child_edit',
+      path: '/child_edit/:id',
       component: () => import('@/views/ChildPage_Edit.vue'),
     },
     {
