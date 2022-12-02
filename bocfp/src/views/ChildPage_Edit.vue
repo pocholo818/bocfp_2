@@ -32,8 +32,12 @@
                         </ion-item>
 
                         <ion-item>
-                            <ion-label position="floating">Sex</ion-label>
-                            <ion-input placeholder="Enter Sex" v-model="childDetails.sex"></ion-input>
+                            <ion-label>Sex:</ion-label>
+
+                            <ion-select placeholder="Male/Female" v-model="childDetails.sex">
+                                <ion-select-option value="M">Male</ion-select-option>
+                                <ion-select-option value="F">Female</ion-select-option>
+                            </ion-select>
                         </ion-item>
 
                         <ion-item>
@@ -41,7 +45,8 @@
                             <ion-datetime-button datetime="dateOfBirth"></ion-datetime-button>
 
                             <ion-modal :keep-contents-mounted="true" class="datetime-modal">
-                                <ion-datetime id="dateOfBirth" displayFormat="YYYY.MM.DD" presentation="date" v-model="childDetails.bdate"></ion-datetime>
+                                <ion-datetime id="dateOfBirth" displayFormat="YYYY.MM.DD" presentation="date"
+                                    v-model="childDetails.bdate"></ion-datetime>
                             </ion-modal>
                         </ion-item>
 
@@ -92,7 +97,8 @@ import {
     IonCardContent,
     IonButtons, IonHeader, IonToolbar, IonBackButton,
     toastController, useIonRouter,
-    IonDatetime, IonDatetimeButton, IonModal
+    IonDatetime, IonDatetimeButton, IonModal,
+    IonSelect, IonSelectOption
 } from '@ionic/vue';
 import { useRoute } from 'vue-router';
 import { IonRouter } from '@ionic/core/components';
@@ -114,7 +120,8 @@ export default defineComponent({
         IonCardHeader,
         IonCardContent,
         IonButtons, IonHeader, IonToolbar, IonBackButton,
-        IonDatetime, IonDatetimeButton, IonModal
+        IonDatetime, IonDatetimeButton, IonModal,
+        IonSelect, IonSelectOption
     },
 
     data() {
