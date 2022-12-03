@@ -93,7 +93,7 @@
                                         <ion-button color="warning" style="width: 49%;"
                                             :router-link="('/record_edit/' + record.record_id)"><ion-icon
                                                 :icon="createOutline"></ion-icon></ion-button>
-                                        <ion-button color="danger" style="width: 49%;" @click="record_delete"><ion-icon
+                                        <ion-button color="danger" style="width: 49%;" @click="record_delete(record.record_id)"><ion-icon
                                                 :icon="trashOutline"></ion-icon></ion-button>
                                     </div>
                                 </ion-label>
@@ -192,7 +192,7 @@ export default defineComponent({
                     this.childRecords = json
                 })
         },
-        async record_delete() {
+        async record_delete(record_id: string) {
             const alert = await alertController.create({
                 header: 'Are you sure you want to delete?',
                 buttons: [
@@ -208,15 +208,17 @@ export default defineComponent({
                                 duration: 1500,
                                 position: 'top'
                             })
+                            const recordId = record_id
 
-                            const childId = + this.childId;
+                            console.log(recordId);
 
-                            fetch('http://localhost:5000/child/' + childId, {
+                            fetch('http://localhost:5000/record/' + recordId, {
                                 method: 'DELETE'
                             })
                                 .then((data) => {
                                     toast.message = 'Success!'
-                                    this.$emit('deleted')
+                                    // this.$emit('deleted')
+                                    this.fetchRecord()
                                 })
                                 .catch((error) => {
                                     toast.message = error
