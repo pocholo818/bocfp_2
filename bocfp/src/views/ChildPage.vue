@@ -75,7 +75,7 @@ export default defineComponent({
       this.isOpen = isOpen;
     },
     fetchData() {
-      fetch('http://localhost:5000/child')
+      fetch('http://localhost:5000/childs')
         .then((response) => response.json())
         .then((json) => {
           this.childList = json

@@ -39,14 +39,14 @@ function bmi(height, weight){
 
 // GET
 // get all child
-app.get('/child', (req, res) => {
+app.get('/childs', (req, res) => {
   connection.query('SELECT * FROM child', (err, rows, fields) => {
     if (err) throw err
     res.json(rows)
   })
 });
 // get specific child
-app.get('/child/:id', (req, res) => {
+app.get('/child/profile/:id', (req, res) => {
   connection.query(`SELECT * FROM child WHERE id=${req.params.id}`, (err, rows, fields) => {
     if (err) throw err
     res.json(rows[0])
@@ -66,6 +66,30 @@ app.get('/record/:id', (req, res) => {
     res.json(rows[0])
   })
 });
+// get all guardian
+app.get('/guardians', (req, res) => {
+  connection.query('SELECT * FROM guardian', (err, rows, fields) => {
+    if (err) throw err
+    res.json(rows)
+  })
+});
+// get specific guardian
+app.get('/guardian/profile/:id', (req, res) => {
+  connection.query(`SELECT * FROM guardian WHERE guardian_id=${req.params.id}`, (err, rows, fields) => {
+    if (err) throw err
+    res.json(rows[0])
+  })
+});
+// search guardian
+app.get('/guardian/:search', (req, res) => {
+  connection.query(`SELECT * FROM guardian WHERE guardian_id LIKE "${req.params.search}"
+    OR fname LIKE "%${req.params.search}%"
+    OR lname LIKE"%${req.params.search}%"`, (err, rows, fields) => {
+    if (err) throw err
+    res.json(rows)
+  })
+});
+
 
 // POST
 // add new child
@@ -90,6 +114,17 @@ app.post('/record/:id', (req, res) => {
   })
   res.send("success")
 });
+// add new guardian
+app.post('/guardian/new', (req, res) => {
+  const { fname, lname, contact, address } = req.body;
+
+  connection.query(`INSERT INTO guardian (fname, lname, contact, address) 
+        VALUES ('${fname}', '${lname}', '${contact}', '${address}')`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+});
+
 
 // PUT
 // update child
@@ -116,26 +151,38 @@ app.put('/record/:id', (req, res) => {
   res.send("success")
 });
 
+
+// SOFT DELETE
+app.put('/guardianDel/:id', (req, res) => {
+  const { id } = req.params;
+
+  connection.query(`UPDATE guardian SET soft_delete='1'  WHERE guardian_id=${id}`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+});
+
 // DELETE
 // delete child
-app.delete('/child/:id', (req, res) => {
-  const { id } = req.params;
+// app.delete('/child/:id', (req, res) => {
+//   const { id } = req.params;
 
-  connection.query(`DELETE FROM child WHERE id='${id}'`, (err, rows, fields) => {
-    if (err) throw err
-  })
-  res.send("success")
-});
-// delete record
-app.delete('/record/:id', (req, res) => {
-  const { id } = req.params;
+//   connection.query(`DELETE FROM child WHERE id='${id}'`, (err, rows, fields) => {
+//     if (err) throw err
+//   })
+//   res.send("success")
+// });
+// // delete record
+// app.delete('/record/:id', (req, res) => {
+//   const { id } = req.params;
 
-  connection.query(`DELETE FROM record WHERE record_id='${id}'`, (err, rows, fields) => {
-    if (err) throw err
-  })
-  res.send("success")
-});
+//   connection.query(`DELETE FROM record WHERE record_id='${id}'`, (err, rows, fields) => {
+//     if (err) throw err
+//   })
+//   res.send("success")
+// });
 
+// 
 const start = async () => {
   try {
     app.listen(port, () =>

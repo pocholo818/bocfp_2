@@ -177,7 +177,7 @@ export default defineComponent({
         this.childId = this.router.params.id + "";
         // console.log(this.router.params.id)
 
-        fetch('http://localhost:5000/child/' + this.childId)
+        fetch('http://localhost:5000/child/profile/' + this.childId)
             .then((response) => response.json())
             .then((json) => {
                 this.childDetails = json
