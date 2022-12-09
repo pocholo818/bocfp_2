@@ -68,7 +68,7 @@ app.get('/record/:id', (req, res) => {
 });
 // get all guardian
 app.get('/guardians', (req, res) => {
-  connection.query('SELECT * FROM guardian', (err, rows, fields) => {
+  connection.query('SELECT * FROM guardian WHERE soft_delete=0', (err, rows, fields) => {
     if (err) throw err
     res.json(rows)
   })

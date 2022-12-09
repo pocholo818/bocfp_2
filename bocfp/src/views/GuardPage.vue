@@ -25,13 +25,13 @@
                         <p>Contact Number: {{ guard.contact_number }}</p>
                         <p>Address: {{ guard.address }}</p><br>
                         <!-- <p>{{ guard.soft_delete }}</p> -->
-                        
+
                         <ion-button color="success" style="width: 32%;"><ion-icon
                                 :icon="eyeOutline"></ion-icon></ion-button>
                         <ion-button color="warning" style="width: 32%;"><ion-icon
                                 :icon="createOutline"></ion-icon></ion-button>
-                        <ion-button color="danger" @click="guardian_delete(guard.guardian_id)" style="width: 32%;"><ion-icon
-                                :icon="trashOutline"></ion-icon></ion-button>
+                        <ion-button color="danger" @click="guardian_delete(guard.guardian_id)"
+                            style="width: 32%;"><ion-icon :icon="trashOutline"></ion-icon></ion-button>
                     </ion-card-content>
                 </ion-card-header>
             </ion-card>
@@ -62,7 +62,8 @@ import {
     IonCardHeader,
     IonCardContent,
     IonSearchbar,
-    toastController
+    toastController,
+    alertController
 } from '@ionic/vue';
 // icons
 import {
@@ -120,31 +121,49 @@ export default defineComponent({
                 })
         },
         async guardian_delete(guardian_id: string) {
-            const toast = await toastController.create({
-                duration: 1500,
-                position: 'top'
-            })
+            const alert = await alertController.create({
+                header: 'Are you sure you want to delete?',
+                buttons: [
+                    {
+                        text: 'Cancel',
+                        role: 'cancel'
+                    },
+                    {
+                        text: 'DELETE',
+                        role: 'confirm',
+                        handler: async () => {
+                            const toast = await toastController.create({
+                                duration: 1500,
+                                position: 'top'
+                            })
+                            const guard_id = guardian_id;
+                            console.log(guardian_id);
 
-            const guard_id = guardian_id;
-            console.log(guardian_id);
+                            fetch('http://localhost:5000/guardianDel/' + guard_id, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                            })
+                                .then((data) => {
+                                    toast.message = 'Success!'
+                                    this.guardianDel = "";
+                                    this.fetchData();
+                                })
+                                .catch((error) => {
+                                    toast.message = error
+                                });
 
-            fetch('http://localhost:5000/guardianDel/' + guard_id, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                // body: JSON.stringify(guard_id),
-            })
-                .then((data) => {
-                    toast.message = 'Success!'
-                    this.guardianDel = "";
-                    this.fetchData();
-                })
-                .catch((error) => {
-                    toast.message = error
-                });
+                            await toast.present();
 
-            await toast.present();
+
+                            await toast.present();
+                        },
+                    },
+                ],
+            });
+
+            await alert.present();
         }
     },
     // get data
