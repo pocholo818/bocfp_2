@@ -17,7 +17,7 @@
         /> -->
 
             <ion-card v-for="guard in guardianList" :key="guard.guardian_id">
-                <ion-card-header v-if="guardian.soft_delete === 0">
+                <ion-card-header>
                     <ion-card-title>{{ guard.fname }} {{ guard.lname }}</ion-card-title>
                     <ion-card-subtitle>GRDN: {{ guard.guardian_id }}</ion-card-subtitle>
 
