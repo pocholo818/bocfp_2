@@ -54,6 +54,10 @@ const routes: Array<RouteRecordRaw> = [
       path: '/guardian_add',
       component: () => import('@/views/GuardPage_Add.vue'),
     },
+    {
+      path: '/dashboard',
+      component: () => import('@/views/DashboardPage.vue'),
+    },
 
     // if wrong
     {

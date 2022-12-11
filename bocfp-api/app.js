@@ -33,8 +33,10 @@ function bmi(height, weight){
     remark = "Underweight";
   }
 
-  return remark;
-  // console.log(remark);
+  console.log("Remark: "+remark);
+  console.log("BMI: "+bmi);
+
+  return remark, bmi;
 };
 
 // GET
@@ -66,7 +68,7 @@ app.get('/record/:id', (req, res) => {
     res.json(rows[0])
   })
 });
-// get all guardian
+// get all !deleted guardian
 app.get('/guardians', (req, res) => {
   connection.query('SELECT * FROM guardian WHERE soft_delete=0', (err, rows, fields) => {
     if (err) throw err
@@ -153,6 +155,7 @@ app.put('/record/:id', (req, res) => {
 
 
 // SOFT DELETE
+// soft delete guardian
 app.put('/guardianDel/:id', (req, res) => {
   const { id } = req.params;
 
@@ -161,6 +164,23 @@ app.put('/guardianDel/:id', (req, res) => {
   })
   res.send("success")
 });
+
+// SQL  FUNCTIONS
+// get total child
+app.get('/child/count/', (req, res) => {
+  connection.query(`SELECT COUNT(id) FROM child`, (err, count, fields) => {
+    if (err) throw err
+    res.json(count[0]["COUNT(id)"])
+  })
+});
+// MAYBE 
+// get total underweight childs
+// app.get('/child/count/uw/', (req, res) => {
+//   connection.query(`SELECT COUNT(remark) FROM child WHERE remark="Underweight"`, (err, uw, fields) => {
+//     if (err) throw err
+//     res.json(uw)
+//   })
+// });
 
 // DELETE
 // delete child

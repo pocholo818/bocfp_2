@@ -62,7 +62,13 @@
 
                         <ion-item>
                             <ion-label position="floating">Address</ion-label>
-                            <ion-input type="tel" placeholder="Enter Contact Number" v-model="childDetails.address"
+                            <ion-input type="tel" placeholder="Enter Address" v-model="childDetails.address"
+                                readonly></ion-input>
+                        </ion-item>
+
+                        <ion-item>
+                            <ion-label position="floating">Remark</ion-label>
+                            <ion-input type="text" placeholder="Enter Remark" v-model="totalRemark"
                                 readonly></ion-input>
                         </ion-item>
                     </ion-list>
@@ -159,7 +165,8 @@ export default defineComponent({
         return {
             childId: "",
             childDetails: {},
-            childRecords: {}
+            childRecords: {},
+            totalRemark: ""
         }
     },
     setup() {
@@ -175,12 +182,14 @@ export default defineComponent({
     },
     mounted() {
         this.childId = this.router.params.id + "";
-        // console.log(this.router.params.id)
 
         fetch('http://localhost:5000/child/profile/' + this.childId)
             .then((response) => response.json())
             .then((json) => {
                 this.childDetails = json
+
+                // this.totalRemark.value = `${json.remark} "("${json.output}")"`
+                this.totalRemark = `${json.remark} (${json.output})`
             })
         this.fetchRecord()
     },
@@ -237,6 +246,16 @@ export default defineComponent({
         $route() {
             this.$nextTick(this.fetchRecord);
         }
+    },
+    computed:{
+        // totalRemark: {
+        //     get(): any {
+        //         return `${this.childDetails.remark} "("${this.childDetails.output}")"`
+        //     },
+        //     set(value: any) {
+        //         this.totalRemark = value
+        //     }
+        // }
     }
 });
 
