@@ -18,7 +18,7 @@
             <ion-card>
                 <ion-card-header>
                     <ion-card-title>Information</ion-card-title>
-                    <ion-card-subtitle>ID: {{ childId }}</ion-card-subtitle>
+                    <ion-card-subtitle>CHLD_ID: {{ childId }}</ion-card-subtitle>
                 </ion-card-header>
 
                 <ion-card-content>
@@ -49,6 +49,12 @@
                         </ion-item>
 
                         <ion-item>
+                            <ion-label position="floating">Age</ion-label>
+                            <ion-input placeholder="Enter Age" v-model="childAge"
+                                readonly></ion-input>
+                        </ion-item>
+
+                        <ion-item>
                             <ion-label position="floating">Guardian</ion-label>
                             <ion-input placeholder="Enter Guardian Name" v-model="childDetails.guardian"
                                 readonly></ion-input>
@@ -66,10 +72,24 @@
                                 readonly></ion-input>
                         </ion-item>
 
+                        <ion-card-header>
+                            <ion-card-title>Record</ion-card-title>
+                        </ion-card-header>
+
                         <ion-item>
                             <ion-label position="floating">Remark</ion-label>
                             <ion-input type="text" placeholder="Enter Remark" v-model="totalRemark"
                                 readonly></ion-input>
+                        </ion-item>
+
+                        <ion-item>
+                            <ion-label position="floating">Height (cm):</ion-label>
+                            <ion-input placeholder="Enter Height" v-model="childDetails.height"></ion-input>
+                        </ion-item>
+
+                        <ion-item>
+                            <ion-label position="floating">Weight (kg):</ion-label>
+                            <ion-input placeholder="Enter Weight" v-model="childDetails.weight"></ion-input>
                         </ion-item>
                     </ion-list>
                 </ion-card-content>
@@ -99,7 +119,8 @@
                                         <ion-button color="warning" style="width: 49%;"
                                             :router-link="('/record_edit/' + record.record_id)"><ion-icon
                                                 :icon="createOutline"></ion-icon></ion-button>
-                                        <ion-button color="danger" style="width: 49%;" @click="record_delete(record.record_id)"><ion-icon
+                                        <ion-button color="danger" style="width: 49%;"
+                                            @click="record_delete(record.record_id)"><ion-icon
                                                 :icon="trashOutline"></ion-icon></ion-button>
                                     </div>
                                 </ion-label>
@@ -166,6 +187,8 @@ export default defineComponent({
             childId: "",
             childDetails: {},
             childRecords: {},
+            childAge: 0,
+            childBdate: "",
             totalRemark: ""
         }
     },
@@ -188,8 +211,8 @@ export default defineComponent({
             .then((json) => {
                 this.childDetails = json
 
-                // this.totalRemark.value = `${json.remark} "("${json.output}")"`
                 this.totalRemark = `${json.remark} (${json.output})`
+                this.childBdate = json.bdate;
             })
         this.fetchRecord()
     },
@@ -200,6 +223,13 @@ export default defineComponent({
                 .then((json) => {
                     this.childRecords = json
                 })
+        },
+        computeAge: function() {
+            let currentDate = new Date();
+            let birthDate = new Date(this.childBdate);
+            let difference = currentDate - birthDate;
+            let age = Math.floor(difference/31557600000);
+            return age;
         },
         async record_delete(record_id: string) {
             const alert = await alertController.create({
@@ -247,7 +277,7 @@ export default defineComponent({
             this.$nextTick(this.fetchRecord);
         }
     },
-    computed:{
+    computed: {
         // totalRemark: {
         //     get(): any {
         //         return `${this.childDetails.remark} "("${this.childDetails.output}")"`

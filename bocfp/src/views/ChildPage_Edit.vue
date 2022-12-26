@@ -146,7 +146,7 @@ export default defineComponent({
         this.childId = this.router.params.id + "";
         // console.log(this.router.params.id)
 
-        fetch('http://localhost:5000/child/' + this.childId)
+        fetch('http://localhost:5000/child/profile/' + this.childId)
             .then((response) => response.json())
             .then((json) => {
                 this.childDetails = json
@@ -162,6 +162,7 @@ export default defineComponent({
             // console.log(this.childDetails)
             // console.log(this.childDetails.bdate.split("T")[0])
             const data = this.childDetails;
+            console.log(data);
             fetch('http://localhost:5000/childUpdate/:id', {
                 method: 'PUT',
                 headers: {
