@@ -16,12 +16,12 @@
         <!-- content -->
         <ion-content>
             <ion-card>
-                <ion-card-header>
-                    <ion-card-title>Information</ion-card-title>
-                    <ion-card-subtitle>CHLD_ID: {{ childId }}</ion-card-subtitle>
-                </ion-card-header>
-
                 <ion-card-content>
+                    <ion-card-header>
+                        <ion-card-title>Information</ion-card-title>
+                        <ion-card-subtitle>CHLD_ID: {{ childId }}</ion-card-subtitle>
+                    </ion-card-header>
+
                     <ion-list>
                         <ion-item>
                             <ion-label position="floating">First Name</ion-label>
@@ -50,8 +50,7 @@
 
                         <ion-item>
                             <ion-label position="floating">Age</ion-label>
-                            <ion-input placeholder="Enter Age" v-model="childAge"
-                                readonly></ion-input>
+                            <ion-input placeholder="Enter Age" v-model="childAge" readonly></ion-input>
                         </ion-item>
 
                         <ion-item>
@@ -73,7 +72,11 @@
                         </ion-item>
 
                         <ion-card-header>
-                            <ion-card-title>Record</ion-card-title>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <ion-card-title>Record</ion-card-title>
+                                <ion-button class="theme" :router-link="('/record_add/' + childId)">+</ion-button>
+                            </div>
+                            <ion-card-subtitle>Displaying the latest record</ion-card-subtitle>
                         </ion-card-header>
 
                         <ion-item>
@@ -162,6 +165,7 @@ import {
 
 } from '@ionic/vue';
 import { useRoute } from 'vue-router';
+import { parseStringStyle } from '@vue/shared';
 // import HeaderBar from '@/components/HeaderBar.vue';
 // import {
 //   IonContent,
@@ -213,6 +217,7 @@ export default defineComponent({
 
                 this.totalRemark = `${json.remark} (${json.output})`
                 this.childBdate = json.bdate;
+                this.childAge = this.computeAge();
             })
         this.fetchRecord()
     },
@@ -224,12 +229,18 @@ export default defineComponent({
                     this.childRecords = json
                 })
         },
-        computeAge: function() {
-            let currentDate = new Date();
-            let birthDate = new Date(this.childBdate);
-            let difference = currentDate - birthDate;
-            let age = Math.floor(difference/31557600000);
+        computeAge: function () {
+            let currentDate = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`;
+            let birthDate = this.childBdate;
+            let age = parseInt(currentDate.split("-")[0]) - parseInt(birthDate.split("-")[0]);
+            let month = parseInt(currentDate.split("-")[1]) - parseInt(birthDate.split("-")[1]);
+
+            if (month < 0 || (month == 0 && parseInt(currentDate.split("-")[1]) < parseInt(birthDate.split("-")[1]))) {
+                age--;
+            }
+
             return age;
+
         },
         async record_delete(record_id: string) {
             const alert = await alertController.create({
