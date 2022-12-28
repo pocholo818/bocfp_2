@@ -53,7 +53,7 @@ app.get('/child/profile/:id', (req, res) => {
 });
 // get record
 app.get('/records/:id', (req, res) => {
-  connection.query(`SELECT * FROM record WHERE id=${req.params.id}`, (err, rows, fields) => {
+  connection.query(`SELECT * FROM record WHERE id=${req.params.id} and soft_delete=0`, (err, rows, fields) => {
     if (err) throw err
     res.json(rows)
   })
@@ -159,6 +159,14 @@ app.put('/guardianDel/:id', (req, res) => {
   const { id } = req.params;
 
   connection.query(`UPDATE guardian SET soft_delete='1'  WHERE guardian_id=${id}`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+});
+app.put('/record/del/:id', (req, res) => {
+  const { id } = req.params;
+
+  connection.query(`UPDATE record SET soft_delete='1'  WHERE record_id=${id}`, (err, rows, fields) => {
     if (err) throw err
   })
   res.send("success")

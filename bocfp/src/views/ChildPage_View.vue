@@ -271,8 +271,8 @@ export default defineComponent({
 
                             console.log(recordId);
 
-                            fetch('http://localhost:5000/record/' + recordId, {
-                                method: 'DELETE'
+                            fetch('http://localhost:5000/record/del/' + recordId, {
+                                method: 'put'
                             })
                                 .then((data) => {
                                     toast.message = 'Success!'
