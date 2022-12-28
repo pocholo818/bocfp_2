@@ -82,8 +82,8 @@ export default defineComponent({
 
               const childId = this.data?.id
               
-              fetch('http://localhost:5000/child/' + childId, {
-                method: 'DELETE'
+              fetch('http://localhost:5000/child/del/' + childId, {
+                method: 'PUT'
               })
                 .then((data) => {
                   toast.message = 'Success!'

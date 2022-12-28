@@ -39,7 +39,7 @@ function bmi(height, weight, output) {
 // GET
 // get all child
 app.get('/childs', (req, res) => {
-  connection.query('SELECT * FROM child', (err, rows, fields) => {
+  connection.query('SELECT * FROM child WHERE soft_delete = 0', (err, rows, fields) => {
     if (err) throw err
     res.json(rows)
   })
@@ -152,6 +152,15 @@ app.put('/record/:id', (req, res) => {
 
 
 // SOFT DELETE
+// soft delete child
+app.put('/child/del/:id', (req, res) => {
+  const { id } = req.params;
+
+  connection.query(`UPDATE child SET soft_delete='1'  WHERE id=${id}`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+  })
 // soft delete guardian
 app.put('/guardianDel/:id', (req, res) => {
   const { id } = req.params;
@@ -161,6 +170,7 @@ app.put('/guardianDel/:id', (req, res) => {
   })
   res.send("success")
 });
+// soft delete record
 app.put('/record/del/:id', (req, res) => {
   const { id } = req.params;
 
