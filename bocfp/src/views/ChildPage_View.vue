@@ -117,6 +117,7 @@
                                 <p>Height: {{ record.height }}cm</p>
                                 <p>Weight: {{ record.weight }}kg</p>
                                 <p>Remark: {{ record.remark }}</p>
+                                <p>BMI: {{ record.output }}</p>
 
                                 <ion-label>
                                     <div style="text-align:center;">

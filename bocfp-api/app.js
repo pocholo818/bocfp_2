@@ -53,7 +53,7 @@ app.get('/child/profile/:id', (req, res) => {
 });
 // get record
 app.get('/records/:id', (req, res) => {
-  connection.query(`SELECT * FROM record WHERE id=${req.params.id} and soft_delete=0`, (err, rows, fields) => {
+  connection.query(`SELECT * FROM record WHERE id=${req.params.id} and soft_delete=0 ORDER BY record_id DESC`, (err, rows, fields) => {
     if (err) throw err
     res.json(rows)
   })
@@ -107,8 +107,8 @@ app.post('/record/:id', (req, res) => {
   const { id } = req.params;
   let remark = bmi(height, weight)
 
-  connection.query(`INSERT INTO record (id, height, weight, remark) 
-        VALUES ('${id}','${height}', '${weight}', '${remark}')`, (err, rows, fields) => {
+  connection.query(`INSERT INTO record (id, height, weight, remark, output) 
+        VALUES ('${id}','${height}', '${weight}', '${remark[0]}', '${remark[1]}')`, (err, rows, fields) => {
     if (err) throw err
   })
   res.send("success")
@@ -147,8 +147,6 @@ app.put('/record/:id', (req, res) => {
       output = '${remark[1]}' WHERE record_id=${id}`, (err, rows, fields) => {
     if (err) throw err
   })
-  // console.log("remark: "+remark[1])
-  // console.log("output: "+remark[0])
   res.send("success")
 });
 
