@@ -110,7 +110,6 @@ export default defineComponent({
   methods: {
     fetchRecord() {
       this.record_id = this.router.params.id + "";
-      // console.log(this.router.params.id)
 
       fetch('http://localhost:5000/record/' + this.record_id)
         .then((response) => response.json())
@@ -124,8 +123,6 @@ export default defineComponent({
                 position: 'top'
             })
 
-            // console.log(this.childDetails)
-            // console.log(this.childDetails.bdate.split("T")[0])
             const data = this.recordDetails;
             fetch('http://localhost:5000/record/' + this.record_id, {
                 method: 'PUT',

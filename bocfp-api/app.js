@@ -16,27 +16,24 @@ const connection = mysql.createConnection({
 })
 
 // funct
-function bmi(height, weight){
-  const bmi = (weight/(height*height))*10000;
+function bmi(height, weight, output) {
+  const bmi = (weight / (height * height)) * 10000;
   let remark;
 
-  if(bmi >= 30.0){
+  if (bmi >= 30.0) {
     remark = "Obese";
   }
-  else if(bmi >= 25.0){
+  else if (bmi >= 25.0) {
     remark = "Overweight";
   }
-  else if(bmi >= 18.5){
+  else if (bmi >= 18.5) {
     remark = "Normal";
   }
-  else if(bmi <= 18.4){
+  else if (bmi <= 18.4) {
     remark = "Underweight";
   }
 
-  console.log("Remark: "+remark);
-  console.log("BMI: "+bmi);
-
-  return remark, bmi;
+  return [remark, bmi];
 };
 
 // GET
@@ -146,10 +143,12 @@ app.put('/record/:id', (req, res) => {
   const { id } = req.params;
   let remark = bmi(height, weight)
 
-  connection.query(`UPDATE record SET height = '${height}', weight = '${weight}', remark = '${remark}'
-      WHERE record_id=${id}`, (err, rows, fields) => {
+  connection.query(`UPDATE record SET height = '${height}', weight = '${weight}', remark = '${remark[0]}', 
+      output = '${remark[1]}' WHERE record_id=${id}`, (err, rows, fields) => {
     if (err) throw err
   })
+  // console.log("remark: "+remark[1])
+  // console.log("output: "+remark[0])
   res.send("success")
 });
 
@@ -173,14 +172,15 @@ app.get('/child/count/', (req, res) => {
     res.json(count[0]["COUNT(id)"])
   })
 });
-// MAYBE 
-// get total underweight childs
-// app.get('/child/count/uw/', (req, res) => {
-//   connection.query(`SELECT COUNT(remark) FROM child WHERE remark="Underweight"`, (err, uw, fields) => {
-//     if (err) throw err
-//     res.json(uw)
-//   })
-// });
+// get child latest record
+app.get('/child/newRecord/:id', (req, res) => {
+  const { id } = req.params;
+
+  connection.query(`SELECT height, weight, remark, output FROM record WHERE id = ${id} AND soft_delete = 0  ORDER BY record_id DESC LIMIT 1`, (err, row, fields) => {
+    if (err) throw err
+    res.json(row[0])
+  })
+});
 
 // DELETE
 // delete child

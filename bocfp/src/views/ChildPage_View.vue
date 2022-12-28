@@ -71,6 +71,7 @@
                                 readonly></ion-input>
                         </ion-item>
 
+                        <!-- latest record -->
                         <ion-card-header>
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <ion-card-title>Record</ion-card-title>
@@ -87,12 +88,12 @@
 
                         <ion-item>
                             <ion-label position="floating">Height (cm):</ion-label>
-                            <ion-input placeholder="Enter Height" v-model="childDetails.height"></ion-input>
+                            <ion-input placeholder="Enter Height" v-model="childNewRecord.height" readonly></ion-input>
                         </ion-item>
 
                         <ion-item>
                             <ion-label position="floating">Weight (kg):</ion-label>
-                            <ion-input placeholder="Enter Weight" v-model="childDetails.weight"></ion-input>
+                            <ion-input placeholder="Enter Weight" v-model="childNewRecord.weight" readonly></ion-input>
                         </ion-item>
                     </ion-list>
                 </ion-card-content>
@@ -191,6 +192,7 @@ export default defineComponent({
             childId: "",
             childDetails: {},
             childRecords: {},
+            childNewRecord: {},
             childAge: 0,
             childBdate: "",
             totalRemark: ""
@@ -215,11 +217,18 @@ export default defineComponent({
             .then((json) => {
                 this.childDetails = json
 
-                this.totalRemark = `${json.remark} (${json.output})`
+                // this.totalRemark = `${json.remark} (${json.output})`
                 this.childBdate = json.bdate;
                 this.childAge = this.computeAge();
             })
         this.fetchRecord()
+
+        fetch('http://localhost:5000/child/newRecord/' + this.childId)
+            .then((response) => response.json())
+            .then((json) => {
+                this.childNewRecord = json
+                this.totalRemark = `${json.remark} (${json.output})`
+            });
     },
     methods: {
         fetchRecord() {
@@ -288,16 +297,6 @@ export default defineComponent({
             this.$nextTick(this.fetchRecord);
         }
     },
-    computed: {
-        // totalRemark: {
-        //     get(): any {
-        //         return `${this.childDetails.remark} "("${this.childDetails.output}")"`
-        //     },
-        //     set(value: any) {
-        //         this.totalRemark = value
-        //     }
-        // }
-    }
 });
 
 
