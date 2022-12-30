@@ -189,19 +189,6 @@ app.get('/child/count/', (req, res) => {
     res.json(count[0]["COUNT(id)"])
   })
 });
-lmao = `<!DOCTYPE html>
-<html lang="en">
-
-<head>
-	<meta charset="utf-8">
-	<title>Error</title>
-</head>
-
-<body>
-	<pre>Cannot GET //child/newRecord/</pre>
-</body>
-
-</html>`;
 // get child latest record
 app.get('/child/newRecord/:id', (req, res) => {
   const { id } = req.params;
@@ -211,10 +198,9 @@ app.get('/child/newRecord/:id', (req, res) => {
     res.json(row[0])
   })
 });
-
 // BMI remarks
 app.get('/child/remarks', (req, res) => {
-  connection.query(`SELECT remark, COUNT(DISTINCT remark) FROM record GROUP BY remark ORDER BY record_id DESC`, (err, count, fields) => {
+  connection.query(`SELECT remark, COUNT(DISTINCT remark) AS total FROM record GROUP BY remark ORDER BY record_id DESC`, (err, count, fields) => {
     if (err) throw err
     res.json(count)
   })

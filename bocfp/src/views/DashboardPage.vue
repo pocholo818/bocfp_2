@@ -15,9 +15,7 @@
             <ion-card>
                 <ion-card-header>
                     <ion-card-title>Remarks</ion-card-title>
-                    <ion-card-subtitle>{{ childRemarks[0]["remark"] }}: {{ childRemarks[0]["COUNT(DISTINCT remark)"] }} ({{ (childRemarks[0]["COUNT(DISTINCT remark)"]/childCount)*100 }}%)</ion-card-subtitle>
-                    <ion-card-subtitle>{{ childRemarks[1]["remark"] }}: {{ childRemarks[1]["COUNT(DISTINCT remark)"] }} ({{ (childRemarks[1]["COUNT(DISTINCT remark)"]/childCount)*100 }}%)</ion-card-subtitle>
-                    <ion-card-subtitle>{{ childRemarks[2]["remark"] }}: {{ childRemarks[1]["COUNT(DISTINCT remark)"] }} ({{ (childRemarks[2]["COUNT(DISTINCT remark)"]/childCount)*100 }}%)</ion-card-subtitle>
+                    <ion-card-subtitle v-for="remarks in childRemarks" :key="remarks.recordId">{{ remarks.remark }}: {{ remarks.total }} ({{ (remarks.total/countTotalRemarks*100).toFixed(2) }}%)</ion-card-subtitle>
                 </ion-card-header>
             </ion-card>
 
@@ -84,7 +82,8 @@ export default defineComponent({
             isOpen: false,
             childList: [],
             childCount: "",
-            childRemarks: ""
+            childRemarks: "",
+            countTotalRemarks: 0
         };
     },
     methods: {
@@ -96,6 +95,10 @@ export default defineComponent({
                 .then((response) => response.json())
                 .then((json) => {
                     this.childRemarks = json
+
+                    for(let i = 0; i < this.childRemarks.length; i++){
+                        this.countTotalRemarks = this.countTotalRemarks + 1;
+                    }
                 })
         },
         fetchChildCount() {

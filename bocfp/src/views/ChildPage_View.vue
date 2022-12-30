@@ -122,7 +122,7 @@
                                     <p>Height: {{ record.height }}cm</p>
                                     <p>Weight: {{ record.weight }}kg</p>
                                     <p>Remark: {{ record.remark }}</p>
-                                    <p>BMI: {{ record.output }}</p>
+                                    <p>BMI: {{ record.output.toFixed(2) }}</p>
                                 </div>
 
                                 <ion-label>
@@ -244,7 +244,7 @@ export default defineComponent({
                 .then((response) => response.json())
                 .then((json) => {
                     this.childNewRecord = json
-                    this.totalRemark = `${json.remark} (${json.output})`
+                    this.totalRemark = `${json.remark} (${json.output.toFixed(2)})`
                 });
         },
         checkIfEmpty() {
