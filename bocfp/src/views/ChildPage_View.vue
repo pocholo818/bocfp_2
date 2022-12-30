@@ -112,12 +112,18 @@
                     <ion-list>
                         <ion-item v-for="record in childRecords" :key="record.recordId">
                             <ion-label>
-                                <h2>{{ record.date.split("T")[0] }}</h2>
-                                <p>Record ID: {{ record.record_id }}</p>
-                                <p>Height: {{ record.height }}cm</p>
-                                <p>Weight: {{ record.weight }}kg</p>
-                                <p>Remark: {{ record.remark }}</p>
-                                <p>BMI: {{ record.output }}</p>
+                                <div v-if="checkIfEmpty() == 0">
+                                    <p>No records yet available</p>
+                                </div>
+
+                                <div v-else>
+                                    <h2>{{ record.date.split("T")[0] }}</h2>
+                                    <p>Record ID: {{ record.record_id }}</p>
+                                    <p>Height: {{ record.height }}cm</p>
+                                    <p>Weight: {{ record.weight }}kg</p>
+                                    <p>Remark: {{ record.remark }}</p>
+                                    <p>BMI: {{ record.output }}</p>
+                                </div>
 
                                 <ion-label>
                                     <div style="text-align:center;">
@@ -192,11 +198,11 @@ export default defineComponent({
         return {
             childId: "",
             childDetails: {},
-            childRecords: {},
-            childNewRecord: {"height": "N/A", "weight": "N/A", "remark": "N/A", "output": "0"},
+            childRecords: "",
+            childNewRecord: {},
             childAge: 0,
             childBdate: "",
-            totalRemark: "N/A (0)"
+            totalRemark: ""
         }
     },
     setup() {
@@ -233,13 +239,16 @@ export default defineComponent({
                     this.childRecords = json
                 })
         },
-        fetchLatestRecord(){
+        fetchLatestRecord() {
             fetch('http://localhost:5000/child/newRecord/' + this.childId)
-            .then((response) => response.json())
-            .then((json) => {
-                this.childNewRecord = json
-                this.totalRemark = `${json.remark} (${json.output})`
-            });
+                .then((response) => response.json())
+                .then((json) => {
+                    this.childNewRecord = json
+                    this.totalRemark = `${json.remark} (${json.output})`
+                });
+        },
+        checkIfEmpty() {
+            return this.childRecords.length
         },
         computeAge: function () {
             let currentDate = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`;

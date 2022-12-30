@@ -108,7 +108,7 @@ export default defineComponent({
     },
     // get data
     mounted() {
-        this.fetchChildRemarks(),
+        this.fetchChildRemarks()
         this.fetchChildCount()
     },
     watch: {
