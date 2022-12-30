@@ -200,7 +200,7 @@ export default defineComponent({
             childNewRecord: { "height": "N/A", "weight": "N/A" },
             childAge: 0,
             childBdate: "",
-            totalRemark: "N/A"
+            totalRemark: "N/A (0)"
         }
     },
     setup() {
@@ -222,7 +222,6 @@ export default defineComponent({
             .then((json) => {
                 this.childDetails = json
 
-                // this.totalRemark = `${json.remark} (${json.output})`
                 this.childBdate = json.bdate;
                 this.childAge = this.computeAge();
             })
