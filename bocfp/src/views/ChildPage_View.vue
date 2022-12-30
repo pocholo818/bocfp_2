@@ -112,18 +112,16 @@
                     <ion-list>
                         <ion-item v-for="record in childRecords" :key="record.recordId">
                             <ion-label>
-                                <div v-if="checkIfEmpty() == 0">
+                                <!-- <div v-if="childRecords == '0'">
                                     <p>No records yet available</p>
-                                </div>
+                                </div> -->
 
-                                <div v-else>
-                                    <h2>{{ record.date.split("T")[0] }}</h2>
-                                    <p>Record ID: {{ record.record_id }}</p>
-                                    <p>Height: {{ record.height }}cm</p>
-                                    <p>Weight: {{ record.weight }}kg</p>
-                                    <p>Remark: {{ record.remark }}</p>
-                                    <p>BMI: {{ record.output.toFixed(2) }}</p>
-                                </div>
+                                <h2>{{ record.date.split("T")[0] }}</h2>
+                                <p>Record ID: {{ record.record_id }}</p>
+                                <p>Height: {{ record.height }}cm</p>
+                                <p>Weight: {{ record.weight }}kg</p>
+                                <p>Remark: {{ record.remark }}</p>
+                                <p>BMI: {{ record.output.toFixed(2) }}</p>
 
                                 <ion-label>
                                     <div style="text-align:center;">
@@ -199,10 +197,10 @@ export default defineComponent({
             childId: "",
             childDetails: {},
             childRecords: "",
-            childNewRecord: {},
+            childNewRecord: { "height": "N/A", "weight": "N/A" },
             childAge: 0,
             childBdate: "",
-            totalRemark: ""
+            totalRemark: "N/A"
         }
     },
     setup() {
@@ -246,9 +244,6 @@ export default defineComponent({
                     this.childNewRecord = json
                     this.totalRemark = `${json.remark} (${json.output.toFixed(2)})`
                 });
-        },
-        checkIfEmpty() {
-            return this.childRecords.length
         },
         computeAge: function () {
             let currentDate = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`;
