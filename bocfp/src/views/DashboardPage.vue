@@ -12,6 +12,14 @@
                 </ion-card-header>
             </ion-card>
 
+            <ion-card>
+                <ion-card-header>
+                    <ion-card-title>Remarks</ion-card-title>
+                    <ion-card-subtitle>{{ childRemarks[0]["remark"] }}: {{ childRemarks[0]["COUNT(DISTINCT remark)"] }} ({{ (childRemarks[0]["COUNT(DISTINCT remark)"]/childCount)*100 }}%)</ion-card-subtitle>
+                    <ion-card-subtitle>{{ childRemarks[1]["remark"] }}: {{ childRemarks[1]["COUNT(DISTINCT remark)"] }} ({{ (childRemarks[1]["COUNT(DISTINCT remark)"]/childCount)*100 }}%)</ion-card-subtitle>
+                    <ion-card-subtitle>{{ childRemarks[2]["remark"] }}: {{ childRemarks[1]["COUNT(DISTINCT remark)"] }} ({{ (childRemarks[2]["COUNT(DISTINCT remark)"]/childCount)*100 }}%)</ion-card-subtitle>
+                </ion-card-header>
+            </ion-card>
 
         </ion-content>
 
@@ -75,18 +83,19 @@ export default defineComponent({
         return {
             isOpen: false,
             childList: [],
-            childCount: ""
+            childCount: "",
+            childRemarks: ""
         };
     },
     methods: {
         setOpen(isOpen: boolean) {
             this.isOpen = isOpen;
         },
-        fetchData() {
-            fetch('http://localhost:5000/childs')
+        fetchChildRemarks() {
+            fetch('http://localhost:5000/child/remarks/')
                 .then((response) => response.json())
                 .then((json) => {
-                    this.childList = json
+                    this.childRemarks = json
                 })
         },
         fetchChildCount() {
@@ -99,12 +108,13 @@ export default defineComponent({
     },
     // get data
     mounted() {
-        this.fetchData(),
+        this.fetchChildRemarks(),
         this.fetchChildCount()
     },
     watch: {
         $route() {
-            this.$nextTick(this.fetchData);
+            this.$nextTick(this.fetchChildCount);
+            // this.$nextTick(this.fetchChildRemarks);
         }
     }
 });

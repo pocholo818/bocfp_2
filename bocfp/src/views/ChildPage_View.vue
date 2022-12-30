@@ -193,10 +193,10 @@ export default defineComponent({
             childId: "",
             childDetails: {},
             childRecords: {},
-            childNewRecord: {},
+            childNewRecord: {"height": "N/A", "weight": "N/A", "remark": "N/A", "output": "0"},
             childAge: 0,
             childBdate: "",
-            totalRemark: ""
+            totalRemark: "N/A (0)"
         }
     },
     setup() {
@@ -223,13 +223,7 @@ export default defineComponent({
                 this.childAge = this.computeAge();
             })
         this.fetchRecord()
-
-        fetch('http://localhost:5000/child/newRecord/' + this.childId)
-            .then((response) => response.json())
-            .then((json) => {
-                this.childNewRecord = json
-                this.totalRemark = `${json.remark} (${json.output})`
-            });
+        this.fetchLatestRecord()
     },
     methods: {
         fetchRecord() {
@@ -238,6 +232,14 @@ export default defineComponent({
                 .then((json) => {
                     this.childRecords = json
                 })
+        },
+        fetchLatestRecord(){
+            fetch('http://localhost:5000/child/newRecord/' + this.childId)
+            .then((response) => response.json())
+            .then((json) => {
+                this.childNewRecord = json
+                this.totalRemark = `${json.remark} (${json.output})`
+            });
         },
         computeAge: function () {
             let currentDate = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`;
@@ -291,11 +293,13 @@ export default defineComponent({
             });
 
             await alert.present();
+            this.fetchLatestRecord();
         }
     },
     watch: {
         $route() {
             this.$nextTick(this.fetchRecord);
+            this.$nextTick(this.fetchLatestRecord);
         }
     },
 });

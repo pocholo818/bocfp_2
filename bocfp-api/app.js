@@ -7,7 +7,8 @@ app.use(cors())
 app.use(express.json());
 
 // 
-const mysql = require('mysql')
+const mysql = require('mysql');
+const { json } = require('express');
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -160,7 +161,7 @@ app.put('/child/del/:id', (req, res) => {
     if (err) throw err
   })
   res.send("success")
-  })
+})
 // soft delete guardian
 app.put('/guardianDel/:id', (req, res) => {
   const { id } = req.params;
@@ -183,11 +184,24 @@ app.put('/record/del/:id', (req, res) => {
 // SQL  FUNCTIONS
 // get total child
 app.get('/child/count/', (req, res) => {
-  connection.query(`SELECT COUNT(id) FROM child`, (err, count, fields) => {
+  connection.query(`SELECT COUNT(id) FROM child WHERE soft_delete = 0`, (err, count, fields) => {
     if (err) throw err
     res.json(count[0]["COUNT(id)"])
   })
 });
+lmao = `<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Error</title>
+</head>
+
+<body>
+	<pre>Cannot GET //child/newRecord/</pre>
+</body>
+
+</html>`;
 // get child latest record
 app.get('/child/newRecord/:id', (req, res) => {
   const { id } = req.params;
@@ -198,7 +212,15 @@ app.get('/child/newRecord/:id', (req, res) => {
   })
 });
 
-// DELETE
+// BMI remarks
+app.get('/child/remarks', (req, res) => {
+  connection.query(`SELECT remark, COUNT(DISTINCT remark) FROM record GROUP BY remark ORDER BY record_id DESC`, (err, count, fields) => {
+    if (err) throw err
+    res.json(count)
+  })
+});
+
+// HARD DELETE
 // delete child
 // app.delete('/child/:id', (req, res) => {
 //   const { id } = req.params;
