@@ -54,15 +54,15 @@ app.get('/child/profile/:id', (req, res) => {
 });
 // get record
 app.get('/records/:id', (req, res) => {
-  connection.query(`SELECT * FROM record WHERE id=${req.params.id} ORDER BY record_id DESC`, (err, rows, fields) => {
-    if (err) throw err
-    res.json(rows[0])
-    // if(rows.length){
-    //   res.json(rows[0])
-    // }
-    // else{
-    //   res.json({"message": "No Record Available", "date": ""})
-    // }
+  connection.query(`SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id DESC`, (err, rows, fields) => {
+    // if (err) throw err
+    // res.json(rows)
+    if(rows.length){
+      res.json(rows)
+    }
+    else{
+      res.json({"message": "No Record Available", "date": ""})
+    }
   })
 });
 // get specific record

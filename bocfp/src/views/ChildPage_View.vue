@@ -110,31 +110,33 @@
 
                 <ion-card-content>
                     <ion-list>
-                        <ion-item v-for="record in childRecords" :key="record.recordId">
-                            <ion-label>
-                                <!-- <div v-if="childRecords == '0'">
-                                    <p>No records yet available</p>
-                                </div> -->
+                        <div v-if="childRecords.date == ''">
+                            <h2 style="text-align: center;">{{ childRecords.message }}</h2>
+                        </div>
 
-                                <h2>{{ record.date.split("T")[0] }}</h2>
-                                <p>Record ID: {{ record.record_id }}</p>
-                                <p>Height: {{ record.height }}cm</p>
-                                <p>Weight: {{ record.weight }}kg</p>
-                                <p>Remark: {{ record.remark }}</p>
-                                <p>BMI: {{ record.output.toFixed(2) }}</p>
-
+                        <div v-else>
+                            <ion-item v-for="record in childRecords" :key="record.recordId">
                                 <ion-label>
-                                    <div style="text-align:center;">
-                                        <ion-button color="warning" style="width: 49%;"
-                                            :router-link="('/record_edit/' + record.record_id)"><ion-icon
-                                                :icon="createOutline"></ion-icon></ion-button>
-                                        <ion-button color="danger" style="width: 49%;"
-                                            @click="record_delete(record.record_id)"><ion-icon
-                                                :icon="trashOutline"></ion-icon></ion-button>
-                                    </div>
+                                    <h2>{{ record.date.split("T")[0] }}</h2>
+                                    <p>Record ID: {{ record.record_id }}</p>
+                                    <p>Height: {{ record.height }}cm</p>
+                                    <p>Weight: {{ record.weight }}kg</p>
+                                    <p>Remark: {{ record.remark }}</p>
+                                    <p>BMI: {{ record.output.toFixed(2) }}</p>
+
+                                    <ion-label>
+                                        <div style="text-align:center;">
+                                            <ion-button color="warning" style="width: 49%;"
+                                                :router-link="('/record_edit/' + record.record_id)"><ion-icon
+                                                    :icon="createOutline"></ion-icon></ion-button>
+                                            <ion-button color="danger" style="width: 49%;"
+                                                @click="record_delete(record.record_id)"><ion-icon
+                                                    :icon="trashOutline"></ion-icon></ion-button>
+                                        </div>
+                                    </ion-label>
                                 </ion-label>
-                            </ion-label>
-                        </ion-item>
+                            </ion-item>
+                        </div>
                     </ion-list>
                 </ion-card-content>
             </ion-card>
