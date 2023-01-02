@@ -54,9 +54,15 @@ app.get('/child/profile/:id', (req, res) => {
 });
 // get record
 app.get('/records/:id', (req, res) => {
-  connection.query(`SELECT * FROM record WHERE id=${req.params.id} and soft_delete=0 ORDER BY record_id DESC`, (err, rows, fields) => {
+  connection.query(`SELECT * FROM record WHERE id=${req.params.id} ORDER BY record_id DESC`, (err, rows, fields) => {
     if (err) throw err
-    res.json(rows)
+    res.json(rows[0])
+    // if(rows.length){
+    //   res.json(rows[0])
+    // }
+    // else{
+    //   res.json({"message": "No Record Available", "date": ""})
+    // }
   })
 });
 // get specific record
@@ -194,8 +200,12 @@ app.get('/child/newRecord/:id', (req, res) => {
   const { id } = req.params;
 
   connection.query(`SELECT height, weight, remark, output FROM record WHERE id = ${id} AND soft_delete = 0  ORDER BY record_id DESC LIMIT 1`, (err, row, fields) => {
-    if (err) throw err
-    res.json(row[0])
+    if(row.length){
+      res.json(row[0])
+    }
+    else{
+      res.json({"height": "N/A", "weight": "N/A", "remark": "N/A", "output": 0})
+    }
   })
 });
 // BMI remarks
