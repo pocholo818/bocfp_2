@@ -61,7 +61,7 @@ app.get('/records/:id', (req, res) => {
       res.json(rows)
     }
     else{
-      res.json({"message": "No Record Available", "date": ""})
+      res.json({"message": "No Record(s) Found", "date": ""})
     }
   })
 });
