@@ -9,13 +9,6 @@
                 <ion-searchbar></ion-searchbar>
             </ion-item>
 
-            <!-- <ChildCard 
-          v-for="child in childList" 
-          :key="child.id" 
-          :data="child"
-          @deleted="fetchData"
-        /> -->
-
             <ion-card v-for="guard in guardianList" :key="guard.guardian_id">
                 <ion-card-header>
                     <ion-card-title>{{ guard.fname }} {{ guard.lname }}</ion-card-title>
@@ -73,7 +66,6 @@ import {
     addOutline
 } from 'ionicons/icons';
 import HeaderBar from '@/components/HeaderBar.vue';
-import ChildCard from '@/components/ChildCard.vue'
 // import {
 //   IonContent,
 //   IonPage,

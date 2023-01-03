@@ -5,7 +5,7 @@
         <ion-content>
 
           <!-- image -->
-          <img src="@/assets/images/logo.png" alt="Barangay Old Cabalan Logo" 
+          <img src="@/assets/images/logo.png" alt="Barangay Old Cabalan Logo"
             style="width: 55%; height: auto; margin-left: auto; margin-right: auto; display: block;">
 
           <ion-list id="inbox-list">
@@ -13,15 +13,16 @@
             <ion-note>bofcp@gmail.com</ion-note>
 
             <ion-menu-toggle auto-hide="false" v-for="(pages, i) in appPages" :key="i">
-              <ion-item @click="selectedIndex = i" router-direction="root" :router-link="pages.url" lines="none" detail="false" class="hydrated" :class="{ selected: selectedIndex === i }">
-                <ion-icon slot="start" :ios="pages.iosIcon" :md="pages.mdIcon"></ion-icon>
-                <ion-label>{{ pages.title }}</ion-label>
-              </ion-item>
+              <router-link :to="pages.url" activeClass="selected">
+                <ion-item
+                  lines="none" detail="false" class="hydrated"
+                  :class="{'selected': $route.name === pages.url}"
+                >
+                  <ion-icon slot="start" :ios="pages.iosIcon" :md="pages.mdIcon"></ion-icon>
+                  <ion-label>{{ pages.title }}</ion-label>
+                </ion-item>
+              </router-link>
 
-              <!-- <ion-item>
-                <ion-icon slot="start" :ios="pages.iosIcon" :md="pages.mdIcon"></ion-icon>
-                <a href="/child_view"><ion-label>Child View</ion-label></a>
-              </ion-item> -->
             </ion-menu-toggle>
           </ion-list>
 
@@ -35,20 +36,21 @@
 
 <script lang="ts">
 // ionic stuff
-import { IonContent, 
-  IonIcon, 
-  IonItem, 
-  IonLabel, 
-  IonList, 
-  IonListHeader, 
-  IonMenu, 
-  IonMenuToggle, 
-  IonNote, 
-  IonRouterOutlet, 
+import {
+  IonContent,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonMenu,
+  IonMenuToggle,
+  IonNote,
+  IonRouterOutlet,
   IonSplitPane
 } from '@ionic/vue';
 // icons
-import { 
+import {
   logOutOutline,
   eyeOutline
 } from 'ionicons/icons';
@@ -59,23 +61,33 @@ import { personOutline, personSharp } from 'ionicons/icons';
 export default defineComponent({
   name: 'HomePage',
   components: {
-    IonList, 
-    IonListHeader, 
-    IonMenu, 
-    IonMenuToggle, 
-    IonNote, 
-    IonRouterOutlet, 
+    IonList,
+    IonListHeader,
+    IonMenu,
+    IonMenuToggle,
+    IonNote,
+    IonRouterOutlet,
     IonSplitPane,
     IonIcon
   },
   setup() {
-    const selectedIndex = ref(0);
-
-    // sidebar contents
+    // sidebar pages
     const appPages = [
+      {
+        title: 'Dashboard',
+        url: '/dashboard',
+        iosIcon: personOutline,
+        mdIcon: personSharp
+      },
       {
         title: 'Child',
         url: '/child',
+        iosIcon: personOutline,
+        mdIcon: personSharp
+      },
+      {
+        title: 'Guardian',
+        url: '/guardian',
         iosIcon: personOutline,
         mdIcon: personSharp
       },
@@ -92,16 +104,16 @@ export default defineComponent({
       //   mdIcon: personSharp
       // },
     ];
-    
-    const path = window.location.pathname.split('folder/')[1];
-    if (path !== undefined) {
-      selectedIndex.value = appPages.findIndex(page => page.title.toLowerCase() === path.toLowerCase());
-    }
-    
+
+    // const path = window.location.pathname.split('folder/')[1];
+    // if (path !== undefined) {
+    //   selectedIndex.value = appPages.findIndex(page => page.title.toLowerCase() === path.toLowerCase());
+    // }
+
     const route = useRoute();
-    
-    return { 
-      selectedIndex,
+
+    return {
+      // selectedIndex,
       appPages,
       personOutline,
       personSharp,
@@ -114,9 +126,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
-ion-menu{
+a {
+  text-decoration: none;
+}
+
+ion-menu {
   --background: #168554;
-    --color: white;
+  --color: white;
 }
 
 ion-menu ion-content {
@@ -173,20 +189,27 @@ ion-menu.md ion-item {
   background: transparent;
 }
 
-ion-menu.md ion-item.selected {
+ion-menu.md a.selected ion-item {
   --background: white;
 }
 
-ion-menu.md ion-item.selected ion-icon {
-  color: #168554;
+ion-menu.md a.selected ion-item ion-icon {
+  color: #168554; 
 }
 
 ion-menu.md ion-item ion-icon {
   color: #616e7e;
 }
 
+ion-menu.md a.selected ion-item ion-label {
+  color: #168554;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
 ion-menu.md ion-item ion-label {
   font-weight: 500;
+  color: #616e7e;
 }
 
 ion-menu.ios ion-content {
@@ -238,7 +261,7 @@ ion-note {
   color: white;
 }
 
-ion-item.selected {
-  --color: #168554;
+ion-item{
+  padding-bottom: 10px;
 }
 </style>

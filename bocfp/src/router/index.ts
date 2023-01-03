@@ -16,6 +16,14 @@ const routes: Array<RouteRecordRaw> = [
         path: '/child',
         component: () => import('@/views/ChildPage.vue')
       },
+      {
+        path: '/guardian',
+        component: () => import('@/views/GuardPage.vue'),
+      },
+      {
+        path: '/dashboard',
+        component: () => import('@/views/DashboardPage.vue'),
+      },
       // {
       //   path: '/child',
       //   component: () => import('@/views/ChildPage.vue')
@@ -45,10 +53,6 @@ const routes: Array<RouteRecordRaw> = [
     {
       path: '/record_edit/:id',
       component: () => import('@/views/Record_Edit.vue'),
-    },
-    {
-      path: '/guardian',
-      component: () => import('@/views/GuardPage.vue'),
     },
     {
       path: '/guardian_add',
