@@ -56,7 +56,9 @@
                         <!-- child's guardian -->
                         <ion-card-header>
                             <ion-card-title>Guardian</ion-card-title>
-                            <ion-card-subtitle v-if="guardianDetails.relationship != ''">GRDNID: {{ guardianDetails.guardian_id }}</ion-card-subtitle>
+                            <ion-card-subtitle v-if="guardianDetails.relationship != ''">GRDNID: {{
+        guardianDetails.guardian_id
+}}</ion-card-subtitle>
                         </ion-card-header>
 
                         <div v-if="guardianDetails.relationship == ''">
@@ -100,23 +102,32 @@
                             <ion-card-subtitle>Displaying the latest record</ion-card-subtitle>
                         </ion-card-header>
 
-                        <ion-item>
-                            <ion-label position="floating">Remark</ion-label>
-                            <ion-input type="text" placeholder="Enter Remark" v-model="totalRemark"
-                                readonly></ion-input>
-                        </ion-item>
+                        <div v-if="childNewRecord.remark == ''">
+                            <h2 style="text-align: center;">{{ childNewRecord.message }}</h2>
+                        </div>
 
-                        <ion-item>
-                            <ion-label position="floating">Height (cm):</ion-label>
-                            <ion-input placeholder="Enter Height" v-model="childNewRecord.height" readonly></ion-input>
-                        </ion-item>
+                        <div v-else>
+                            <ion-item>
+                                <ion-label position="floating">Remark</ion-label>
+                                <ion-input type="text" placeholder="Enter Remark" v-model="totalRemark"
+                                    readonly></ion-input>
+                            </ion-item>
 
-                        <ion-item>
-                            <ion-label position="floating">Weight (kg):</ion-label>
-                            <ion-input placeholder="Enter Weight" v-model="childNewRecord.weight" readonly></ion-input>
-                        </ion-item>
+                            <ion-item>
+                                <ion-label position="floating">Height (cm):</ion-label>
+                                <ion-input placeholder="Enter Height" v-model="childNewRecord.height"
+                                    readonly></ion-input>
+                            </ion-item>
+
+                            <ion-item>
+                                <ion-label position="floating">Weight (kg):</ion-label>
+                                <ion-input placeholder="Enter Weight" v-model="childNewRecord.weight"
+                                    readonly></ion-input>
+                            </ion-item>
+                            <ion-button class="theme" :router-link="('/record_view/' + childId)">View all Records</ion-button>
+                        </div>
+
                     </ion-list>
-                    <ion-button class="theme" :router-link="('/record_view/' + childId)">View all Records</ion-button>
                 </ion-card-content>
             </ion-card>
 
@@ -225,7 +236,12 @@ export default defineComponent({
                 .then((json) => {
                     this.childNewRecord = json
 
-                    this.totalRemark = `${json.remark} (${json.output.toFixed(2)})`
+                    if(json.remark == ""){
+                        this.totalRemark = ""
+                    }
+                    else{
+                        this.totalRemark = `${json.remark} (${json.output.toFixed(2)})`
+                    }
                 });
         },
         computeAge: function () {

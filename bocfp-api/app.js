@@ -239,7 +239,7 @@ app.get('/child/newRecord/:id', (req, res) => {
       res.json(row[0])
     }
     else {
-      res.json({ "height": "N/A", "weight": "N/A", "remark": "N/A", "output": 0 })
+      res.json({ "message": "No Recent Record yet", "remark": "" })
     }
   })
 });
