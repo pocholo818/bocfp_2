@@ -24,7 +24,7 @@
                         <ion-button color="warning" :router-link="('/guardian_edit/' + guard.guardian_id)" style="width: 32%;"><ion-icon
                                 :icon="createOutline"></ion-icon>&nbsp; Modify</ion-button>
                         <ion-button color="danger" @click="guardian_delete(guard.guardian_id)"
-                            style="width: 32%;"><ion-icon :icon="trashOutline"></ion-icon></ion-button>
+                            style="width: 32%;"><ion-icon :icon="trashOutline"></ion-icon>&nbsp; Delete</ion-button>
                     </ion-card-content>
                 </ion-card-header>
             </ion-card>

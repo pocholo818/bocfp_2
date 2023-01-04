@@ -51,25 +51,44 @@
                         <ion-item>
                             <ion-label position="floating">Age</ion-label>
                             <ion-input placeholder="Enter Age" v-model="childAge" readonly></ion-input>
-                        </ion-item>
+                        </ion-item><br>
 
-                        <ion-item>
-                            <ion-label position="floating">Guardian</ion-label>
-                            <ion-input placeholder="Enter Guardian Name" v-model="childDetails.guardian"
-                                readonly></ion-input>
-                        </ion-item>
+                        <!-- child's guardian -->
+                        <ion-card-header>
+                            <ion-card-title>Guardian</ion-card-title>
+                            <ion-card-subtitle>GRDNID: {{ guardianDetails.guardian_id }}</ion-card-subtitle>
+                        </ion-card-header>
 
-                        <ion-item>
-                            <ion-label position="floating">Contact Number</ion-label>
-                            <ion-input type="tel" placeholder="Enter Contact Number" maxlength="11"
-                                v-model="childDetails.contact" readonly></ion-input>
-                        </ion-item>
+                        <div v-if="guardianDetails.relationship == ''">
+                            <h2 style="text-align: center;">{{ guardianDetails.message }}</h2>
+                            <br>
+                        </div>
 
-                        <ion-item>
-                            <ion-label position="floating">Address</ion-label>
-                            <ion-input type="tel" placeholder="Enter Address" v-model="childDetails.address"
-                                readonly></ion-input>
-                        </ion-item>
+                        <div v-else>
+                            <ion-item>
+                                <ion-label position="floating">Guardian</ion-label>
+                                <ion-input placeholder="Enter Guardian Name" v-model="guardianName"
+                                    readonly></ion-input>
+                            </ion-item>
+
+                            <ion-item>
+                                <ion-label position="floating">Relationship</ion-label>
+                                <ion-input placeholder="Enter Guardian Name" v-model="guardianDetails.relationship"
+                                    readonly></ion-input>
+                            </ion-item>
+
+                            <ion-item>
+                                <ion-label position="floating">Contact Number</ion-label>
+                                <ion-input type="tel" placeholder="Enter Contact Number" maxlength="11"
+                                    v-model="guardianDetails.contact" readonly></ion-input>
+                            </ion-item>
+
+                            <ion-item>
+                                <ion-label position="floating">Address</ion-label>
+                                <ion-input type="tel" placeholder="Enter Address" v-model="guardianDetails.address"
+                                    readonly></ion-input>
+                            </ion-item><br>
+                        </div>
 
                         <!-- latest record -->
                         <ion-card-header>
@@ -161,7 +180,9 @@ export default defineComponent({
             childNewRecord: "",
             childAge: 0,
             childBdate: "",
-            totalRemark: ""
+            totalRemark: "",
+            guardianDetails: "",
+            guardianName: ""
         }
     },
     setup() {
@@ -186,15 +207,16 @@ export default defineComponent({
                 this.childBdate = json.bdate;
                 this.childAge = this.computeAge();
             })
-        this.fetchRecord()
+        this.fetchGuardian()
         this.fetchLatestRecord()
     },
     methods: {
-        fetchRecord() {
-            fetch('http://localhost:5000/records/' + this.childId)
+        fetchGuardian() {
+            fetch('http://localhost:5000/child/link/' + this.childId)
                 .then((response) => response.json())
                 .then((json) => {
-                    this.childRecords = json
+                    this.guardianDetails = json
+                    this.guardianName = `${json.fname} ${json.lname}`
                 })
         },
         fetchLatestRecord() {
@@ -245,7 +267,7 @@ export default defineComponent({
                                 .then((data) => {
                                     toast.message = 'Success!'
                                     // this.$emit('deleted')
-                                    this.fetchRecord()
+                                    this.fetchGuardian()
                                 })
                                 .catch((error) => {
                                     toast.message = error
@@ -263,7 +285,7 @@ export default defineComponent({
     },
     watch: {
         $route() {
-            this.$nextTick(this.fetchRecord);
+            this.$nextTick(this.fetchGuardian);
             this.$nextTick(this.fetchLatestRecord);
         }
     },
