@@ -12,58 +12,38 @@
     <ion-content>
       <ion-content class="ion-padding">
         <ion-card>
-          <ion-card-header>
-            <ion-card-title>Information</ion-card-title>
-            <ion-card-subtitle>GRDNID: {{ guardProfile.guardian_id }}</ion-card-subtitle>
-          </ion-card-header>
+          <!-- <ion-card-header>
+                    <ion-card-title>Add Information</ion-card-title>
+                </ion-card-header> -->
 
           <ion-card-content>
             <ion-list>
               <ion-item>
                 <ion-label position="floating">First Name:</ion-label>
-                <ion-input placeholder="Enter First Name" v-model="guardProfile.fname" readonly></ion-input>
+                <ion-input placeholder="Enter First Name" v-model="guardProfile.fname"></ion-input>
               </ion-item>
 
               <ion-item>
                 <ion-label position="floating">Last Name:</ion-label>
-                <ion-input placeholder="Enter Last Name" v-model="guardProfile.lname" readonly></ion-input>
+                <ion-input placeholder="Enter Last Name" v-model="guardProfile.lname"></ion-input>
               </ion-item>
 
               <ion-item>
                 <ion-label position="floating">Contact Number:</ion-label>
-                <ion-input type="tel" placeholder="Enter Contact Number" maxlength="11" v-model="guardProfile.contact"
-                  readonly></ion-input>
+                <ion-input type="tel" placeholder="Enter Contact Number" maxlength="11"
+                  v-model="guardProfile.contact"></ion-input>
               </ion-item>
 
               <ion-item>
                 <ion-label position="floating">Address:</ion-label>
-                <ion-input type="text" placeholder="Enter Address" v-model="guardProfile.address" readonly></ion-input>
+                <ion-input type="text" placeholder="Enter Address" v-model="guardProfile.address"></ion-input>
               </ion-item>
             </ion-list>
           </ion-card-content>
         </ion-card>
 
-        <!-- child(s) list -->
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>Child List:</ion-card-title>
-          </ion-card-header>
-
-          <ion-card-content>
-            <ion-list>
-              <ion-item>
-
-                <ion-label>
-                  <h2>Name Test</h2>
-                  <p>Grandfather</p>
-                  <ion-button>button</ion-button>
-                </ion-label>
-
-              </ion-item>
-            </ion-list>
-
-          </ion-card-content>
-        </ion-card>
+        <!-- Save -->
+        <ion-button expand="block" color="success" @click="guardian_edit">Save</ion-button>
 
       </ion-content>
     </ion-content>
@@ -91,9 +71,8 @@ import {
   IonHeader,
   IonToolbar,
   IonItem,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle
+  toastController,
+  useIonRouter
 } from '@ionic/vue';
 
 export default defineComponent({
@@ -109,24 +88,23 @@ export default defineComponent({
     IonHeader,
     IonToolbar,
     IonItem,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardSubtitle
   },
   data() {
     return {
       guardId: "",
-      guardProfile: ""
+      guardProfile: {}
     }
   },
   setup() {
     const router = useRoute();
+    const ionRouter = useIonRouter();
 
     return {
       eyeOutline,
       createOutline,
       trashOutline,
-      router
+      router,
+      ionRouter
     }
   },
   mounted() {
@@ -142,6 +120,37 @@ export default defineComponent({
           this.guardProfile = json
         })
     },
+    async guardian_edit() {
+            const toast = await toastController.create({
+                duration: 1500,
+                position: 'top'
+            })
+
+            const data = this.guardProfile;
+
+            fetch('http://localhost:5000/guardUpdate/:id', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then((data) => {
+                    toast.message = 'Success!'
+                    this.guardProfile = {
+                        fname: "",
+                        lname: "",
+                        contact: "",
+                        address: ""
+                    }
+                    this.ionRouter.back()
+                })
+                .catch((error) => {
+                    toast.message = error
+                });
+
+            await toast.present();
+        }
 
   }
 });

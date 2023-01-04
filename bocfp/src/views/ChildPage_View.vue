@@ -19,7 +19,7 @@
                 <ion-card-content>
                     <ion-card-header>
                         <ion-card-title>Information</ion-card-title>
-                        <ion-card-subtitle>CHLD_ID: {{ childId }}</ion-card-subtitle>
+                        <ion-card-subtitle>CHLDID: {{ childId }}</ion-card-subtitle>
                     </ion-card-header>
 
                     <ion-list>

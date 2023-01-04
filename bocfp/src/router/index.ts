@@ -55,6 +55,10 @@ const routes: Array<RouteRecordRaw> = [
       component: () => import('@/views/GuardPage_View.vue'),
     },
     {
+      path: '/guardian_edit/:id',
+      component: () => import('@/views/GuardPage_Edit.vue'),
+    },
+    {
       path: '/dashboard',
       component: () => import('@/views/DashboardPage.vue'),
     },

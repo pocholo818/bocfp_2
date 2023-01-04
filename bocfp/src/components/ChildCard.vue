@@ -6,7 +6,7 @@
     </ion-card-header>
 
     <ion-card-content>
-      <p>CHLD: {{ data.id }}</p>
+      <p>CHLDID: {{ data.id }}</p>
       <p>Sex: {{ data.sex }}</p>
       <p>Birth Date: {{ data.bdate }}</p>
       <p>Guardian Contact Number: {{ data.contact }}</p>

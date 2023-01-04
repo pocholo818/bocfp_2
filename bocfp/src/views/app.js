@@ -156,17 +156,6 @@ app.put('/record/:id', (req, res) => {
   })
   res.send("success")
 });
-// update guardian
-app.put('/guardUpdate/:id', (req, res) => {
-  const { guardian_id, fname, lname, contact, address } = req.body;
-
-  connection.query(`UPDATE guardian SET fname = '${fname}', lname = '${lname}',
-      contact = '${contact}', address = '${address}'
-      WHERE guardian_id=${guardian_id}`, (err, rows, fields) => {
-    if (err) throw err
-  })
-  res.send("success")
-});
 
 
 // SOFT DELETE

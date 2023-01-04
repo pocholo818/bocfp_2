@@ -15,7 +15,7 @@
         <ion-content>
             <ion-card>
                 <ion-card-header>
-                    <ion-card-title>Information</ion-card-title>
+                    <ion-card-title>Editting Information</ion-card-title>
                     <ion-card-subtitle>ID: {{ childId }}</ion-card-subtitle>
                 </ion-card-header>
 

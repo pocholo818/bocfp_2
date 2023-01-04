@@ -21,7 +21,7 @@
 
                         <ion-button color="success" :router-link="('/guardian_profile/' + guard.guardian_id)" style="width: 32%;"><ion-icon
                                 :icon="eyeOutline" ></ion-icon></ion-button>
-                        <ion-button color="warning" style="width: 32%;"><ion-icon
+                        <ion-button color="warning" :router-link="('/guardian_edit/' + guard.guardian_id)" style="width: 32%;"><ion-icon
                                 :icon="createOutline"></ion-icon></ion-button>
                         <ion-button color="danger" @click="guardian_delete(guard.guardian_id)"
                             style="width: 32%;"><ion-icon :icon="trashOutline"></ion-icon></ion-button>
