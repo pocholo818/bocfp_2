@@ -73,10 +73,11 @@
 
                         <!-- latest record -->
                         <ion-card-header>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <ion-card-title>Record</ion-card-title>
-                                <ion-button class="theme" :router-link="('/record_add/' + childId)">+</ion-button>
+                            <div style="position: absolute; right: 0; z-index: 1;padding-right: 2px;">
+                                <span><ion-button class="theme"
+                                        :router-link="('/record_add/' + childId)">+</ion-button></span>
                             </div>
+                            <ion-card-title>Record</ion-card-title>
                             <ion-card-subtitle>Displaying the latest record</ion-card-subtitle>
                         </ion-card-header>
 
@@ -96,15 +97,17 @@
                             <ion-input placeholder="Enter Weight" v-model="childNewRecord.weight" readonly></ion-input>
                         </ion-item>
                     </ion-list>
+                    <ion-button class="theme" :router-link="('/record_view/' + childId)">View all Records</ion-button>
                 </ion-card-content>
             </ion-card>
 
-            <ion-card>
+            <!-- <ion-card>
                 <ion-card-header>
-                    <div style="display: flex; justify-content: space-between; align-items: center">
-                        <ion-card-title>Record</ion-card-title>
-                        <ion-button class="theme" :router-link="('/record_add/' + childId)">+</ion-button>
+                    <div style="position: absolute; right: 0; z-index: 1; padding-right: 20px;">
+                        <span><ion-button class="theme" 
+                            :router-link="('/record_add/' + childId)">+</ion-button></span>
                     </div>
+                    <ion-card-title>Record</ion-card-title>
                     <ion-card-subtitle>Data Gathered</ion-card-subtitle>
                 </ion-card-header>
 
@@ -139,7 +142,7 @@
                         </div>
                     </ion-list>
                 </ion-card-content>
-            </ion-card>
+            </ion-card> -->
 
 
         </ion-content>

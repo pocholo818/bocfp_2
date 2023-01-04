@@ -3,6 +3,18 @@
     color: white;
 }
 
+@media only screen and (max-width: 768px){
+    /* phone */
+    [class*="theme"]{
+        width: 100%;
+    }
+}
+
+.funcBttn{
+    --background: #168554;
+    color: white;
+}
+
 .dateStyle{
     background-color: #168554;
     

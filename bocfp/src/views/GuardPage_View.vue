@@ -60,7 +60,9 @@
                     <ion-label>
                       <h2>{{ link.fname }} {{ link.lname }}</h2>
                       <p>Guardian Relationship: {{ link.relationship }}</p>
-                      <ion-button>button</ion-button>
+                      <ion-button color="success">View</ion-button>
+                      <ion-button color="warning">Edit</ion-button>
+                      <ion-button color="danger">Remove Link</ion-button>
                     </ion-label>
                   </ion-item>
                 </div>
