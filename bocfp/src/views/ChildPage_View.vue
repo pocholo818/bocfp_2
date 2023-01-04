@@ -56,7 +56,7 @@
                         <!-- child's guardian -->
                         <ion-card-header>
                             <ion-card-title>Guardian</ion-card-title>
-                            <ion-card-subtitle>GRDNID: {{ guardianDetails.guardian_id }}</ion-card-subtitle>
+                            <ion-card-subtitle v-if="guardianDetails.relationship != ''">GRDNID: {{ guardianDetails.guardian_id }}</ion-card-subtitle>
                         </ion-card-header>
 
                         <div v-if="guardianDetails.relationship == ''">
