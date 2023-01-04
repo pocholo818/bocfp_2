@@ -6,7 +6,7 @@ import HomePage from '@/views/HomePage.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/child'
+    redirect: '/dashboard'
   },
   {
     path: '/',
@@ -24,14 +24,6 @@ const routes: Array<RouteRecordRaw> = [
         path: '/dashboard',
         component: () => import('@/views/DashboardPage.vue'),
       },
-      // {
-      //   path: '/child',
-      //   component: () => import('@/views/ChildPage.vue')
-      // },
-      // {
-      //   path: '/child',
-      //   component: () => import('@/views/ChildPage.vue')
-      // },
     ]
   },
     {
@@ -57,6 +49,10 @@ const routes: Array<RouteRecordRaw> = [
     {
       path: '/guardian_add',
       component: () => import('@/views/GuardPage_Add.vue'),
+    },
+    {
+      path: '/guardian_profile/:id',
+      component: () => import('@/views/GuardPage_View.vue'),
     },
     {
       path: '/dashboard',

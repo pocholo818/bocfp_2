@@ -68,21 +68,10 @@
         IonButtons, 
         IonHeader, 
         IonToolbar,
-        // IonDatetime, 
-        // IonDatetimeButton, 
-        // IonModal,
         IonItem, 
-        // IonSelect, 
-        // IonSelectOption, 
         toastController,
         useIonRouter
     } from '@ionic/vue';
-import { stringLiteral } from '@babel/types';
-    // import HeaderBar from '@/components/HeaderBar.vue';
-    // import {
-    //   IonContent,
-    //   IonPage,
-    // } from '@ionic/vue';
   
     export default defineComponent({
       name: 'ChildPage2',
@@ -96,12 +85,7 @@ import { stringLiteral } from '@babel/types';
         IonButtons, 
         IonHeader, 
         IonToolbar,
-        // IonDatetime, 
-        // IonDatetimeButton, 
-        // IonModal,
         IonItem, 
-        // IonSelect, 
-        // IonSelectOption
       },
         data(){
           return {

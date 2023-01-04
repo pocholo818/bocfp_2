@@ -15,12 +15,12 @@
                     <ion-card-subtitle>GRDN: {{ guard.guardian_id }}</ion-card-subtitle>
 
                     <ion-card-content>
-                        <p>Contact Number: {{ guard.contact_number }}</p>
+                        <p>Contact Number: {{ guard.contact }}</p>
                         <p>Address: {{ guard.address }}</p><br>
                         <!-- <p>{{ guard.soft_delete }}</p> -->
 
-                        <ion-button color="success" style="width: 32%;"><ion-icon
-                                :icon="eyeOutline"></ion-icon></ion-button>
+                        <ion-button color="success" :router-link="('/guardian_profile/' + guard.guardian_id)" style="width: 32%;"><ion-icon
+                                :icon="eyeOutline" ></ion-icon></ion-button>
                         <ion-button color="warning" style="width: 32%;"><ion-icon
                                 :icon="createOutline"></ion-icon></ion-button>
                         <ion-button color="danger" @click="guardian_delete(guard.guardian_id)"
@@ -129,7 +129,7 @@ export default defineComponent({
                                 position: 'top'
                             })
                             const guard_id = guardian_id;
-                            console.log(guardian_id);
+                            // console.log(guardian_id);
 
                             fetch('http://localhost:5000/guardianDel/' + guard_id, {
                                 method: 'PUT',
