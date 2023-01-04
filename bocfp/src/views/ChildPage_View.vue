@@ -101,50 +101,6 @@
                 </ion-card-content>
             </ion-card>
 
-            <!-- <ion-card>
-                <ion-card-header>
-                    <div style="position: absolute; right: 0; z-index: 1; padding-right: 20px;">
-                        <span><ion-button class="theme" 
-                            :router-link="('/record_add/' + childId)">+</ion-button></span>
-                    </div>
-                    <ion-card-title>Record</ion-card-title>
-                    <ion-card-subtitle>Data Gathered</ion-card-subtitle>
-                </ion-card-header>
-
-                <ion-card-content>
-                    <ion-list>
-                        <div v-if="childRecords.date == ''">
-                            <h2 style="text-align: center;">{{ childRecords.message }}</h2>
-                        </div>
-
-                        <div v-else>
-                            <ion-item v-for="record in childRecords" :key="record.recordId">
-                                <ion-label>
-                                    <h2>{{ record.date.split("T")[0] }}</h2>
-                                    <p>Record ID: {{ record.record_id }}</p>
-                                    <p>Height: {{ record.height }}cm</p>
-                                    <p>Weight: {{ record.weight }}kg</p>
-                                    <p>Remark: {{ record.remark }}</p>
-                                    <p>BMI: {{ record.output.toFixed(2) }}</p>
-
-                                    <ion-label>
-                                        <div style="text-align:center;">
-                                            <ion-button color="warning" style="width: 49%;"
-                                                :router-link="('/record_edit/' + record.record_id)"><ion-icon
-                                                    :icon="createOutline"></ion-icon></ion-button>
-                                            <ion-button color="danger" style="width: 49%;"
-                                                @click="record_delete(record.record_id)"><ion-icon
-                                                    :icon="trashOutline"></ion-icon></ion-button>
-                                        </div>
-                                    </ion-label>
-                                </ion-label>
-                            </ion-item>
-                        </div>
-                    </ion-list>
-                </ion-card-content>
-            </ion-card> -->
-
-
         </ion-content>
     </ion-page>
 
@@ -195,7 +151,7 @@ export default defineComponent({
         IonCardHeader,
         IonCardContent,
         IonButtons, IonHeader, IonToolbar,
-        IonDatetime, IonDatetimeButton, IonModal
+        IonDatetime, IonDatetimeButton, IonModal,
     },
     data() {
         return {

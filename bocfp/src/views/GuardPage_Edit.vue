@@ -3,7 +3,9 @@
     <ion-header>
       <ion-toolbar style="">
         <ion-buttons slot="start">
-          <ion-back-button router-link="/guardian" text="Back"></ion-back-button>
+          <!-- replace all ion-back-button -->
+          <ion-button :router-link="('/guardian')"><ion-icon
+              :icon="arrowBack"></ion-icon>&nbsp;Back</ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -58,7 +60,8 @@ import { useRoute } from 'vue-router';
 import {
   eyeOutline,
   createOutline,
-  trashOutline
+  trashOutline,
+  arrowBack
 } from 'ionicons/icons';
 // ionic stuff
 import {
@@ -66,7 +69,6 @@ import {
   IonList,
   IonCard,
   IonCardContent,
-  IonBackButton,
   IonButtons,
   IonHeader,
   IonToolbar,
@@ -83,7 +85,6 @@ export default defineComponent({
     IonList,
     IonCard,
     IonCardContent,
-    IonBackButton,
     IonButtons,
     IonHeader,
     IonToolbar,
@@ -103,6 +104,7 @@ export default defineComponent({
       eyeOutline,
       createOutline,
       trashOutline,
+      arrowBack,
       router,
       ionRouter
     }
@@ -121,36 +123,36 @@ export default defineComponent({
         })
     },
     async guardian_edit() {
-            const toast = await toastController.create({
-                duration: 1500,
-                position: 'top'
-            })
+      const toast = await toastController.create({
+        duration: 1500,
+        position: 'top'
+      })
 
-            const data = this.guardProfile;
+      const data = this.guardProfile;
 
-            fetch('http://localhost:5000/guardUpdate/:id', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-                .then((data) => {
-                    toast.message = 'Success!'
-                    this.guardProfile = {
-                        fname: "",
-                        lname: "",
-                        contact: "",
-                        address: ""
-                    }
-                    this.ionRouter.back()
-                })
-                .catch((error) => {
-                    toast.message = error
-                });
+      fetch('http://localhost:5000/guardUpdate/:id', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+        .then((data) => {
+          toast.message = 'Success!'
+          this.guardProfile = {
+            fname: "",
+            lname: "",
+            contact: "",
+            address: ""
+          }
+          this.ionRouter.back()
+        })
+        .catch((error) => {
+          toast.message = error
+        });
 
-            await toast.present();
-        }
+      await toast.present();
+    }
 
   }
 });

@@ -3,7 +3,8 @@
     <ion-header>
       <ion-toolbar style="">
         <ion-buttons slot="start">
-          <ion-back-button router-link="/guardian" text="Back"></ion-back-button>
+          <!-- replace all ion-back-button -->
+          <ion-button router-link="/guardian"><ion-icon :icon="arrowBack"></ion-icon>&nbsp;Back</ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -51,21 +52,21 @@
 
           <ion-card-content>
             <ion-list>
-                <div v-if="childList.relationship == ''">
-                  <h2 style="text-align: center;">{{ childList.message }}</h2>
-                </div>
+              <div v-if="childList.relationship == ''">
+                <h2 style="text-align: center;">{{ childList.message }}</h2>
+              </div>
 
-                <div v-else>
-                  <ion-item v-for="link in childList" :key="link.link_id">
-                    <ion-label>
-                      <h2>{{ link.fname }} {{ link.lname }}</h2>
-                      <p>Guardian Relationship: {{ link.relationship }}</p>
-                      <ion-button color="success">View</ion-button>
-                      <ion-button color="warning">Edit</ion-button>
-                      <ion-button color="danger">Remove Link</ion-button>
-                    </ion-label>
-                  </ion-item>
-                </div>
+              <div v-else>
+                <ion-item v-for="link in childList" :key="link.link_id">
+                  <ion-label>
+                    <h2>{{ link.fname }} {{ link.lname }}</h2>
+                    <p>Guardian Relationship: {{ link.relationship }}</p>
+                    <ion-button color="success">View</ion-button>
+                    <ion-button color="warning">Edit</ion-button>
+                    <ion-button color="danger">Remove Link</ion-button>
+                  </ion-label>
+                </ion-item>
+              </div>
 
             </ion-list>
 
@@ -85,7 +86,8 @@ import { useRoute } from 'vue-router';
 import {
   eyeOutline,
   createOutline,
-  trashOutline
+  trashOutline,
+  arrowBack
 } from 'ionicons/icons';
 // ionic stuff
 import {
@@ -93,7 +95,6 @@ import {
   IonList,
   IonCard,
   IonCardContent,
-  IonBackButton,
   IonButtons,
   IonHeader,
   IonToolbar,
@@ -111,7 +112,6 @@ export default defineComponent({
     IonList,
     IonCard,
     IonCardContent,
-    IonBackButton,
     IonButtons,
     IonHeader,
     IonToolbar,
@@ -134,6 +134,7 @@ export default defineComponent({
       eyeOutline,
       createOutline,
       trashOutline,
+      arrowBack,
       router
     }
   },

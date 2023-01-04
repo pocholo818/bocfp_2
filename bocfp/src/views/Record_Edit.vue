@@ -3,7 +3,8 @@
     <ion-header>
       <ion-toolbar style="">
         <ion-buttons slot="start">
-          <ion-back-button router-link="/child" text="Back"></ion-back-button>
+          <!-- replace all ion-back-button -->
+          <ion-button :router-link="('/record_view/' + recordDetails.id)"><ion-icon :icon="arrowBack"></ion-icon>&nbsp;Back</ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -46,7 +47,8 @@ import { defineComponent } from 'vue';
 import {
   eyeOutline,
   createOutline,
-  trashOutline
+  trashOutline,
+  arrowBack
 } from 'ionicons/icons';
 // ionic stuff
 import {
@@ -54,7 +56,6 @@ import {
   IonList,
   IonCard,
   IonCardContent,
-  IonBackButton,
   IonButtons, IonHeader, IonToolbar,
   IonItem, toastController,
   useIonRouter,
@@ -76,7 +77,6 @@ export default defineComponent({
     IonList,
     IonCard,
     IonCardContent,
-    IonBackButton,
     IonButtons, IonHeader, IonToolbar,
     IonItem,
     IonCardHeader, IonCardTitle
@@ -99,12 +99,16 @@ export default defineComponent({
       eyeOutline,
       createOutline,
       trashOutline,
+      arrowBack,
       router,
       ionRouter
     }
   },
   mounted() {
     this.record_id = this.router.params.id + "";
+    // this.childId = this.router.params.id + "";
+
+
     this.fetchRecord()
   },
   methods: {
@@ -118,29 +122,29 @@ export default defineComponent({
         })
     },
     async record_edit() {
-            const toast = await toastController.create({
-                duration: 1500,
-                position: 'top'
-            })
+      const toast = await toastController.create({
+        duration: 1500,
+        position: 'top'
+      })
 
-            const data = this.recordDetails;
-            fetch('http://localhost:5000/record/' + this.record_id, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-                .then((data) => {
-                    toast.message = 'Success!'
-                    this.ionRouter.back()
-                })
-                .catch((error) => {
-                    toast.message = error
-                });
+      const data = this.recordDetails;
+      fetch('http://localhost:5000/record/' + this.record_id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+        .then((data) => {
+          toast.message = 'Success!'
+          this.ionRouter.back()
+        })
+        .catch((error) => {
+          toast.message = error
+        });
 
-            await toast.present();
-        }
+      await toast.present();
+    }
   }
 });
 
