@@ -51,15 +51,20 @@
 
           <ion-card-content>
             <ion-list>
-              <ion-item>
+                <div v-if="childList.relationship == ''">
+                  <h2 style="text-align: center;">{{ childList.message }}</h2>
+                </div>
 
-                <ion-label>
-                  <h2>Name Test</h2>
-                  <p>Grandfather</p>
-                  <ion-button>button</ion-button>
-                </ion-label>
+                <div v-else>
+                  <ion-item v-for="link in childList" :key="link.link_id">
+                    <ion-label>
+                      <h2>{{ link.fname }} {{ link.lname }}</h2>
+                      <p>Guardian Relationship: {{ link.relationship }}</p>
+                      <ion-button>button</ion-button>
+                    </ion-label>
+                  </ion-item>
+                </div>
 
-              </ion-item>
             </ion-list>
 
           </ion-card-content>
@@ -116,7 +121,8 @@ export default defineComponent({
   data() {
     return {
       guardId: "",
-      guardProfile: ""
+      guardProfile: "",
+      childList: ""
     }
   },
   setup() {
@@ -133,6 +139,7 @@ export default defineComponent({
     this.guardId = this.router.params.id + "";
 
     this.fetchGuardProfile()
+    this.fetchChilds()
   },
   methods: {
     fetchGuardProfile() {
@@ -142,7 +149,13 @@ export default defineComponent({
           this.guardProfile = json
         })
     },
-
+    fetchChilds() {
+      fetch('http://localhost:5000/guardian/link/' + this.guardId)
+        .then((response) => response.json())
+        .then((json) => {
+          this.childList = json
+        })
+    },
   }
 });
 

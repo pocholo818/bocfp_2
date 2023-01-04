@@ -55,13 +55,11 @@ app.get('/child/profile/:id', (req, res) => {
 // get record
 app.get('/records/:id', (req, res) => {
   connection.query(`SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id DESC`, (err, rows, fields) => {
-    // if (err) throw err
-    // res.json(rows)
-    if(rows.length){
+    if (rows.length) {
       res.json(rows)
     }
-    else{
-      res.json({"message": "No Record(s) Found", "date": ""})
+    else {
+      res.json({ "message": "No Record(s) Found", "date": "" })
     }
   })
 });
@@ -72,7 +70,7 @@ app.get('/record/:id', (req, res) => {
     res.json(rows[0])
   })
 });
-// get all !deleted guardian
+// get all guardian
 app.get('/guardians', (req, res) => {
   connection.query('SELECT * FROM guardian WHERE soft_delete=0', (err, rows, fields) => {
     if (err) throw err
@@ -93,6 +91,19 @@ app.get('/guardian/:search', (req, res) => {
     OR lname LIKE"%${req.params.search}%"`, (err, rows, fields) => {
     if (err) throw err
     res.json(rows)
+  })
+});
+// get all linked child to guardian
+app.get('/guardian/link/:id', (req, res) => {
+  connection.query(`SELECT child.fname, child.lname, link.relationship, child.id
+      FROM link JOIN child ON link.id = child.id
+      WHERE link.guardian_id = ${req.params.id} AND link.soft_delete = 0`, (err, rows, fields) => {
+    if(rows.length){
+      res.json(rows)
+    }
+    else{
+      res.json({"message": "No Linked Child Yet", "relationship": ""})
+    }
   })
 });
 
@@ -211,11 +222,11 @@ app.get('/child/newRecord/:id', (req, res) => {
   const { id } = req.params;
 
   connection.query(`SELECT height, weight, remark, output FROM record WHERE id = ${id} AND soft_delete = 0  ORDER BY record_id DESC LIMIT 1`, (err, row, fields) => {
-    if(row.length){
+    if (row.length) {
       res.json(row[0])
     }
-    else{
-      res.json({"height": "N/A", "weight": "N/A", "remark": "N/A", "output": 0})
+    else {
+      res.json({ "height": "N/A", "weight": "N/A", "remark": "N/A", "output": 0 })
     }
   })
 });
