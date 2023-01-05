@@ -1,14 +1,10 @@
 
 <template>
     <ion-page>
-        <!-- <HeaderBar title="Child View" /> -->
-        <!-- <HeaderBar2 title="Child Edit" /> -->
-
         <ion-header>
             <ion-toolbar style="">
                 <ion-buttons slot="start">
-                    <!-- replace all ion-back-button -->
-                    <ion-button router-link="/child"><ion-icon :icon="arrowBack"></ion-icon>&nbsp;Back</ion-button>
+                    <ion-back-button text="Back"></ion-back-button>
                 </ion-buttons>
             </ion-toolbar>
         </ion-header>
@@ -19,8 +15,11 @@
                 <ion-card-content>
                     <ion-card-header>
                         <ion-card-title>Information</ion-card-title>
-                        <ion-card-subtitle>CHLDID: {{ childId }}</ion-card-subtitle>
                     </ion-card-header>
+
+                    <!-- picture -->
+                    <img alt="picture" class="icon" src="@/assets/images/noPic.png">
+                    <ion-card-subtitle style="text-align: center;">CHLDID: {{ childId }}</ion-card-subtitle>
 
                     <ion-list>
                         <ion-item>
@@ -57,8 +56,8 @@
                         <ion-card-header>
                             <ion-card-title>Guardian</ion-card-title>
                             <ion-card-subtitle v-if="guardianDetails.relationship != ''">GRDNID: {{
-        guardianDetails.guardian_id
-}}</ion-card-subtitle>
+                                guardianDetails.guardian_id
+                            }}</ion-card-subtitle>
                         </ion-card-header>
 
                         <div v-if="guardianDetails.relationship == ''">
@@ -124,7 +123,8 @@
                                 <ion-input placeholder="Enter Weight" v-model="childNewRecord.weight"
                                     readonly></ion-input>
                             </ion-item>
-                            <ion-button class="theme" :router-link="('/record_view/' + childId)">View all Records</ion-button>
+                            <ion-button class="theme" :router-link="('/record_view/' + childId)">View all
+                                Records</ion-button>
                         </div>
 
                     </ion-list>
@@ -158,7 +158,8 @@ import {
     IonHeader,
     IonToolbar,
     IonDatetime, IonDatetimeButton, IonModal,
-    alertController, toastController
+    alertController, toastController,
+    IonBackButton,
 
 } from '@ionic/vue';
 import { useRoute } from 'vue-router';
@@ -182,6 +183,7 @@ export default defineComponent({
         IonCardContent,
         IonButtons, IonHeader, IonToolbar,
         IonDatetime, IonDatetimeButton, IonModal,
+        IonBackButton,
     },
     data() {
         return {
@@ -236,10 +238,10 @@ export default defineComponent({
                 .then((json) => {
                     this.childNewRecord = json
 
-                    if(json.remark == ""){
+                    if (json.remark == "") {
                         this.totalRemark = ""
                     }
-                    else{
+                    else {
                         this.totalRemark = `${json.remark} (${json.output.toFixed(2)})`
                     }
                 });
@@ -315,5 +317,23 @@ export default defineComponent({
 ion-toolbar {
     --background: #168554;
     --color: white;
+}
+
+.icon {
+    width: 180px;
+    height: 180px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    text-align: center;
+}
+
+@media only screen and (max-width: 768px) {
+
+    /* phone */
+    [class*="icon"] {
+        width: 140px;
+        height: 140px;
+    }
 }
 </style>

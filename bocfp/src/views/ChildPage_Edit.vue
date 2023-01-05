@@ -1,12 +1,9 @@
 <template>
     <ion-page>
-        <!-- <HeaderBar title="Child Edit" /> -->
-        <!-- <HeaderBar2 title="Child Edit" /> -->
-
         <ion-header>
             <ion-toolbar style="">
                 <ion-buttons slot="start">
-                    <ion-back-button default-href="/child" text="Back"></ion-back-button>
+                    <ion-back-button text="Back"></ion-back-button>
                 </ion-buttons>
             </ion-toolbar>
         </ion-header>

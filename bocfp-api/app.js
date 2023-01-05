@@ -41,8 +41,12 @@ function bmi(height, weight, output) {
 // get all child
 app.get('/childs', (req, res) => {
   connection.query('SELECT * FROM child WHERE soft_delete = 0', (err, rows, fields) => {
-    if (err) throw err
-    res.json(rows)
+    if (rows.length) {
+      res.json(rows)
+    }
+    else {
+      res.json({ "message": "No Child(s) Found", "id": "" })
+    }
   })
 });
 // get specific child
@@ -108,7 +112,8 @@ app.get('/guardian/link/:id', (req, res) => {
 });
 // get linked child to guardian
 app.get('/child/link/:id', (req, res) => {
-  connection.query(`SELECT *
+  connection.query(`SELECT guardian.fname, guardian.lname, guardian.address, 
+      guardian.contact, link.relationship, guardian.guardian_id
       FROM link JOIN guardian ON link.guardian_id = guardian.guardian_id
       WHERE link.id = ${req.params.id} AND link.soft_delete = 0;`, (err, rows, fields) => {
     if(rows.length){

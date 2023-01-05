@@ -6,11 +6,11 @@
     <ion-content>
 
       <ion-item>
-        <ion-label position="floating">Search</ion-label>
-        <ion-input placeholder="Enter text"></ion-input>
+        <ion-searchbar></ion-searchbar>
       </ion-item>
-
-      <ChildCard 
+      
+      
+            <ChildCard 
         v-for="child in childList" 
         :key="child.id" 
         :data="child"
@@ -33,7 +33,7 @@
 import { defineComponent } from 'vue';
 // ionic stuff
 import {
-  IonInput,
+  IonSearchbar,
   IonFab,
   IonFabButton,
   IonIcon
@@ -52,8 +52,8 @@ import ChildCard from '@/components/ChildCard.vue'
 export default defineComponent({
   name: 'ChildPage',
   components: {
+    IonSearchbar,
     HeaderBar,
-    IonInput,
     IonFab,
     IonFabButton,
     IonIcon,

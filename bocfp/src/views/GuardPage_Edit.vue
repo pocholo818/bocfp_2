@@ -3,9 +3,7 @@
     <ion-header>
       <ion-toolbar style="">
         <ion-buttons slot="start">
-          <!-- replace all ion-back-button -->
-          <ion-button :router-link="('/guardian')"><ion-icon
-              :icon="arrowBack"></ion-icon>&nbsp;Back</ion-button>
+          <ion-back-button text="Back"></ion-back-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -74,7 +72,8 @@ import {
   IonToolbar,
   IonItem,
   toastController,
-  useIonRouter
+  useIonRouter,
+  IonBackButton
 } from '@ionic/vue';
 
 export default defineComponent({
@@ -89,6 +88,7 @@ export default defineComponent({
     IonHeader,
     IonToolbar,
     IonItem,
+    IonBackButton
   },
   data() {
     return {

@@ -3,8 +3,7 @@
     <ion-header>
       <ion-toolbar style="">
         <ion-buttons slot="start">
-          <!-- replace all ion-back-button -->
-          <ion-button router-link="/guardian"><ion-icon :icon="arrowBack"></ion-icon>&nbsp;Back</ion-button>
+          <ion-back-button text="Back"></ion-back-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -48,6 +47,7 @@
         <ion-card>
           <ion-card-header>
             <ion-card-title>Child List:</ion-card-title>
+            <ion-card-subtitle>Displaying the linked list of child</ion-card-subtitle>
           </ion-card-header>
 
           <ion-card-content>
@@ -61,7 +61,7 @@
                   <ion-label>
                     <h2>{{ link.fname }} {{ link.lname }}</h2>
                     <p>Guardian Relationship: {{ link.relationship }}</p>
-                    <ion-button color="success">View</ion-button>
+                    <ion-button color="success" :router-link="'/child_view/' + link.id">View</ion-button>
                     <ion-button color="warning">Edit</ion-button>
                     <ion-button color="danger">Remove Link</ion-button>
                   </ion-label>
@@ -101,7 +101,8 @@ import {
   IonItem,
   IonCardHeader,
   IonCardTitle,
-  IonCardSubtitle
+  IonCardSubtitle,
+  IonBackButton
 } from '@ionic/vue';
 
 export default defineComponent({
@@ -118,7 +119,8 @@ export default defineComponent({
     IonItem,
     IonCardHeader,
     IonCardTitle,
-    IonCardSubtitle
+    IonCardSubtitle,
+    IonBackButton
   },
   data() {
     return {

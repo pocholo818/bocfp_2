@@ -3,8 +3,7 @@
     <ion-header>
       <ion-toolbar style="">
         <ion-buttons slot="start">
-          <!-- replace all ion-back-button -->
-          <ion-button :router-link="('/child_view/' + childId)"><ion-icon :icon="arrowBack"></ion-icon>&nbsp;Back</ion-button>
+          <ion-back-button text="Back"></ion-back-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -75,13 +74,9 @@ import {
   IonItem, toastController,
   useIonRouter,
   IonCardHeader, IonCardTitle, IonCardSubtitle,
+  IonBackButton
 } from '@ionic/vue';
 import { useRoute } from 'vue-router';
-// import HeaderBar from '@/components/HeaderBar.vue';
-// import {
-//   IonContent,
-//   IonPage,
-// } from '@ionic/vue';
 
 export default defineComponent({
   name: 'ChildPage2',
@@ -92,7 +87,8 @@ export default defineComponent({
     IonCardContent,
     IonButtons, IonHeader, IonToolbar,
     IonItem,
-    IonCardHeader, IonCardTitle, IonCardSubtitle
+    IonCardHeader, IonCardTitle, IonCardSubtitle,
+    IonBackButton
   },
   data() {
     return {

@@ -1,15 +1,17 @@
 <template>
   <ion-card>
-    <ion-card-header>
-      <ion-card-title>{{ name }}</ion-card-title>
-      <ion-card-subtitle>{{ data.guardian }}</ion-card-subtitle>
-    </ion-card-header>
+    <ion-item>
+        <ion-thumbnail slot="start">
+          <img alt="pcture"  theme="icon" src="@/assets/images/noPic.png">
+        </ion-thumbnail>
+
+        <ion-card-header>
+          <ion-card-title>{{ name }}</ion-card-title>
+          <ion-card-subtitle>CHLDID: {{ data.id }}</ion-card-subtitle>
+        </ion-card-header>
+      </ion-item>
 
     <ion-card-content>
-      <p>CHLDID: {{ data.id }}</p>
-      <p>Sex: {{ data.sex }}</p>
-      <p>Birth Date: {{ data.bdate }}</p>
-
       <div style="text-align:center;">
         <ion-button color="success" style="width: 32%;" :router-link="'/child_view/' + data.id"><ion-icon
             :icon="eyeOutline"></ion-icon>&nbsp; View</ion-button>
@@ -31,6 +33,7 @@ import {
   IonCardHeader,
   IonCardContent,
   IonIcon,
+  IonThumbnail,
   alertController,
   toastController
 } from '@ionic/vue';
@@ -50,7 +53,8 @@ export default defineComponent({
     IonCardSubtitle,
     IonCardHeader,
     IonCardContent,
-    IonIcon
+    IonIcon,
+    IonThumbnail,
   },
   setup() {
     return {
@@ -79,7 +83,7 @@ export default defineComponent({
               })
 
               const childId = this.data?.id
-              
+
               fetch('http://localhost:5000/child/del/' + childId, {
                 method: 'PUT'
               })
@@ -109,4 +113,13 @@ export default defineComponent({
     }
   }
 });
+
 </script>
+
+<style scoped>
+.icon {
+  width: 110px;
+  height: 110px;
+  border: 1px solid black;
+}
+</style>

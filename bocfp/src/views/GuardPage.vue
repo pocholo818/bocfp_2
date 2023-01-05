@@ -10,23 +10,22 @@
             </ion-item>
 
             <ion-card v-for="guard in guardianList" :key="guard.guardian_id">
-                <ion-card-header>
-                    <ion-card-title>{{ guard.fname }} {{ guard.lname }}</ion-card-title>
-                    <ion-card-subtitle>GRDN: {{ guard.guardian_id }}</ion-card-subtitle>
+                <ion-item>
+                    <ion-card-header>
+                        <ion-card-title>{{ guard.fname }} {{ guard.lname }}</ion-card-title>
+                        <ion-card-subtitle>GRDN: {{ guard.guardian_id }}</ion-card-subtitle>
+                    </ion-card-header>
+                </ion-item>
 
-                    <ion-card-content>
-                        <p>Contact Number: {{ guard.contact }}</p>
-                        <p>Address: {{ guard.address }}</p><br>
-                        <!-- <p>{{ guard.soft_delete }}</p> -->
+                <ion-card-content>
+                    <ion-button color="success" :router-link="('/guardian_profile/' + guard.guardian_id)"
+                        style="width: 32%;"><ion-icon :icon="eyeOutline"></ion-icon>&nbsp; View</ion-button>
+                    <ion-button color="warning" :router-link="('/guardian_edit/' + guard.guardian_id)"
+                        style="width: 32%;"><ion-icon :icon="createOutline"></ion-icon>&nbsp; Modify</ion-button>
+                    <ion-button color="danger" @click="guardian_delete(guard.guardian_id)" style="width: 32%;"><ion-icon
+                            :icon="trashOutline"></ion-icon>&nbsp; Delete</ion-button>
+                </ion-card-content>
 
-                        <ion-button color="success" :router-link="('/guardian_profile/' + guard.guardian_id)" style="width: 32%;"><ion-icon
-                                :icon="eyeOutline" ></ion-icon>&nbsp; View</ion-button>
-                        <ion-button color="warning" :router-link="('/guardian_edit/' + guard.guardian_id)" style="width: 32%;"><ion-icon
-                                :icon="createOutline"></ion-icon>&nbsp; Modify</ion-button>
-                        <ion-button color="danger" @click="guardian_delete(guard.guardian_id)"
-                            style="width: 32%;"><ion-icon :icon="trashOutline"></ion-icon>&nbsp; Delete</ion-button>
-                    </ion-card-content>
-                </ion-card-header>
             </ion-card>
 
 
@@ -41,7 +40,7 @@
 
     </ion-page>
 </template>
-  
+
 <script lang="ts">
 import { defineComponent } from 'vue';
 // ionic stuff
@@ -169,10 +168,9 @@ export default defineComponent({
     }
 });
 </script>
-  
+
 <style scoped>
 ion-button {
     --border-width: 100%;
 }
 </style>
-  

@@ -3,7 +3,7 @@
     <ion-header>
       <ion-toolbar style="">
         <ion-buttons slot="start">
-          <ion-back-button router-link="/child" text="Back"></ion-back-button>
+          <ion-back-button text="Back"></ion-back-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
