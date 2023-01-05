@@ -12,11 +12,11 @@
         <ion-content>
             <ion-content class="ion-padding">
           <ion-card>
-                <!-- <ion-card-header>
-                    <ion-card-title>Add Information</ion-card-title>
-                </ion-card-header> -->
-
                 <ion-card-content>
+                  <ion-card-header>
+                    <ion-card-title>Add New Child</ion-card-title>
+                </ion-card-header>
+
                 <ion-list>
                     <ion-item>
                         <ion-label position="floating">First Name:</ion-label>

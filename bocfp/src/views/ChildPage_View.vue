@@ -14,7 +14,7 @@
             <ion-card>
                 <ion-card-content>
                     <ion-card-header>
-                        <ion-card-title>Information</ion-card-title>
+                        <ion-card-title>Child Information</ion-card-title>
                     </ion-card-header>
 
                     <!-- picture -->
