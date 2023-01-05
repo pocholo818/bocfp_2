@@ -102,7 +102,6 @@ export default defineComponent({
   },
   mounted() {
     this.record_id = this.router.params.id + "";
-    // this.childId = this.router.params.id + "";
 
 
     this.fetchRecord()

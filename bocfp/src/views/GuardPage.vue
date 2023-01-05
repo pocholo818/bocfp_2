@@ -6,14 +6,14 @@
         <ion-content>
 
             <ion-item>
-                <ion-searchbar></ion-searchbar>
+                <ion-searchbar v-on:keyup.enter="onEnter" v-model="search"></ion-searchbar>
             </ion-item>
 
             <ion-card v-for="guard in guardianList" :key="guard.guardian_id">
                 <ion-item>
                     <ion-card-header>
                         <ion-card-title>{{ guard.fname }} {{ guard.lname }}</ion-card-title>
-                        <ion-card-subtitle>GRDN: {{ guard.guardian_id }}</ion-card-subtitle>
+                        <ion-card-subtitle>GRDNID: {{ guard.guardian_id }}</ion-card-subtitle>
                     </ion-card-header>
                 </ion-item>
 
@@ -21,9 +21,9 @@
                     <ion-button color="success" :router-link="('/guardian_profile/' + guard.guardian_id)"
                         style="width: 32%;"><ion-icon :icon="eyeOutline"></ion-icon>&nbsp; View</ion-button>
                     <ion-button color="warning" :router-link="('/guardian_edit/' + guard.guardian_id)"
-                        style="width: 32%;"><ion-icon :icon="createOutline"></ion-icon>&nbsp; Modify</ion-button>
+                        style="width: 32%;"><ion-icon :icon="createOutline"></ion-icon>&nbsp; Edit</ion-button>
                     <ion-button color="danger" @click="guardian_delete(guard.guardian_id)" style="width: 32%;"><ion-icon
-                            :icon="trashOutline"></ion-icon>&nbsp; Delete</ion-button>
+                            :icon="trashOutline"></ion-icon>&nbsp; Del<span>ete</span></ion-button>
                 </ion-card-content>
 
             </ion-card>
@@ -97,12 +97,32 @@ export default defineComponent({
         return {
             isOpen: false,
             guardianList: [],
-            guardianDel: ""
+            guardianDel: "",
+            search: ""
         };
     },
     methods: {
+        onEnter: function(){
+            console.log(this.search)
+            
+            if(this.search == ""){
+                this.fetchData()
+                this.search = ""
+            }
+            else{
+                this.searchData()
+                this.search = ""
+            }
+        },
         setOpen(isOpen: boolean) {
             this.isOpen = isOpen;
+        },
+        searchData(){
+            fetch('http://localhost:5000/guardian/' + this.search)
+                .then((response) => response.json())
+                .then((json) => {
+                    this.guardianList = json
+                })
         },
         fetchData() {
             fetch('http://localhost:5000/guardians')
@@ -172,5 +192,11 @@ export default defineComponent({
 <style scoped>
 ion-button {
     --border-width: 100%;
+}
+
+@media only screen and (max-width: 768px) {
+  span {
+    display: none;
+  }
 }
 </style>

@@ -89,12 +89,17 @@ app.get('/guardian/profile/:id', (req, res) => {
   })
 });
 // search guardian
-app.get('/guardian/:search', (req, res) => {
-  connection.query(`SELECT * FROM guardian WHERE guardian_id LIKE "${req.params.search}"
-    OR fname LIKE "%${req.params.search}%"
-    OR lname LIKE"%${req.params.search}%"`, (err, rows, fields) => {
-    if (err) throw err
-    res.json(rows)
+app.get('/guardian/search/:search', (req, res) => {
+  connection.query(`SELECT * FROM guardian WHERE 
+    soft_delete = 0 AND guardian_id LIKE "${req.params.search}"
+    OR soft_delete = 0 AND fname LIKE "%${req.params.search}%"
+    OR soft_delete = 0 AND lname LIKE"%${req.params.search}%"`, (err, rows, fields) => {
+    if (rows.length) {
+      res.json(rows)
+    }
+    else {
+      res.json({ "message": "No Guardian(s) Found"})
+    }
   })
 });
 // get linked guardian to child
