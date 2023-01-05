@@ -126,7 +126,7 @@ export default defineComponent({
             height: "",
             weight: ""
           }
-          this.ionRouter.push("/child_view/" + this.childId);
+          this.ionRouter.push("/record_view/" + this.childId);
         })
         .catch((error) => {
           toast.message = error

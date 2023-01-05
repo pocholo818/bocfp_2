@@ -13,6 +13,9 @@
       <ion-content class="ion-padding">
         <ion-card>
           <ion-card-header>
+            <div style="position: absolute; right: 0; z-index: 1;padding-right: 1.5vw">
+              <span><ion-button class="theme" :router-link="('/record_add/' + childId)">+</ion-button></span>
+            </div>
             <ion-card-title>Record</ion-card-title>
             <ion-card-subtitle>Data Gathered</ion-card-subtitle>
           </ion-card-header>
@@ -37,10 +40,10 @@
                       <div style="text-align:center;">
                         <ion-button color="warning" style="width: 49%;"
                           :router-link="('/record_edit/' + record.record_id)"><ion-icon
-                            :icon="createOutline"></ion-icon></ion-button>
+                            :icon="createOutline"></ion-icon>Edit</ion-button>
                         <ion-button color="danger" style="width: 49%;"
                           @click="record_delete(record.record_id)"><ion-icon
-                            :icon="trashOutline"></ion-icon></ion-button>
+                            :icon="trashOutline"></ion-icon>Del<span>ete</span></ion-button>
                       </div>
                     </ion-label>
                   </ion-label>
@@ -74,7 +77,8 @@ import {
   IonItem, toastController,
   useIonRouter,
   IonCardHeader, IonCardTitle, IonCardSubtitle,
-  IonBackButton
+  IonBackButton,
+  alertController
 } from '@ionic/vue';
 import { useRoute } from 'vue-router';
 
@@ -122,7 +126,53 @@ export default defineComponent({
           this.childRecords = json
         })
     },
-  }
+    async record_delete(record_id: string) {
+            const alert = await alertController.create({
+                header: 'Are you sure you want to delete?',
+                buttons: [
+                    {
+                        text: 'Cancel',
+                        role: 'cancel'
+                    },
+                    {
+                        text: 'DELETE',
+                        role: 'confirm',
+                        handler: async () => {
+                            const toast = await toastController.create({
+                                duration: 1500,
+                                position: 'top'
+                            })
+                            const recordId = record_id
+
+                            console.log(recordId);
+
+                            fetch('http://localhost:5000/record/del/' + recordId, {
+                                method: 'put'
+                            })
+                                .then((data) => {
+                                    toast.message = 'Success!'
+                                    // this.$emit('deleted')
+                                    this.fetchRecord()
+                                })
+                                .catch((error) => {
+                                    toast.message = error
+                                });
+
+                            await toast.present();
+                        },
+                    },
+                ],
+            });
+
+            await alert.present();
+            this.fetchRecord();
+        }
+  },
+  watch: {
+        $route() {
+            this.$nextTick(this.fetchRecord);
+        }
+    },
 });
 
 
@@ -135,4 +185,11 @@ ion-toolbar {
   --background: #168554;
   --color: white;
 }
+
+@media only screen and (max-width: 768px) {
+    span {
+        display: none;
+    }
+}
+
 </style>
