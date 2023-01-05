@@ -66,7 +66,7 @@ app.get('/child/search/:search', (req, res) => {
       res.json(rows)
     }
     else {
-      res.json({ "message": "No Guardian(s) Found"})
+      res.json({ "message": "No Child(s) Found"})
     }
   })
 });

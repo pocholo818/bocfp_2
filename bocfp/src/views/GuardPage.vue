@@ -9,24 +9,35 @@
                 <ion-searchbar v-on:keyup.enter="onEnter" v-model="search"></ion-searchbar>
             </ion-item>
 
-            <ion-card v-for="guard in guardianList" :key="guard.guardian_id">
-                <ion-item>
+            <div v-if="guardianList.message">
+                <ion-card>
                     <ion-card-header>
-                        <ion-card-title>{{ guard.fname }} {{ guard.lname }}</ion-card-title>
-                        <ion-card-subtitle>GRDNID: {{ guard.guardian_id }}</ion-card-subtitle>
+                        <ion-card-subtitle style="text-align: center;">{{ guardianList.message }}</ion-card-subtitle>
                     </ion-card-header>
-                </ion-item>
+                </ion-card>
+            </div>
 
-                <ion-card-content>
-                    <ion-button color="success" :router-link="('/guardian_profile/' + guard.guardian_id)"
-                        style="width: 32%;"><ion-icon :icon="eyeOutline"></ion-icon>&nbsp; View</ion-button>
-                    <ion-button color="warning" :router-link="('/guardian_edit/' + guard.guardian_id)"
-                        style="width: 32%;"><ion-icon :icon="createOutline"></ion-icon>&nbsp; Edit</ion-button>
-                    <ion-button color="danger" @click="guardian_delete(guard.guardian_id)" style="width: 32%;"><ion-icon
-                            :icon="trashOutline"></ion-icon>&nbsp; Del<span>ete</span></ion-button>
-                </ion-card-content>
+            <div v-else>
+                <ion-card v-for="guard in guardianList" :key="guard.guardian_id">
+                    <ion-item>
+                        <ion-card-header>
+                            <ion-card-title>{{ guard.fname }} {{ guard.lname }}</ion-card-title>
+                            <ion-card-subtitle>GRDNID: {{ guard.guardian_id }}</ion-card-subtitle>
+                        </ion-card-header>
+                    </ion-item>
 
-            </ion-card>
+                    <ion-card-content>
+                        <ion-button color="success" :router-link="('/guardian_profile/' + guard.guardian_id)"
+                            style="width: 32%;"><ion-icon :icon="eyeOutline"></ion-icon>&nbsp; View</ion-button>
+                        <ion-button color="warning" :router-link="('/guardian_edit/' + guard.guardian_id)"
+                            style="width: 32%;"><ion-icon :icon="createOutline"></ion-icon>&nbsp; Edit</ion-button>
+                        <ion-button color="danger" @click="guardian_delete(guard.guardian_id)"
+                            style="width: 32%;"><ion-icon :icon="trashOutline"></ion-icon>&nbsp;
+                            Del<span>ete</span></ion-button>
+                    </ion-card-content>
+
+                </ion-card>
+            </div>
 
 
         </ion-content>
@@ -102,20 +113,20 @@ export default defineComponent({
         };
     },
     methods: {
-        onEnter: function(){
+        onEnter: function () {
             console.log(this.search)
-            
-            if(this.search == ""){
+
+            if (this.search == "") {
                 this.fetchData()
             }
-            else{
+            else {
                 this.searchData()
             }
         },
         setOpen(isOpen: boolean) {
             this.isOpen = isOpen;
         },
-        searchData(){
+        searchData() {
             fetch('http://localhost:5000/guardian/search/' + this.search)
                 .then((response) => response.json())
                 .then((json) => {
@@ -193,8 +204,8 @@ ion-button {
 }
 
 @media only screen and (max-width: 768px) {
-  span {
-    display: none;
-  }
+    span {
+        display: none;
+    }
 }
 </style>

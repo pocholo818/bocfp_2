@@ -9,8 +9,18 @@
         <ion-searchbar v-on:keyup.enter="onEnter" v-model="search"></ion-searchbar>
       </ion-item>
 
+      <div v-if="childList.message">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-subtitle style="text-align: center;">{{ childList.message }}</ion-card-subtitle>
+          </ion-card-header>
+        </ion-card>
+      </div>
 
-      <ChildCard v-for="child in childList" :key="child.id" :data="child" @deleted="fetchData" />
+      <div v-else>
+        <ChildCard v-for="child in childList" :key="child.id" :data="child" @deleted="fetchData" />
+      </div>
+
 
     </ion-content>
 
@@ -31,7 +41,10 @@ import {
   IonSearchbar,
   IonFab,
   IonFabButton,
-  IonIcon
+  IonIcon,
+  IonCard,
+  IonCardSubtitle,
+  IonCardHeader
 } from '@ionic/vue';
 // icons
 import {
@@ -52,7 +65,10 @@ export default defineComponent({
     IonFab,
     IonFabButton,
     IonIcon,
-    ChildCard
+    ChildCard,
+    IonCard,
+    IonCardSubtitle,
+    IonCardHeader
   },
   setup() {
     return {
