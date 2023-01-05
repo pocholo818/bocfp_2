@@ -6,16 +6,11 @@
     <ion-content>
 
       <ion-item>
-        <ion-searchbar></ion-searchbar>
+        <ion-searchbar v-on:keyup.enter="onEnter" v-model="search"></ion-searchbar>
       </ion-item>
-      
-      
-            <ChildCard 
-        v-for="child in childList" 
-        :key="child.id" 
-        :data="child"
-        @deleted="fetchData"
-      />
+
+
+      <ChildCard v-for="child in childList" :key="child.id" :data="child" @deleted="fetchData" />
 
     </ion-content>
 
@@ -67,10 +62,28 @@ export default defineComponent({
   data() {
     return {
       isOpen: false,
-      childList: []
+      childList: [],
+      search: ""
     };
   },
   methods: {
+    onEnter: function () {
+      console.log(this.search)
+
+      if (this.search == "") {
+        this.fetchData()
+      }
+      else {
+        this.searchData()
+      }
+    },
+    searchData() {
+      fetch('http://localhost:5000/child/search/' + this.search)
+        .then((response) => response.json())
+        .then((json) => {
+          this.childList = json
+        })
+    },
     setOpen(isOpen: boolean) {
       this.isOpen = isOpen;
     },

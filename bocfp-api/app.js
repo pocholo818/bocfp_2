@@ -56,6 +56,20 @@ app.get('/child/profile/:id', (req, res) => {
     res.json(rows[0])
   })
 });
+// search child
+app.get('/child/search/:search', (req, res) => {
+  connection.query(`SELECT * FROM child WHERE 
+    soft_delete = 0 AND id LIKE "${req.params.search}"
+    OR soft_delete = 0 AND fname LIKE "%${req.params.search}%"
+    OR soft_delete = 0 AND lname LIKE"%${req.params.search}%"`, (err, rows, fields) => {
+    if (rows.length) {
+      res.json(rows)
+    }
+    else {
+      res.json({ "message": "No Guardian(s) Found"})
+    }
+  })
+});
 // get record
 app.get('/records/:id', (req, res) => {
   connection.query(`SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id DESC`, (err, rows, fields) => {
