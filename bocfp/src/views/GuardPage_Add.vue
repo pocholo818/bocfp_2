@@ -70,7 +70,9 @@
         IonToolbar,
         IonItem, 
         toastController,
-        useIonRouter
+        useIonRouter,
+        IonCardHeader,
+        IonCardTitle
     } from '@ionic/vue';
   
     export default defineComponent({
@@ -86,6 +88,8 @@
         IonHeader, 
         IonToolbar,
         IonItem, 
+        IonCardHeader,
+        IonCardTitle
       },
         data(){
           return {
