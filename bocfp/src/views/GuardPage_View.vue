@@ -12,7 +12,7 @@
     <ion-content>
       <ion-content class="ion-padding">
         <ion-card>
-          <ion-card-content>  
+          <ion-card-content>
             <ion-card-header>
               <ion-card-title>Guardian Information</ion-card-title>
               <ion-card-subtitle>GRDNID: {{ guardProfile.guardian_id }}</ion-card-subtitle>
@@ -46,6 +46,9 @@
         <!-- child(s) list -->
         <ion-card>
           <ion-card-header>
+            <div style="position: absolute; right: 0; z-index: 1;padding-right: 1.5vw;">
+              <span><ion-button class="theme" :router-link="('/link_add/')">+</ion-button></span>
+            </div>
             <ion-card-title>Child List:</ion-card-title>
             <ion-card-subtitle>Displaying the linked list of child</ion-card-subtitle>
           </ion-card-header>

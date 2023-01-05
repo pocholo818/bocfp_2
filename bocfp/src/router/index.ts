@@ -66,6 +66,10 @@ const routes: Array<RouteRecordRaw> = [
       path: '/guardian_edit/:id',
       component: () => import('@/views/GuardPage_Edit.vue'),
     },
+    {
+      path: '/link_add',
+      component: () => import('@/views/Link_Add.vue'),
+    },
 
     // if wrong
     {
