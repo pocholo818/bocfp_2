@@ -107,18 +107,16 @@ export default defineComponent({
             
             if(this.search == ""){
                 this.fetchData()
-                this.search = ""
             }
             else{
                 this.searchData()
-                this.search = ""
             }
         },
         setOpen(isOpen: boolean) {
             this.isOpen = isOpen;
         },
         searchData(){
-            fetch('http://localhost:5000/guardian/' + this.search)
+            fetch('http://localhost:5000/guardian/search/' + this.search)
                 .then((response) => response.json())
                 .then((json) => {
                     this.guardianList = json
