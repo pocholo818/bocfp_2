@@ -178,6 +178,17 @@ app.post('/guardian/new', (req, res) => {
   })
   res.send("success")
 });
+// add link to guardian & child
+app.post('/link/add/:guardian_id', (req, res) => {
+  const { relationship, id } = req.body;
+  const { guardian_id } = req.params;
+
+  connection.query(`INSERT INTO link (guardian_id, id, relationship) 
+        VALUES ('${guardian_id}','${id}', '${relationship}')`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+});
 
 
 // PUT
@@ -240,6 +251,15 @@ app.put('/record/del/:id', (req, res) => {
   const { id } = req.params;
 
   connection.query(`UPDATE record SET soft_delete='1'  WHERE record_id=${id}`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+});
+// soft delete record
+app.put('/link/del/:guardian_id', (req, res) => {
+  const { guardian_id } = req.params;
+
+  connection.query(`UPDATE link SET soft_delete='1'  WHERE guardian_id=${guardian_id}`, (err, rows, fields) => {
     if (err) throw err
   })
   res.send("success")

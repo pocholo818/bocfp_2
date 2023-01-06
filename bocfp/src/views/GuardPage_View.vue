@@ -66,7 +66,7 @@
                     <p>Guardian Relationship: {{ link.relationship }}</p>
                     <ion-button color="success" :router-link="'/child_view/' + link.id">View</ion-button>
                     <ion-button color="warning">Edit</ion-button>
-                    <ion-button color="danger">Remove Link</ion-button>
+                    <ion-button color="danger" @click="link_delete(guardId)">Remove Link</ion-button>
                   </ion-label>
                 </ion-item>
               </div>
@@ -105,7 +105,9 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonCardSubtitle,
-  IonBackButton
+  IonBackButton,
+  alertController,
+  toastController
 } from '@ionic/vue';
 
 export default defineComponent({
@@ -164,7 +166,52 @@ export default defineComponent({
           this.childList = json
         })
     },
-  }
+    async link_delete(guardian_id: string) {
+      const alert = await alertController.create({
+        header: 'Are you sure you want to delete?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel'
+          },
+          {
+            text: 'DELETE',
+            role: 'confirm',
+            handler: async () => {
+              const toast = await toastController.create({
+                duration: 1500,
+                position: 'top'
+              })
+              const guardId = guardian_id
+
+              console.log(guardId);
+
+              fetch('http://localhost:5000/link/del/' + this.guardId, {
+                method: 'put'
+              })
+                .then((data) => {
+                  toast.message = 'Success!'
+                  this.fetchChilds()
+                })
+                .catch((error) => {
+                  toast.message = error
+                });
+
+              await toast.present();
+            },
+          },
+        ],
+      });
+
+      await alert.present();
+      this.fetchChilds();
+    }
+  },
+  watch: {
+    $route() {
+      this.$nextTick(this.fetchChilds);
+    }
+  },
 });
 
 

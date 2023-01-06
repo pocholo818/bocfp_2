@@ -25,14 +25,15 @@
               <ion-item>
                 <ion-label>Child:</ion-label>
 
-                <ion-select placeholder="Select Child" v-model="childList.id" >
+                <ion-select placeholder="Select Child" v-model="linkDetails.id">
                   <template v-if="childList.message">
                     <ion-select-option value="">{{ childList.message }}</ion-select-option>
                   </template>
 
                   <template v-else>
-                    <ion-select-option v-for="child in childList" :key="child.childList" 
-                    v-bind:value="child.id">{{ child.fname }} {{ child.lname }}</ion-select-option>
+                    <ion-select-option v-for="child in childList" :key="child.childList" v-bind:value="child.id">{{
+                      child.fname
+                    }} {{ child.lname }}</ion-select-option>
                   </template>
                 </ion-select>
               </ion-item>
@@ -40,7 +41,7 @@
               <ion-item>
                 <ion-label>Relationship:</ion-label>
 
-                <ion-select placeholder="Select Relationship" v-model="childList.relationship">
+                <ion-select placeholder="Select Relationship" v-model="linkDetails.relationship">
                   <ion-select-option value="Mother">Mother</ion-select-option>
                   <ion-select-option value="Father">Father</ion-select-option>
                   <ion-select-option value="Foster Mother">Foster Mother</ion-select-option>
@@ -103,13 +104,14 @@ export default defineComponent({
   data() {
     return {
       guardId: "",
-      childList: {
+      childList: {},
+      linkDetails: {
         "id": "",
         "guardian_id": "",
         "relationship": ""
       },
-      linkDetails: {},
-      search: ""
+      search: "",
+      check: { "guardian_id": "" }
     }
   },
   setup() {
@@ -129,59 +131,63 @@ export default defineComponent({
   },
   methods: {
     async link_add() {
-      // console.log("Test: "+this.childList.id)
-      // console.log("Test: "+this.childList.relationship)
-      // console.log("Test: "+this.guardId)
+      const toast = await toastController.create({
+        duration: 1500,
+        position: 'top'
+      })
 
-      // const toast = await toastController.create({
-      //   duration: 1500,
-      //   position: 'top'
-      // })
+      // checks if empty
+      if (this.linkDetails.id && this.linkDetails.relationship) {
+        // !empty
+        fetch('http://localhost:5000/child/link/' + this.linkDetails.id)
+          .then((response) => response.json())
+          .then((json) => {
+            this.check = json
+          })
 
-      // const data = this.linkDetails;
-      // fetch('http://localhost:5000/link/add/' + this.guardId, {
-      //   method: 'POST', // or 'PUT'
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(data),
-      // })
-
-        if(this.linkDetails.id == "" || this.linkDetails.relationship == ""){
-          console.log('empty')
+        // checks for links
+        if (this.check.guardian_id != '') {
+          const data = this.linkDetails;
+          fetch('http://localhost:5000/link/add/' + this.guardId, {
+            method: 'POST', // or 'PUT'
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          })
+            .then((data) => {
+              toast.message = 'Success!'
+              this.linkDetails = {
+                "id": "",
+                "guardian_id": "",
+                "relationship": ""
+              }
+              this.ionRouter.push("/guardian_profile/" + this.guardId);
+            })
+            .catch((error) => {
+              toast.message = error
+            });
         }
+        else {
+          toast.message = "Child is already linked"
+        }
+      }
+      else {
+        toast.message = "Child Or Relationship is Empty"
+      }
 
-      //   .then((data) => {
-      //     toast.message = 'Success!'
-      //     // this.linkDetails = {
-      //     //   "id": "",
-      //     //   "guardian_id": "",
-      //     //   "relationship": ""
-      //     // }
-      //     this.ionRouter.push("/guardian_profile/" + this.guardId);
-      //   })
-      //   .catch((error) => {
-      //     toast.message = error
-      //   });
-
-      // await toast.present();
+      await toast.present();
     },
     searchData() {
       fetch('http://localhost:5000/child/search/' + this.search)
         .then((response) => response.json())
         .then((json) => {
           this.childList = json
-          console.log(this.childList)
         })
     },
     onEnter: function () {
-      console.log(this.search)
-
       if (this.search != "") {
         this.searchData()
-      }
-      else{
-        this.childList = {"id": "", "fname": "", "lname": ""}
       }
     },
   }
