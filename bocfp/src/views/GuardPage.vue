@@ -114,7 +114,6 @@ export default defineComponent({
     },
     methods: {
         onEnter: function () {
-            console.log(this.search)
 
             if (this.search == "") {
                 this.fetchData()

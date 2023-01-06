@@ -67,7 +67,7 @@ const routes: Array<RouteRecordRaw> = [
       component: () => import('@/views/GuardPage_Edit.vue'),
     },
     {
-      path: '/link_add',
+      path: '/link_add/:id',
       component: () => import('@/views/Link_Add.vue'),
     },
 

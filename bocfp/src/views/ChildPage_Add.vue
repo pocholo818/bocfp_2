@@ -45,21 +45,6 @@
                         <ion-datetime id="dateOfBirth" displayFormat="YYYY.MM.DD" class="dateStyle" presentation="date" v-model="childDetails.bdate"></ion-datetime>
                       </ion-modal>
                     </ion-item>
-
-                    <ion-item>
-                        <ion-label position="floating">Guardian:</ion-label>
-                        <ion-input placeholder="Enter Guardian Name" v-model="childDetails.guardian"></ion-input>
-                    </ion-item>
-
-                    <ion-item>
-                        <ion-label position="floating">Contact Number:</ion-label>
-                        <ion-input type="tel" placeholder="Enter Contact Number" maxlength="11" v-model="childDetails.contact"></ion-input>
-                    </ion-item>
-
-                    <ion-item>
-                        <ion-label position="floating">Address:</ion-label>
-                        <ion-input type="text" placeholder="Enter Address" v-model="childDetails.address"></ion-input>
-                    </ion-item>
                 </ion-list>
                 </ion-card-content>
             </ion-card>

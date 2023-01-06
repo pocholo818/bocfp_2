@@ -148,10 +148,10 @@ app.get('/child/link/:id', (req, res) => {
 // POST
 // add new child
 app.post('/child', (req, res) => {
-  const { fname, lname, bdate, sex, guardian, contact, address } = req.body;
+  const { fname, lname, bdate, sex} = req.body;
 
-  connection.query(`INSERT INTO child (fname, lname, bdate, sex, guardian, contact, address) 
-        VALUES ('${fname}', '${lname}', '${bdate}', '${sex}', '${guardian}', '${contact}', '${address}')`, (err, rows, fields) => {
+  connection.query(`INSERT INTO child (fname, lname, bdate, sex) 
+        VALUES ('${fname}', '${lname}', '${bdate}', '${sex}')`, (err, rows, fields) => {
     if (err) throw err
   })
   res.send("success")
@@ -183,11 +183,10 @@ app.post('/guardian/new', (req, res) => {
 // PUT
 // update child
 app.put('/childUpdate/:id', (req, res) => {
-  const { id, fname, lname, bdate, sex, guardian, contact, address } = req.body;
+  const { id, fname, lname, bdate, sex} = req.body;
 
   connection.query(`UPDATE child SET fname = '${fname}', lname = '${lname}', bdate = '${bdate}', 
-      sex ='${sex}', guardian = '${guardian}', contact = '${contact}', address = '${address}'
-      WHERE id=${id}`, (err, rows, fields) => {
+      sex ='${sex}' WHERE id=${id}`, (err, rows, fields) => {
     if (err) throw err
   })
   res.send("success")

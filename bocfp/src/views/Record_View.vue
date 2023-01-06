@@ -13,9 +13,9 @@
       <ion-content class="ion-padding">
         <ion-card>
           <ion-card-header>
-            <div style="position: absolute; right: 0; z-index: 1;padding-right: 1.5vw">
+            <!-- <div style="position: absolute; right: 0; z-index: 1;padding-right: 1.5vw">
               <span><ion-button class="theme" :router-link="('/record_add/' + childId)">+</ion-button></span>
-            </div>
+            </div> -->
             <ion-card-title>Record</ion-card-title>
             <ion-card-subtitle>Data Gathered</ion-card-subtitle>
           </ion-card-header>

@@ -93,6 +93,10 @@
 
                         <!-- latest record -->
                         <ion-card-header>
+                            <div style="position: absolute; right: 0; z-index: 1;padding-right: 1.5vw">
+                                <span><ion-button class="theme"
+                                        :router-link="('/record_add/' + childId)">+</ion-button></span>
+                            </div>
                             <ion-card-title>Record</ion-card-title>
                             <ion-card-subtitle>Displaying the latest record</ion-card-subtitle>
                         </ion-card-header>

@@ -47,7 +47,7 @@
         <ion-card>
           <ion-card-header>
             <div style="position: absolute; right: 0; z-index: 1;padding-right: 1.5vw;">
-              <span><ion-button class="theme" :router-link="('/link_add/')">+</ion-button></span>
+              <span><ion-button class="theme" :router-link="('/link_add/' + guardId)">+</ion-button></span>
             </div>
             <ion-card-title>Child List:</ion-card-title>
             <ion-card-subtitle>Displaying the linked list of child</ion-card-subtitle>
