@@ -184,8 +184,6 @@ export default defineComponent({
               })
               const guardId = guardian_id
 
-              console.log(guardId);
-
               fetch('http://localhost:5000/link/del/' + this.guardId, {
                 method: 'put'
               })
