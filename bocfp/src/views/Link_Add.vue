@@ -19,23 +19,36 @@
 
             <ion-list>
               <ion-item>
-                <ion-searchbar v-on:keyup.enter="onEnter" v-model="search"></ion-searchbar>
+                <ion-label>Search Child</ion-label>
+                <ion-searchbar @input="searchData($event.target.value)" v-model="search"
+                  placeholder="Search Child Here"></ion-searchbar>
               </ion-item><br>
 
               <ion-item>
-                <ion-label>Child:</ion-label>
+                <ion-label>test</ion-label>
+                <ion-radio-group :allow-empty-selection="true" v-model="linkDetails.id" style="width: 100%;">
 
-                <ion-select placeholder="Select Child" v-model="linkDetails.id">
+                  <template v-if="text == false">
+                    <ion-item>
+                      <ion-card-subtitle style="text-align: center; margin-left: auto; margin-right: auto;">Type in the
+                        Search bar</ion-card-subtitle>
+                    </ion-item>
+                  </template>
+
                   <template v-if="childList.message">
-                    <ion-select-option value="">{{ childList.message }}</ion-select-option>
+                    <ion-item>
+                      <ion-label value="" style="text-align: center;">{{ childList.message }}</ion-label>
+                    </ion-item>
                   </template>
 
                   <template v-else>
-                    <ion-select-option v-for="child in childList" :key="child.childList" v-bind:value="child.id">{{
-                      child.fname
-                    }} {{ child.lname }}</ion-select-option>
+                    <ion-item v-for="child in childList" :key="child.childList">
+                      <ion-radio slot="start" v-bind:value="child.id"></ion-radio>
+                      <ion-label>{{ child.fname }} {{ child.lname }}</ion-label>
+                    </ion-item><br>
                   </template>
-                </ion-select>
+
+                </ion-radio-group>
               </ion-item>
 
               <ion-item>
@@ -81,9 +94,11 @@ import {
   IonButtons, IonHeader, IonToolbar,
   IonItem, toastController,
   useIonRouter,
-  IonCardHeader, IonCardTitle,
+  IonCardHeader, IonCardTitle, IonCardSubtitle,
   IonSelect, IonSelectOption,
-  IonSearchbar
+  IonSearchbar,
+  IonRadioGroup,
+  IonRadio
 } from '@ionic/vue';
 import { stringLiteral } from '@babel/types';
 import { useRoute } from 'vue-router';
@@ -97,9 +112,11 @@ export default defineComponent({
     IonBackButton,
     IonButtons, IonHeader, IonToolbar,
     IonItem,
-    IonCardHeader, IonCardTitle,
+    IonCardHeader, IonCardTitle, IonCardSubtitle,
     IonSelect, IonSelectOption,
-    IonSearchbar
+    IonSearchbar,
+    IonRadioGroup,
+    IonRadio
   },
   data() {
     return {
@@ -111,7 +128,8 @@ export default defineComponent({
         "relationship": ""
       },
       search: "",
-      check: { "guardian_id": "" }
+      text: false,
+      check: { "relationship": "" }
     }
   },
   setup() {
@@ -143,34 +161,47 @@ export default defineComponent({
           .then((response) => response.json())
           .then((json) => {
             this.check = json
-          })
 
-        // checks for links
-        if (this.check.guardian_id != '') {
-          const data = this.linkDetails;
-          fetch('http://localhost:5000/link/add/' + this.guardId, {
-            method: 'POST', // or 'PUT'
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
+            // check if child has link
+            if (this.check.relationship) {
+              toast.message = "Child is already linked"
+            }
+            else {
+              fetch('http://localhost:5000/guardian/link/' + this.guardId)
+                .then((response) => response.json())
+                .then((json) => {
+                  this.check = json
+
+                  // check if guardian has link
+                  if (this.check.relationship) {
+                    toast.message = "Guardian is already linked"
+                  }
+                  else {
+                    const data = this.linkDetails;
+                    fetch('http://localhost:5000/link/add/' + this.guardId, {
+                      method: 'POST', // or 'PUT'
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify(data),
+                    })
+                      .then((data) => {
+                        toast.message = 'Success!'
+                        this.linkDetails = {
+                          "id": "",
+                          "guardian_id": "",
+                          "relationship": ""
+                        }
+                        this.ionRouter.push("/guardian_profile/" + this.guardId);
+                      })
+                      .catch((error) => {
+                        toast.message = error
+                      });
+                    toast.message = "Success!"
+                  }
+                })
+            }
           })
-            .then((data) => {
-              toast.message = 'Success!'
-              this.linkDetails = {
-                "id": "",
-                "guardian_id": "",
-                "relationship": ""
-              }
-              this.ionRouter.push("/guardian_profile/" + this.guardId);
-            })
-            .catch((error) => {
-              toast.message = error
-            });
-        }
-        else {
-          toast.message = "Child is already linked"
-        }
       }
       else {
         toast.message = "Child Or Relationship is Empty"
@@ -178,16 +209,25 @@ export default defineComponent({
 
       await toast.present();
     },
-    searchData() {
-      fetch('http://localhost:5000/child/search/' + this.search)
-        .then((response) => response.json())
-        .then((json) => {
-          this.childList = json
-        })
-    },
-    onEnter: function () {
-      if (this.search != "") {
-        this.searchData()
+    // search
+    searchData(search: string) {
+      this.linkDetails.id = ""
+      search = search.trim()
+      if (search.length) {
+        setTimeout(() => {
+          fetch('http://localhost:5000/child/search/' + search)
+            .then((response) => response.json())
+            .then((json) => {
+              this.text = true
+              this.childList = json
+            })
+        }, 1000)
+      }
+      else {
+        // this.linkDetails = {"id": "", "guardian_id": "", "relationship": ""}
+        this.linkDetails.id = ""
+        this.childList = []
+        this.text = false
       }
     },
   }

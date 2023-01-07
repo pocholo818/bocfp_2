@@ -6,7 +6,7 @@
     <ion-content>
 
       <ion-item>
-        <ion-searchbar v-on:keyup.enter="onEnter" v-model="search"></ion-searchbar>
+        <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
       </ion-item>
 
       <div v-if="childList.message">
@@ -83,22 +83,21 @@ export default defineComponent({
     };
   },
   methods: {
-    onEnter: function () {
-      console.log(this.search)
-
-      if (this.search == "") {
-        this.fetchData()
+    searchData(search: string) {
+      search = search.trim()
+      if (search.length) {
+        setTimeout(() => {
+          fetch('http://localhost:5000/child/search/' + search)
+            .then((response) => response.json())
+            .then((json) => {
+              this.childList = json
+            })
+        }, 1000)
       }
       else {
-        this.searchData()
+        this.fetchData()
       }
-    },
-    searchData() {
-      fetch('http://localhost:5000/child/search/' + this.search)
-        .then((response) => response.json())
-        .then((json) => {
-          this.childList = json
-        })
+
     },
     setOpen(isOpen: boolean) {
       this.isOpen = isOpen;

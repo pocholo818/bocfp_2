@@ -6,7 +6,7 @@
         <ion-content>
 
             <ion-item>
-                <ion-searchbar v-on:keyup.enter="onEnter" v-model="search"></ion-searchbar>
+                <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
             </ion-item>
 
             <div v-if="guardianList.message">
@@ -18,14 +18,14 @@
             </div>
 
             <div v-else>
-                <ion-card v-for="guard in guardianList" :key="guard.guardian_id">
+                <ion-card v-for="guard in guardianList" :key="guard.guardian_id" :router-link="('/guardian_profile/' + guard.guardian_id)">
                     <ion-item>
                         <ion-card-header>
                             <ion-card-title>{{ guard.fname }} {{ guard.lname }}</ion-card-title>
                             <ion-card-subtitle>GRDNID: {{ guard.guardian_id }}</ion-card-subtitle>
                         </ion-card-header>
                     </ion-item>
-
+<!-- 
                     <ion-card-content>
                         <ion-button color="success" :router-link="('/guardian_profile/' + guard.guardian_id)"
                             style="width: 32%;"><ion-icon :icon="eyeOutline"></ion-icon>&nbsp; View</ion-button>
@@ -34,7 +34,7 @@
                         <ion-button color="danger" @click="guardian_delete(guard.guardian_id)"
                             style="width: 32%;"><ion-icon :icon="trashOutline"></ion-icon>&nbsp;
                             Del<span>ete</span></ion-button>
-                    </ion-card-content>
+                    </ion-card-content> -->
 
                 </ion-card>
             </div>
@@ -63,7 +63,7 @@ import {
     IonCardTitle,
     IonCardSubtitle,
     IonCardHeader,
-    IonCardContent,
+    // IonCardContent,
     IonSearchbar,
     toastController,
     alertController
@@ -92,7 +92,7 @@ export default defineComponent({
         IonCardTitle,
         IonCardSubtitle,
         IonCardHeader,
-        IonCardContent,
+        // IonCardContent,
         IonSearchbar
         //   ChildCard
     },
@@ -113,24 +113,24 @@ export default defineComponent({
         };
     },
     methods: {
-        onEnter: function () {
-
-            if (this.search == "") {
-                this.fetchData()
-            }
-            else {
-                this.searchData()
-            }
-        },
         setOpen(isOpen: boolean) {
             this.isOpen = isOpen;
         },
-        searchData() {
-            fetch('http://localhost:5000/guardian/search/' + this.search)
-                .then((response) => response.json())
-                .then((json) => {
-                    this.guardianList = json
-                })
+        searchData(search: string) {
+            search = search.trim()
+            if (search.length) {
+                setTimeout(() => {
+                    fetch('http://localhost:5000/guardian/search/' + search)
+                        .then((response) => response.json())
+                        .then((json) => {
+                            this.guardianList = json
+                        })
+                }, 1000)
+            }
+            else {
+                this.fetchData()
+            }
+
         },
         fetchData() {
             fetch('http://localhost:5000/guardians')
