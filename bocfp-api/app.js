@@ -143,20 +143,6 @@ app.get('/child/link/:id', (req, res) => {
     }
   })
 });
-// get links
-// app.get('/links/:id/:guardian_id', (req, res) => {
-//   connection.query(`SELECT guardian.fname, guardian.lname, guardian.address, 
-//       guardian.contact, link.relationship, guardian.guardian_id
-//       FROM link JOIN guardian ON link.guardian_id = guardian.guardian_id
-//       WHERE link.id = ${req.params.id} AND link.soft_delete = 0;`, (err, rows, fields) => {
-//     if(rows.length){
-//       res.json(rows[0])
-//     }
-//     else{
-//       res.json({"message": "No Linked Guardian Yet", "relationship": ""})
-//     }
-//   })
-// });
 
 
 // POST
