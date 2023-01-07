@@ -18,14 +18,15 @@
             </div>
 
             <div v-else>
-                <ion-card v-for="guard in guardianList" :key="guard.guardian_id" :router-link="('/guardian_profile/' + guard.guardian_id)">
+                <ion-card v-for="guard in guardianList" :key="guard.guardian_id"
+                    :router-link="('/guardian_profile/' + guard.guardian_id)">
                     <ion-item>
                         <ion-card-header>
                             <ion-card-title>{{ guard.fname }} {{ guard.lname }}</ion-card-title>
                             <ion-card-subtitle>GRDNID: {{ guard.guardian_id }}</ion-card-subtitle>
                         </ion-card-header>
                     </ion-item>
-<!-- 
+                    <!-- 
                     <ion-card-content>
                         <ion-button color="success" :router-link="('/guardian_profile/' + guard.guardian_id)"
                             style="width: 32%;"><ion-icon :icon="eyeOutline"></ion-icon>&nbsp; View</ion-button>
@@ -138,51 +139,6 @@ export default defineComponent({
                 .then((json) => {
                     this.guardianList = json
                 })
-        },
-        async guardian_delete(guardian_id: string) {
-            const alert = await alertController.create({
-                header: 'Are you sure you want to delete?',
-                buttons: [
-                    {
-                        text: 'Cancel',
-                        role: 'cancel'
-                    },
-                    {
-                        text: 'DELETE',
-                        role: 'confirm',
-                        handler: async () => {
-                            const toast = await toastController.create({
-                                duration: 1500,
-                                position: 'top'
-                            })
-                            const guard_id = guardian_id;
-                            // console.log(guardian_id);
-
-                            fetch('http://localhost:5000/guardianDel/' + guard_id, {
-                                method: 'PUT',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                            })
-                                .then((data) => {
-                                    toast.message = 'Success!'
-                                    this.guardianDel = "";
-                                    this.fetchData();
-                                })
-                                .catch((error) => {
-                                    toast.message = error
-                                });
-
-                            await toast.present();
-
-
-                            await toast.present();
-                        },
-                    },
-                ],
-            });
-
-            await alert.present();
         }
     },
     // get data

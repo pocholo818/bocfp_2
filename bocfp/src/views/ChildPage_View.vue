@@ -52,6 +52,15 @@
                             <ion-input placeholder="Enter Age" v-model="childAge" readonly></ion-input>
                         </ion-item><br>
 
+                        <!-- options -->
+                        <ion-card-content style="display: flex; justify-content: end;">
+                            <ion-button color="warning" :router-link="('/child_edit/' + childId)"><ion-icon
+                                    :icon="createOutline"></ion-icon>&nbsp; Edit</ion-button>
+                            <ion-button color="danger" @click="child_delete(childId)"><ion-icon :icon="trashOutline">
+                            </ion-icon>&nbsp;
+                                Del<span>ete</span></ion-button>
+                        </ion-card-content>
+
                         <!-- child's guardian -->
                         <ion-card-header>
                             <ion-card-title>Guardian</ion-card-title>
@@ -160,6 +169,7 @@ import {
     IonDatetime, IonDatetimeButton, IonModal,
     alertController, toastController,
     IonBackButton,
+    useIonRouter,
 
 } from '@ionic/vue';
 import { useRoute } from 'vue-router';
@@ -200,13 +210,15 @@ export default defineComponent({
     },
     setup() {
         const router = useRoute();
+        const ionRouter = useIonRouter()
 
         return {
             router,
             eyeOutline,
             createOutline,
             trashOutline,
-            arrowBack
+            arrowBack,
+            ionRouter
         }
     },
     mounted() {
@@ -299,6 +311,45 @@ export default defineComponent({
 
             await alert.present();
             this.fetchLatestRecord();
+        },
+        async child_delete(id: string) {
+            const alert = await alertController.create({
+                header: 'Are you sure you want to delete?',
+                buttons: [
+                    {
+                        text: 'Cancel',
+                        role: 'cancel'
+                    },
+                    {
+                        text: 'DELETE',
+                        role: 'confirm',
+                        handler: async () => {
+                            const toast = await toastController.create({
+                                duration: 1500,
+                                position: 'top'
+                            })
+
+                            const childId = this.childId
+
+                            fetch('http://localhost:5000/child/del/' + childId, {
+                                method: 'PUT'
+                            })
+                                .then((data) => {
+                                    toast.message = 'Success!'
+                                    this.$emit('deleted')
+                                })
+                                .catch((error) => {
+                                    toast.message = error
+                                });
+
+                            await toast.present();
+                            this.ionRouter.back()
+                        },
+                    },
+                ],
+            });
+
+            await alert.present();
         }
     },
     watch: {

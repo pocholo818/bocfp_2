@@ -44,10 +44,10 @@
               <ion-card-content style="display: flex; justify-content: end;">
                 <!-- <ion-button color="success" :router-link="('/guardian_profile/' + guardId)"
                   style="width: 32%;"><ion-icon :icon="eyeOutline"></ion-icon>&nbsp; View</ion-button> -->
-                <ion-button color="warning" :router-link="('/guardian_edit/' + guardId)"
-                  ><ion-icon :icon="createOutline"></ion-icon>&nbsp; Edit</ion-button>
+                <ion-button color="warning" :router-link="('/guardian_edit/' + guardId)"><ion-icon
+                    :icon="createOutline"></ion-icon>&nbsp; Edit</ion-button>
                 <ion-button color="danger" @click="guardian_delete(guardId)"><ion-icon
-                  :icon="trashOutline"></ion-icon>&nbsp;
+                    :icon="trashOutline"></ion-icon>&nbsp;
                   Del<span>ete</span></ion-button>
               </ion-card-content>
             </ion-list>
@@ -118,7 +118,13 @@ import {
   IonCardSubtitle,
   IonBackButton,
   alertController,
-  toastController
+  toastController,
+IonButton,
+IonContent,
+IonIcon,
+IonLabel,
+IonPage,
+useIonRouter,
 } from '@ionic/vue';
 
 export default defineComponent({
@@ -147,13 +153,15 @@ export default defineComponent({
   },
   setup() {
     const router = useRoute();
+    const ionRouter = useIonRouter()
 
     return {
       eyeOutline,
       createOutline,
       trashOutline,
       arrowBack,
-      router
+      router,
+      ionRouter
     }
   },
   mounted() {
@@ -176,6 +184,45 @@ export default defineComponent({
         .then((json) => {
           this.childList = json
         })
+    },
+    async guardian_delete(guardian_id: string) {
+      const alert = await alertController.create({
+        header: 'Are you sure you want to delete?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel'
+          },
+          {
+            text: 'DELETE',
+            role: 'confirm',
+            handler: async () => {
+              const toast = await toastController.create({
+                duration: 1500,
+                position: 'top'
+              })
+              const guard_id = guardian_id;
+
+              fetch('http://localhost:5000/guardianDel/' + guard_id, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              })
+                .then((data) => {
+                  toast.message = 'Success!'
+                })
+                .catch((error) => {
+                  toast.message = error
+                });
+              await toast.present();
+              this.ionRouter.back()
+            },
+          },
+        ],
+      });
+
+      await alert.present();
     },
     async link_delete(guardian_id: string) {
       const alert = await alertController.create({

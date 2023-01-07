@@ -76,7 +76,10 @@
         IonButtons, IonHeader, IonToolbar,
         IonDatetime, IonDatetimeButton, IonModal ,
         IonItem, IonSelect, IonSelectOption, toastController,
-        useIonRouter
+        useIonRouter,
+        IonCardHeader,
+        IonCardTitle
+
     } from '@ionic/vue';
 import { stringLiteral } from '@babel/types';
     // import HeaderBar from '@/components/HeaderBar.vue';
@@ -96,7 +99,9 @@ import { stringLiteral } from '@babel/types';
         IonBackButton,
         IonButtons, IonHeader, IonToolbar,
         IonDatetime, IonDatetimeButton, IonModal,
-        IonItem, IonSelect, IonSelectOption
+        IonItem, IonSelect, IonSelectOption,
+        IonCardHeader,
+        IonCardTitle
       },
         data(){
           return {

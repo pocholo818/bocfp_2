@@ -1,5 +1,5 @@
 <template>
-  <ion-card>
+  <ion-card :router-link="('/child_view/' + data.id)">
     <ion-item>
         <ion-thumbnail slot="start">
           <img alt="pcture"  theme="icon" src="@/assets/images/noPic.png">
@@ -11,7 +11,7 @@
         </ion-card-header>
       </ion-item>
 
-    <ion-card-content>
+    <!-- <ion-card-content>
       <div style="text-align:center;">
         <ion-button color="success" style="width: 32%;" :router-link="'/child_view/' + data.id"><ion-icon
             :icon="eyeOutline"></ion-icon>&nbsp; View</ion-button>
@@ -20,7 +20,7 @@
         <ion-button color="danger" style="width: 32%;" @click="child_delete"><ion-icon
             :icon="trashOutline"></ion-icon>&nbsp; Del<span>ete</span></ion-button>
       </div>
-    </ion-card-content>
+    </ion-card-content> -->
   </ion-card>
 </template>
 
@@ -31,8 +31,8 @@ import {
   IonCardTitle,
   IonCardSubtitle,
   IonCardHeader,
-  IonCardContent,
-  IonIcon,
+  // IonCardContent,
+  // IonIcon,
   IonThumbnail,
   alertController,
   toastController
@@ -52,8 +52,8 @@ export default defineComponent({
     IonCardTitle,
     IonCardSubtitle,
     IonCardHeader,
-    IonCardContent,
-    IonIcon,
+    // IonCardContent,
+    // IonIcon,
     IonThumbnail,
   },
   setup() {
