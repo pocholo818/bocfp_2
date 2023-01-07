@@ -18,7 +18,10 @@
                     </ion-card-header>
 
                     <!-- picture -->
-                    <img alt="picture" class="icon" src="@/assets/images/noPic.png">
+                    <!-- <img alt="picture" class="icon" src="@/assets/images/noPic.png"> -->
+                    <img alt="picture" class="icon" :src="childDetails.image">
+
+                    
                     <ion-card-subtitle style="text-align: center;">CHLDID: {{ childId }}</ion-card-subtitle>
 
                     <ion-list>
@@ -198,7 +201,7 @@ export default defineComponent({
     data() {
         return {
             childId: "",
-            childDetails: {},
+            childDetails: {"image": ""},
             childRecords: "",
             childNewRecord: "",
             childAge: 0,
@@ -228,6 +231,10 @@ export default defineComponent({
             .then((response) => response.json())
             .then((json) => {
                 this.childDetails = json
+                
+                if(!this.childDetails.image){
+                    this.childDetails.image = require("@/assets/images/noPic.png")
+                }
 
                 this.childBdate = json.bdate;
                 this.childAge = this.computeAge();

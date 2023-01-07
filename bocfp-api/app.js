@@ -148,10 +148,10 @@ app.get('/child/link/:id', (req, res) => {
 // POST
 // add new child
 app.post('/child', (req, res) => {
-  const { fname, lname, bdate, sex} = req.body;
+  const { fname, lname, bdate, sex, image} = req.body;
 
-  connection.query(`INSERT INTO child (fname, lname, bdate, sex) 
-        VALUES ('${fname}', '${lname}', '${bdate}', '${sex}')`, (err, rows, fields) => {
+  connection.query(`INSERT INTO child (fname, lname, bdate, sex, image) 
+        VALUES ('${fname}', '${lname}', '${bdate}', '${sex}', '${image}')`, (err, rows, fields) => {
     if (err) throw err
   })
   res.send("success")

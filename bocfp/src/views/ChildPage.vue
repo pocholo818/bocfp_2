@@ -18,7 +18,18 @@
       </div>
 
       <div v-else>
-        <ChildCard v-for="child in childList" :key="child.id" :data="child" @deleted="fetchData" />
+        <ion-card v-for="child in childList" :key="child.id" :router-link="('/child_view/' + child.id)">
+          <ion-item>
+            <ion-thumbnail slot="start">
+              <img alt="picture" class="icon" :src="child.image">
+            </ion-thumbnail>
+
+            <ion-card-header>
+              <ion-card-title>{{ child.fname }} {{ child.lname }}</ion-card-title>
+              <ion-card-subtitle>CHLDID: {{ child.id }}</ion-card-subtitle>
+            </ion-card-header>
+          </ion-item>
+        </ion-card>
       </div>
 
 
@@ -44,14 +55,15 @@ import {
   IonIcon,
   IonCard,
   IonCardSubtitle,
-  IonCardHeader
+  IonCardHeader,
+  IonCardTitle,
+  IonThumbnail
 } from '@ionic/vue';
 // icons
 import {
   addOutline
 } from 'ionicons/icons';
 import HeaderBar from '@/components/HeaderBar.vue';
-import ChildCard from '@/components/ChildCard.vue'
 // import {
 //   IonContent,
 //   IonPage,
@@ -65,10 +77,11 @@ export default defineComponent({
     IonFab,
     IonFabButton,
     IonIcon,
-    ChildCard,
     IonCard,
     IonCardSubtitle,
-    IonCardHeader
+    IonCardHeader,
+    IonCardTitle,
+    IonThumbnail
   },
   setup() {
     return {
@@ -78,7 +91,7 @@ export default defineComponent({
   data() {
     return {
       isOpen: false,
-      childList: [],
+      childList: { "image": "" },
       search: ""
     };
   },
@@ -107,6 +120,13 @@ export default defineComponent({
         .then((response) => response.json())
         .then((json) => {
           this.childList = json
+
+          if (this.childList.image) {
+            this.childList.image = `data:image/jpeg;base64,${json.image}`
+          }
+          else {
+            this.childList.image = require("@/assets/images/noPic.png")
+          }
         })
     }
   },
@@ -125,5 +145,20 @@ export default defineComponent({
 <style scoped>
 ion-button {
   --border-width: 100%;
+}
+
+.icon {
+  width: 60px;
+  height: 60px;
+}
+
+img[src=""] {
+  content: url('~@/assets/images/noPic.png');
+}
+
+@media only screen and (max-width: 768px) {
+  span {
+    display: none;
+  }
 }
 </style>

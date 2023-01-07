@@ -2,7 +2,8 @@
   <ion-card :router-link="('/child_view/' + data.id)">
     <ion-item>
         <ion-thumbnail slot="start">
-          <img alt="pcture"  theme="icon" src="@/assets/images/noPic.png">
+          <!-- <img alt="pcture"  theme="icon" src="@/assets/images/noPic.png"> -->
+          <img alt="picture" class="icon" :src="data.image">
         </ion-thumbnail>
 
         <ion-card-header>
@@ -118,9 +119,12 @@ export default defineComponent({
 
 <style scoped>
 .icon {
-  width: 110px;
-  height: 110px;
-  border: 1px solid black;
+  width: 60px;
+  height: 60px;
+}
+
+img[src=""] {
+  content: url('~@/assets/images/noPic.png');
 }
 
 @media only screen and (max-width: 768px) {
