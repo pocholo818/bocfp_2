@@ -10,16 +10,16 @@
                         <ion-item>
                             <ion-label position="floating">Username</ion-label>
                             <!-- <ion-icon slot="start" :name="personOutline"></ion-icon> -->
-                            <ion-input placeholder="Username" v-model="loginDetails.username"></ion-input>
+                            <ion-input placeholder="Username" @keyup.enter="login()" v-model="loginDetails.username"></ion-input>
                         </ion-item>
 
                         <ion-item>
                             <ion-label position="floating">Password</ion-label>
-                            <ion-input type="password" placeholder="Password"
+                            <ion-input type="password" @keyup.enter="login()" placeholder="Password"
                                 v-model="loginDetails.password"></ion-input>
                         </ion-item><br>
 
-                        <ion-button class="theme" @click="login()" @keyup.enter="login()"
+                        <ion-button class="theme" @click="login()"
                             expand="block">Login</ion-button>
                     </ion-card-content>
                 </ion-card>
