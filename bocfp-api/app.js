@@ -291,7 +291,7 @@ app.put('/link/del/:guardian_id', (req, res) => {
   res.send("success")
 });
 
-// SQL  FUNCTIONS
+// dashboard stuff
 // get total child
 app.get('/child/count/', (req, res) => {
   connection.query(`SELECT COUNT(id) FROM child WHERE soft_delete = 0`, (err, count, fields) => {
@@ -314,9 +314,21 @@ app.get('/child/newRecord/:id', (req, res) => {
 });
 // BMI remarks
 app.get('/child/remarks', (req, res) => {
-  connection.query(`SELECT remark, COUNT(DISTINCT remark) AS total FROM record GROUP BY remark ORDER BY record_id DESC`, (err, count, fields) => {
-    if (err) throw err
-    res.json(count)
+  let results = {
+    "Underweight": 0,
+    "Normal": 0,
+    "Overweight": 0,
+    "Obese" : 0
+  }
+
+  connection.query(`SELECT remark FROM record t INNER JOIN (SELECT MAX(date) as maxdate FROM record GROUP BY id) tm ON t.date = tm.maxdate WHERE soft_delete = 0`, (err, rows, fields) => {
+    if(rows){
+      rows.forEach(item => results[item.remark] += 1)
+      res.json(results)
+    }
+    else{
+      res.json({"message": "No result(s)"})
+    }
   })
 });
 
