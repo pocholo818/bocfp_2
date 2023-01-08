@@ -64,16 +64,16 @@
 
           <ion-card-content>
             <ion-list>
-              <div v-if="childList.relationship == ''">
-                <h2 style="text-align: center;">{{ childList.message }}</h2>
+              <div v-if="child.relationship == ''">
+                <h2 style="text-align: center;">{{ child.message }}</h2>
               </div>
 
               <div v-else>
-                <ion-item v-for="link in childList" :key="link.link_id">
+                <ion-item>
                   <ion-label>
-                    <h2>{{ link.fname }} {{ link.lname }}</h2>
-                    <p>Guardian Relationship: {{ link.relationship }}</p>
-                    <ion-button color="success" :router-link="'/child_view/' + link.id">View</ion-button>
+                    <h2>{{ child.fname }} {{ child.lname }}</h2>
+                    <p>Guardian Relationship: {{ child.relationship }}</p>
+                    <ion-button color="success" :router-link="'/child_view/' + child.id">View</ion-button>
                     <ion-button color="warning">Edit</ion-button>
                     <ion-button color="danger" @click="link_delete(guardId)">Remove Link</ion-button>
                   </ion-label>
@@ -146,7 +146,7 @@ export default defineComponent({
     return {
       guardId: "",
       guardProfile: "",
-      childList: ""
+      child: ""
     }
   },
   setup() {
@@ -180,7 +180,7 @@ export default defineComponent({
       fetch('http://localhost:5000/guardian/link/' + this.guardId)
         .then((response) => response.json())
         .then((json) => {
-          this.childList = json
+          this.child = json
         })
     },
     async guardian_delete(guardian_id: string) {
