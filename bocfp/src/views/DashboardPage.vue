@@ -23,11 +23,16 @@
                 </ion-card-header>
             </ion-card>
 
+            <ion-card>
+                <!-- <Pie :data="data" :options="options" /> -->
+                <PieChart :data="data" :options="options" />
+            </ion-card>
+
         </ion-content>
 
     </ion-page>
 </template>
-  
+
 <script lang="ts">
 import { defineComponent } from 'vue';
 // ionic stuff
@@ -52,15 +57,17 @@ import {
     addOutline
 } from 'ionicons/icons';
 import HeaderBar from '@/components/HeaderBar.vue';
-import ChildCard from '@/components/ChildCard.vue'
-// import {
-//   IonContent,
-//   IonPage,
-// } from '@ionic/vue';
+
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+// import { Pie } from 'vue-chartjs'
+ChartJS.register(ArcElement, Tooltip, Legend)
+import PieChart from '@/components/PieChart.vue'
+// import * as chartConfig from './chartConfig.js'
 
 export default defineComponent({
     name: 'ChildPage',
     components: {
+        PieChart,
         HeaderBar,
         // IonFab,
         // IonFabButton,
@@ -87,7 +94,21 @@ export default defineComponent({
             childList: [],
             childCount: "",
             childRemarks: {},
-            countTotalRemarks: 0
+            countTotalRemarks: 0,
+            data: {
+                labels: ['Underweight', 'Normal', 'Overweight', 'Obese'],
+                datasets: [
+                    {
+                        backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
+                        data: [0]
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+
         };
     },
     methods: {
@@ -99,6 +120,8 @@ export default defineComponent({
                 .then((response) => response.json())
                 .then((json) => {
                     this.childRemarks = json
+                    this.data.datasets[0].data = [json.Underweight, json.Normal, json.Overweight, json.Obese]
+                    // console.log(this.data)
                 })
         },
         fetchChildCount() {
@@ -122,8 +145,7 @@ export default defineComponent({
     }
 });
 </script>
-  
+
 <style scoped>
 
 </style>
-  
