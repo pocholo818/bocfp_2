@@ -9,6 +9,10 @@ const routes: Array<RouteRecordRaw> = [
     redirect: '/dashboard'
   },
   {
+    path: '/login',
+    component: () => import('@/views/LoginPage.vue'),
+  },
+  {
     path: '/',
     component: HomePage,
     children: [
@@ -66,10 +70,8 @@ const routes: Array<RouteRecordRaw> = [
       },
     ]
   },
-   
-
-    // if wrong
-    {
+  // if wrong
+  {
     path: '/:pathMatch(.*)*',
     redirect: '/'
   },

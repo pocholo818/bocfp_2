@@ -201,6 +201,20 @@ app.post('/link/add/:guardian_id', (req, res) => {
   })
   res.send("success")
 });
+// get user
+app.post('/user/login', (req, res) => {
+  const {username, password} = req.body
+
+  connection.query(`SELECT * FROM user WHERE username='${username}' AND password='${password}'`, (err, rows, fields) => {
+    // console.log(rows.length)
+    if(!rows.length){
+      res.json({"message": "Incorrect Username or Password"})
+    }
+    else if(rows[0].username == username && rows[0].password == password){
+      res.json({"message": "Success!"})
+    }
+  })
+});
 
 
 // PUT
