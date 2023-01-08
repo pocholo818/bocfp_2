@@ -7,10 +7,7 @@
           <ion-menu-button></ion-menu-button>
         </ion-buttons>
         <ion-title>Child</ion-title>
-        <ion-buttons slot="end">
-          <ion-button @click="prevData()">Prev</ion-button>
-          <ion-button @click="nextData()">Next</ion-button>
-        </ion-buttons>
+        <PageButtons :prev="prevData" :next="nextData"/>
       </ion-toolbar>
     </ion-header>
 
@@ -72,24 +69,20 @@ import {
   IonThumbnail,
   IonToolbar,
   IonHeader, IonMenuButton,
-  IonButtons, IonButton,
+  IonButtons,
   IonTitle
 } from '@ionic/vue';
 // icons
 import {
   addOutline
 } from 'ionicons/icons';
-// import HeaderBar from '@/components/HeaderBar.vue';
-// import {
-//   IonContent,
-//   IonPage,
-// } from '@ionic/vue';
+import PageButtons from '@/components/PageButtons.vue';
 
 export default defineComponent({
   name: 'ChildPage',
   components: {
     IonSearchbar,
-    // HeaderBar,
+    PageButtons,
     IonFab,
     IonFabButton,
     IonIcon,
@@ -100,7 +93,7 @@ export default defineComponent({
     IonThumbnail,
     IonToolbar,
     IonHeader, IonMenuButton,
-    IonButtons, IonButton,
+    IonButtons,
     IonTitle
   },
   setup() {

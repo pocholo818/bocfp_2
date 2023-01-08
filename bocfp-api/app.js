@@ -75,7 +75,9 @@ app.get('/child/search/:search', (req, res) => {
 });
 // get record
 app.get('/records/:id', (req, res) => {
-  connection.query(`SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id DESC`, (err, rows, fields) => {
+  const {limit, offset} = req.query
+
+  connection.query(`SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
     // connection.query(`SELECT * FROM child WHERE soft_delete = 0 ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
     if (rows.length) {
       res.json(rows)

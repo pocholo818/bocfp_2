@@ -7,19 +7,14 @@
                     <ion-menu-button></ion-menu-button>
                 </ion-buttons>
                 <ion-title>Guardian</ion-title>
-                <ion-buttons slot="end">
-                    <ion-button @click="prevData()">Prev</ion-button>
-                    <ion-button @click="nextData()">Next</ion-button>
-                </ion-buttons>
+                <PageButtons :prev="prevData" :next="nextData" />
             </ion-toolbar>
         </ion-header>
 
         <!-- content -->
         <ion-content>
 
-            <ion-item>
-                <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
-            </ion-item>
+            <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
 
             <div v-if="guardianList.message">
                 <ion-card>
@@ -67,11 +62,9 @@ import {
     IonCardSubtitle,
     IonCardHeader,
     IonSearchbar,
-    toastController,
-    alertController,
     IonToolbar,
     IonHeader, IonMenuButton,
-    IonButtons, IonButton,
+    IonButtons,
     IonTitle
 } from '@ionic/vue';
 // icons
@@ -81,10 +74,12 @@ import {
     trashOutline,
     addOutline
 } from 'ionicons/icons';
+import PageButtons from '@/components/PageButtons.vue';
 
 export default defineComponent({
     name: 'ChildPage',
     components: {
+        PageButtons,
         IonFab,
         IonFabButton,
         IonIcon,
@@ -95,7 +90,7 @@ export default defineComponent({
         IonSearchbar,
         IonToolbar,
         IonHeader, IonMenuButton,
-        IonButtons, IonButton,
+        IonButtons,
         IonTitle
     },
     setup() {

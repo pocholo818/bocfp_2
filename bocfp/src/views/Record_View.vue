@@ -5,6 +5,7 @@
         <ion-buttons slot="start">
           <ion-back-button text="Back"></ion-back-button>
         </ion-buttons>
+        <PageButtons :prev="prevData" :next="nextData" />
       </ion-toolbar>
     </ion-header>
 
@@ -38,11 +39,9 @@
 
                     <ion-label>
                       <div>
-                        <ion-button color="warning"
-                          :router-link="('/record_edit/' + record.record_id)"><ion-icon
+                        <ion-button color="warning" :router-link="('/record_edit/' + record.record_id)"><ion-icon
                             :icon="createOutline"></ion-icon>Edit</ion-button>
-                        <ion-button color="danger"
-                          @click="record_delete(record.record_id)"><ion-icon
+                        <ion-button color="danger" @click="record_delete(record.record_id)"><ion-icon
                             :icon="trashOutline"></ion-icon>Del<span>ete</span></ion-button>
                       </div>
                     </ion-label>
@@ -80,12 +79,14 @@ import {
   IonBackButton,
   alertController
 } from '@ionic/vue';
+
 import { useRoute } from 'vue-router';
+import PageButtons from '@/components/PageButtons.vue';
 
 export default defineComponent({
   name: 'ChildPage2',
   components: {
-    // HeaderBar,
+    PageButtons,
     IonList,
     IonCard,
     IonCardContent,
@@ -97,7 +98,9 @@ export default defineComponent({
   data() {
     return {
       childId: "",
-      childRecords: ""
+      childRecords: "",
+      limit: 10,
+      offset: 0
     }
   },
   setup() {
@@ -120,59 +123,75 @@ export default defineComponent({
   },
   methods: {
     fetchRecord() {
-      fetch('http://localhost:5000/records/' + this.childId)
+      fetch(`http://localhost:5000/records/` + this.childId + `?limit=${this.limit}&offset=${this.offset}`)
         .then((response) => response.json())
         .then((json) => {
           this.childRecords = json
         })
     },
     async record_delete(record_id: string) {
-            const alert = await alertController.create({
-                header: 'Are you sure you want to delete?',
-                buttons: [
-                    {
-                        text: 'Cancel',
-                        role: 'cancel'
-                    },
-                    {
-                        text: 'DELETE',
-                        role: 'confirm',
-                        handler: async () => {
-                            const toast = await toastController.create({
-                                duration: 1500,
-                                position: 'top'
-                            })
-                            const recordId = record_id
+      const alert = await alertController.create({
+        header: 'Are you sure you want to delete?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel'
+          },
+          {
+            text: 'DELETE',
+            role: 'confirm',
+            handler: async () => {
+              const toast = await toastController.create({
+                duration: 1500,
+                position: 'top'
+              })
+              const recordId = record_id
 
-                            console.log(recordId);
+              console.log(recordId);
 
-                            fetch('http://localhost:5000/record/del/' + recordId, {
-                                method: 'put'
-                            })
-                                .then((data) => {
-                                    toast.message = 'Success!'
-                                    // this.$emit('deleted')
-                                    this.fetchRecord()
-                                })
-                                .catch((error) => {
-                                    toast.message = error
-                                });
+              fetch('http://localhost:5000/record/del/' + recordId, {
+                method: 'put'
+              })
+                .then((data) => {
+                  toast.message = 'Success!'
+                  // this.$emit('deleted')
+                  this.fetchRecord()
+                })
+                .catch((error) => {
+                  toast.message = error
+                });
 
-                            await toast.present();
-                        },
-                    },
-                ],
-            });
+              await toast.present();
+            },
+          },
+        ],
+      });
 
-            await alert.present();
-            this.fetchRecord();
-        }
+      await alert.present();
+      this.fetchRecord();
+    },
+    prevData() {
+      const offset = this.offset -= this.limit
+      if (offset <= 0) {
+        this.offset = 0
+      }
+      else {
+        this.offset = offset
+      }
+
+      this.fetchRecord()
+    },
+    nextData() {
+      this.offset += this.limit
+
+      this.fetchRecord()
+    },
   },
   watch: {
-        $route() {
-            this.$nextTick(this.fetchRecord);
-        }
-    },
+    $route() {
+      this.$nextTick(this.fetchRecord);
+    }
+  },
 });
 
 
@@ -187,9 +206,8 @@ ion-toolbar {
 }
 
 @media only screen and (max-width: 768px) {
-    span {
-        display: none;
-    }
+  span {
+    display: none;
+  }
 }
-
 </style>
