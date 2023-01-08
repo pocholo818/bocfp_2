@@ -1,6 +1,18 @@
 <template>
     <ion-page>
-        <HeaderBar title="Guardian" />
+
+        <ion-header>
+            <ion-toolbar class="theme">
+                <ion-buttons slot="start">
+                    <ion-menu-button></ion-menu-button>
+                </ion-buttons>
+                <ion-title>Guardian</ion-title>
+                <ion-buttons slot="end">
+                    <ion-button @click="prevData()">Prev</ion-button>
+                    <ion-button @click="nextData()">Next</ion-button>
+                </ion-buttons>
+            </ion-toolbar>
+        </ion-header>
 
         <!-- content -->
         <ion-content>
@@ -19,23 +31,13 @@
 
             <div v-else>
                 <ion-card v-for="guard in guardianList" :key="guard.guardian_id"
-                    :router-link="('/guardian_profile/' + guard.guardian_id)">
+                    :router-link="('/guardian_profile/' + guard.guardian_id)" style="cursor: pointer">
                     <ion-item>
                         <ion-card-header>
                             <ion-card-title>{{ guard.fname }} {{ guard.lname }}</ion-card-title>
                             <ion-card-subtitle>GRDNID: {{ guard.guardian_id }}</ion-card-subtitle>
                         </ion-card-header>
                     </ion-item>
-                    <!-- 
-                    <ion-card-content>
-                        <ion-button color="success" :router-link="('/guardian_profile/' + guard.guardian_id)"
-                            style="width: 32%;"><ion-icon :icon="eyeOutline"></ion-icon>&nbsp; View</ion-button>
-                        <ion-button color="warning" :router-link="('/guardian_edit/' + guard.guardian_id)"
-                            style="width: 32%;"><ion-icon :icon="createOutline"></ion-icon>&nbsp; Edit</ion-button>
-                        <ion-button color="danger" @click="guardian_delete(guard.guardian_id)"
-                            style="width: 32%;"><ion-icon :icon="trashOutline"></ion-icon>&nbsp;
-                            Del<span>ete</span></ion-button>
-                    </ion-card-content> -->
 
                 </ion-card>
             </div>
@@ -64,10 +66,13 @@ import {
     IonCardTitle,
     IonCardSubtitle,
     IonCardHeader,
-    // IonCardContent,
     IonSearchbar,
     toastController,
-    alertController
+    alertController,
+    IonToolbar,
+    IonHeader, IonMenuButton,
+    IonButtons, IonButton,
+    IonTitle
 } from '@ionic/vue';
 // icons
 import {
@@ -76,16 +81,10 @@ import {
     trashOutline,
     addOutline
 } from 'ionicons/icons';
-import HeaderBar from '@/components/HeaderBar.vue';
-// import {
-//   IonContent,
-//   IonPage,
-// } from '@ionic/vue';
 
 export default defineComponent({
     name: 'ChildPage',
     components: {
-        HeaderBar,
         IonFab,
         IonFabButton,
         IonIcon,
@@ -93,9 +92,11 @@ export default defineComponent({
         IonCardTitle,
         IonCardSubtitle,
         IonCardHeader,
-        // IonCardContent,
-        IonSearchbar
-        //   ChildCard
+        IonSearchbar,
+        IonToolbar,
+        IonHeader, IonMenuButton,
+        IonButtons, IonButton,
+        IonTitle
     },
     setup() {
         return {
@@ -110,7 +111,9 @@ export default defineComponent({
             isOpen: false,
             guardianList: [],
             guardianDel: "",
-            search: ""
+            search: "",
+            limit: 20,
+            offset: 0
         };
     },
     methods: {
@@ -134,12 +137,28 @@ export default defineComponent({
 
         },
         fetchData() {
-            fetch('http://localhost:5000/guardians')
+            fetch(`http://localhost:5000/guardians?limit=${this.limit}&offset=${this.offset}`)
                 .then((response) => response.json())
                 .then((json) => {
                     this.guardianList = json
                 })
-        }
+        },
+        prevData() {
+            const offset = this.offset -= this.limit
+            if (offset <= 0) {
+                this.offset = 0
+            }
+            else {
+                this.offset = offset
+            }
+
+            this.fetchData()
+        },
+        nextData() {
+            this.offset += this.limit
+
+            this.fetchData()
+        },
     },
     // get data
     mounted() {

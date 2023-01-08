@@ -37,11 +37,11 @@
                     <p>BMI: {{ record.output.toFixed(2) }}</p>
 
                     <ion-label>
-                      <div style="text-align:center;">
-                        <ion-button color="warning" style="width: 49%;"
+                      <div>
+                        <ion-button color="warning"
                           :router-link="('/record_edit/' + record.record_id)"><ion-icon
                             :icon="createOutline"></ion-icon>Edit</ion-button>
-                        <ion-button color="danger" style="width: 49%;"
+                        <ion-button color="danger"
                           @click="record_delete(record.record_id)"><ion-icon
                             :icon="trashOutline"></ion-icon>Del<span>ete</span></ion-button>
                       </div>

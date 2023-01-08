@@ -40,10 +40,8 @@
                 <ion-input type="text" placeholder="Enter Address" v-model="guardProfile.address" readonly></ion-input>
               </ion-item>
 
-
+              <!-- options -->
               <ion-card-content style="display: flex; justify-content: end;">
-                <!-- <ion-button color="success" :router-link="('/guardian_profile/' + guardId)"
-                  style="width: 32%;"><ion-icon :icon="eyeOutline"></ion-icon>&nbsp; View</ion-button> -->
                 <ion-button color="warning" :router-link="('/guardian_edit/' + guardId)"><ion-icon
                     :icon="createOutline"></ion-icon>&nbsp; Edit</ion-button>
                 <ion-button color="danger" @click="guardian_delete(guardId)"><ion-icon
@@ -119,12 +117,12 @@ import {
   IonBackButton,
   alertController,
   toastController,
-IonButton,
-IonContent,
-IonIcon,
-IonLabel,
-IonPage,
-useIonRouter,
+  IonButton,
+  IonContent,
+  IonIcon,
+  IonLabel,
+  IonPage,
+  useIonRouter,
 } from '@ionic/vue';
 
 export default defineComponent({

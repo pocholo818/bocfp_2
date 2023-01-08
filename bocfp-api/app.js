@@ -40,7 +40,9 @@ function bmi(height, weight, output) {
 // GET
 // get all child
 app.get('/childs', (req, res) => {
-  connection.query('SELECT * FROM child WHERE soft_delete = 0', (err, rows, fields) => {
+  const {limit, offset} = req.query
+
+  connection.query(`SELECT * FROM child WHERE soft_delete = 0 ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
     if (rows.length) {
       res.json(rows)
     }
@@ -48,6 +50,7 @@ app.get('/childs', (req, res) => {
       res.json({ "message": "No Child(s) Found", "id": "" })
     }
   })
+
 });
 // get specific child
 app.get('/child/profile/:id', (req, res) => {
@@ -73,6 +76,7 @@ app.get('/child/search/:search', (req, res) => {
 // get record
 app.get('/records/:id', (req, res) => {
   connection.query(`SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id DESC`, (err, rows, fields) => {
+    // connection.query(`SELECT * FROM child WHERE soft_delete = 0 ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
     if (rows.length) {
       res.json(rows)
     }
@@ -90,9 +94,15 @@ app.get('/record/:id', (req, res) => {
 });
 // get all guardian
 app.get('/guardians', (req, res) => {
-  connection.query('SELECT * FROM guardian WHERE soft_delete=0', (err, rows, fields) => {
-    if (err) throw err
-    res.json(rows)
+  const {limit, offset} = req.query
+
+    connection.query(`SELECT * FROM guardian WHERE soft_delete = 0 ORDER BY guardian_id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
+    if(rows.length){
+      res.json(rows)
+    }
+    else{
+      res.json({ "message": "No Guardian(s) Found"})
+    }
   })
 });
 // get specific guardian
