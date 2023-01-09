@@ -91,24 +91,7 @@ export default defineComponent({
         iosIcon: personOutline,
         mdIcon: personSharp
       },
-      // {
-      //   title: 'Child Add',
-      //   url: '/child_add',
-      //   iosIcon: personOutline,
-      //   mdIcon: personSharp
-      // },
-      // {
-      //   title: 'Childsss',
-      //   url: '/childsss',
-      //   iosIcon: personOutline,
-      //   mdIcon: personSharp
-      // },
     ];
-
-    // const path = window.location.pathname.split('folder/')[1];
-    // if (path !== undefined) {
-    //   selectedIndex.value = appPages.findIndex(page => page.title.toLowerCase() === path.toLowerCase());
-    // }
 
     const route = useRoute();
 

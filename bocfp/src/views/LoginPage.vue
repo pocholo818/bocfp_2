@@ -3,14 +3,17 @@
         <ion-content>
 
             <div class="loginCard">
-                <ion-card>
+                <ion-card style="width: 420px;">
                     <ion-card-content>
-                        <ion-card-title style="text-align:center;">Login</ion-card-title>
+                        <ion-card-title style="text-align:center;">Login</ion-card-title><br>
+
+                        <img src="@/assets/images/logo.png">
 
                         <ion-item>
                             <ion-label position="floating">Username</ion-label>
                             <!-- <ion-icon slot="start" :name="personOutline"></ion-icon> -->
-                            <ion-input placeholder="Username" @keyup.enter="login()" v-model="loginDetails.username"></ion-input>
+                            <ion-input placeholder="Username" @keyup.enter="login()"
+                                v-model="loginDetails.username"></ion-input>
                         </ion-item>
 
                         <ion-item>
@@ -19,8 +22,7 @@
                                 v-model="loginDetails.password"></ion-input>
                         </ion-item><br>
 
-                        <ion-button class="theme" @click="login()"
-                            expand="block">Login</ion-button>
+                        <ion-button class="theme" @click="login()" expand="block">Login</ion-button>
                     </ion-card-content>
                 </ion-card>
             </div>
@@ -45,6 +47,7 @@ import {
 } from '@ionic/vue';
 import { personOutline } from 'ionicons/icons';
 import router from '@/router';
+import SHA256 from 'crypto-js/sha256';
 
 export default defineComponent({
     name: 'ChildPage',
@@ -83,7 +86,8 @@ export default defineComponent({
                 position: 'top'
             })
 
-            const data = this.loginDetails
+            let data = Object.assign({}, this.loginDetails) // clone this.loginDetails, not reference
+            data.password = SHA256(this.loginDetails.password).toString()
 
             fetch('http://localhost:5000/user/login/', {
                 method: 'POST',
@@ -96,20 +100,34 @@ export default defineComponent({
                 .then(data => {
                     if (data.message == "Success!") {
                         toast.message = data.message
-                        this.loginDetails = {
-                            username: "",
-                            password: ""
-                        }
-                        router.push('/dashboard')
+                        // this.loginDetails = {
+                        //     username: "",
+                        //     password: ""
+                        // }
+                        // router.push('/dashboard')
                     }
                     else {
                         toast.message = data.message
-
                     }
                 })
             await toast.present();
         },
     },
+    mounted() {
+        // const password = SHA256("passwordshit");
+        // const FromApiPassword = "ASDASDASDSAD!#!#@"
+        // let hash1 = SHA256("bocfp2022$")
+        // let hash2 = "0d3c456672f7646f6403659b91c8987e95ecc7012fd7f77cfa400ce6dd33c789"
+
+        // if(hash1.toString() === hash2){
+        //     console.log("hash1: ",hash1.toString())
+        //     console.log("hash2: ",hash2.toString())
+        //     console.log("yes")
+        // }
+        // else{
+        //     console.log("no")
+        // }
+    }
 });
 </script>
 
@@ -123,6 +141,14 @@ ion-content {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+img {
+    width: 150px;
+    height: 150px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* .loginCard ion-card{
