@@ -100,11 +100,11 @@ export default defineComponent({
                 .then(data => {
                     if (data.message == "Success!") {
                         toast.message = data.message
-                        // this.loginDetails = {
-                        //     username: "",
-                        //     password: ""
-                        // }
-                        // router.push('/dashboard')
+                        this.loginDetails = {
+                            username: "",
+                            password: ""
+                        }
+                        router.push('/dashboard')
                     }
                     else {
                         toast.message = data.message
