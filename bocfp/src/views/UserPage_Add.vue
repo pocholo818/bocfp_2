@@ -14,11 +14,9 @@
             <ion-card>
                 <ion-card-content>
                     <ion-card-header>
-                        <ion-card-title>User Information</ion-card-title>
+                        <ion-card-title>Add New User</ion-card-title>
                     </ion-card-header>
 
-
-                    <ion-card-subtitle style="text-align: center;">USERID: {{ userId }}</ion-card-subtitle>
 
                     <ion-list>
                         <ion-item>
@@ -34,7 +32,13 @@
                         <ion-item>
                             <ion-label position="floating">Last Name</ion-label>
                             <ion-input placeholder="Enter Last Name" v-model="userDetails.lname" required></ion-input>
-                        </ion-item><br>
+                        </ion-item>
+
+                        <ion-item>
+                            <ion-label position="floating">Contact Number:</ion-label>
+                            <ion-input type="tel" placeholder="Enter Contact Number" maxlength="11"
+                                v-model="userDetails.contact"></ion-input>
+                        </ion-item>
 
                         <ion-item>
                             <ion-label>Admin Power:</ion-label>
@@ -47,7 +51,7 @@
 
 
                         <!-- Save -->
-                        <ion-button expand="block" class="theme" @click="user_edit">Save</ion-button>
+                        <ion-button expand="block" class="theme" @click="user_add">Save</ion-button>
 
                     </ion-list>
                 </ion-card-content>
@@ -73,7 +77,6 @@ import {
     IonList,
     IonCard,
     IonCardTitle,
-    IonCardSubtitle,
     IonCardHeader,
     IonCardContent,
     IonButtons,
@@ -95,7 +98,6 @@ export default defineComponent({
         IonList,
         IonCard,
         IonCardTitle,
-        IonCardSubtitle,
         IonCardHeader,
         IonCardContent,
         IonButtons, IonHeader, IonToolbar,
@@ -105,7 +107,12 @@ export default defineComponent({
     data() {
         return {
             userId: "",
-            userDetails: {},
+            userDetails: {
+                "fname": "",
+                "lname": "",
+                "contact": "",
+                "admin_power": ""
+            },
         }
     },
     setup() {
@@ -124,28 +131,18 @@ export default defineComponent({
     mounted() {
         this.userId = this.router.params.id + "";
 
-        this.fetchUser()
     },
     methods: {
-        fetchUser() {
-            this.userId = this.router.params.id + "";
-            fetch('http://localhost:5000/user/profile/' + this.userId)
-                .then((response) => response.json())
-                .then((json) => {
-                    this.userDetails = json
-                })
-        },
-        async user_edit() {
+        async user_add() {
             const toast = await toastController.create({
                 duration: 1500,
                 position: 'top'
             })
 
             const data = this.userDetails;
-            console.log(data);
 
-            fetch('http://localhost:5000/user/edit/:id', {
-                method: 'PUT',
+            fetch('http://localhost:5000/user', {
+                method: 'POST', // or 'PUT'
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -156,8 +153,8 @@ export default defineComponent({
                     this.userDetails = {
                         fname: "",
                         lname: "",
-                        username: "",
-                        admin_power: "",
+                        contact: "",
+                        admin_power: ""
                     }
                     this.ionRouter.push("/user");
                 })

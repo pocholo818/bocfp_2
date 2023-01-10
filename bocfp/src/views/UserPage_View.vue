@@ -178,7 +178,12 @@ export default defineComponent({
 
             await alert.present();
         }
-    }
+    },
+    watch: {
+        $route() {
+            this.$nextTick(this.fetchUser);
+        }
+    },
 });
 
 

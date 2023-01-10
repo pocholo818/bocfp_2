@@ -43,7 +43,7 @@
     </ion-content>
 
     <!-- Add user button -->
-    <ion-fab slot="fixed" vertical="bottom" horizontal="end" router-link="/child_add">
+    <ion-fab slot="fixed" vertical="bottom" horizontal="end" router-link="/user/add">
       <ion-fab-button @click="setOpen(true)" class="theme">
         <ion-icon :icon="addOutline"></ion-icon>
       </ion-fab-button>

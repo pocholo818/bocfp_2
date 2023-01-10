@@ -259,6 +259,16 @@ app.get('/user/profile/:id', (req, res) => {
   })
 
 });
+// add new user
+app.post('/user', (req, res) => {
+  const { fname, lname, username, contact, admin_power } = req.body;
+
+  connection.query(`INSERT INTO user (fname, lname, username, contact, admin_power) 
+        VALUES ('${fname}', '${lname}', '${username}', '${contact}', '${admin_power}')`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+});
 
 
 // PUT

@@ -80,6 +80,10 @@ const routes: Array<RouteRecordRaw> = [
         path: '/user/edit/:id',
         component: () => import('@/views/UserPage_Edit.vue')
       },
+      {
+        path: '/user/add',
+        component: () => import('@/views/UserPage_Add.vue')
+      }
     ]
   },
   // if wrong
