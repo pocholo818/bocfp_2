@@ -244,7 +244,7 @@ app.post('/user/login', (req, res) => {
 });
 // get specific user
 app.get('/user/profile/:id', (req, res) => {
-  connection.query(`SELECT user_id, fname, lname, username, admin_power,
+  connection.query(`SELECT user_id, fname, lname, username, contact,admin_power,
     CASE 
       WHEN admin_power = 1 THEN 'YES'
       ELSE "NO"
@@ -296,7 +296,7 @@ app.put('/guardUpdate/:id', (req, res) => {
   res.send("success")
 });
 // update user
-app.put('/user/update/:id', (req, res) => {
+app.put('/user/edit/:id', (req, res) => {
   const { user_id, fname, lname, contact, admin_power } = req.body;
 
   connection.query(`UPDATE user SET fname = '${fname}', lname = '${lname}',

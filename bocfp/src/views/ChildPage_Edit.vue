@@ -51,7 +51,7 @@
             </ion-card>
 
             <!-- Save -->
-            <ion-button expand="block" color="success" @click="child_edit">Save</ion-button>
+            <ion-button expand="block" class="theme" @click="child_edit">Save</ion-button>
 
         </ion-content>
     </ion-page>

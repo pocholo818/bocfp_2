@@ -34,7 +34,13 @@
                         <ion-item>
                             <ion-label position="floating">Last Name</ion-label>
                             <ion-input placeholder="Enter Last Name" v-model="userDetails.lname" required></ion-input>
-                        </ion-item><br>
+                        </ion-item>
+
+                        <ion-item>
+                            <ion-label position="floating">Contact Number:</ion-label>
+                            <ion-input type="tel" placeholder="Enter Contact Number" maxlength="11"
+                                v-model="userDetails.contact"></ion-input>
+                        </ion-item>
 
                         <ion-item>
                             <ion-label>Admin Power:</ion-label>
@@ -128,6 +134,7 @@ export default defineComponent({
     },
     methods: {
         fetchUser() {
+            this.userId = this.router.params.id + "";
             fetch('http://localhost:5000/user/profile/' + this.userId)
                 .then((response) => response.json())
                 .then((json) => {

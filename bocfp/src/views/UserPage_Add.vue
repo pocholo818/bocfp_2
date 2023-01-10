@@ -23,39 +23,31 @@
                     <ion-list>
                         <ion-item>
                             <ion-label position="floating">Username</ion-label>
-                            <ion-input placeholder="Enter Username" v-model="userDetails.username" readonly></ion-input>
+                            <ion-input placeholder="Enter Username" v-model="userDetails.username" required></ion-input>
                         </ion-item>
 
                         <ion-item>
                             <ion-label position="floating">First Name</ion-label>
-                            <ion-input placeholder="Enter First Name" v-model="userDetails.fname" readonly></ion-input>
+                            <ion-input placeholder="Enter First Name" v-model="userDetails.fname" required></ion-input>
                         </ion-item>
 
                         <ion-item>
                             <ion-label position="floating">Last Name</ion-label>
-                            <ion-input placeholder="Enter Last Name" v-model="userDetails.lname" readonly></ion-input>
-                        </ion-item>
+                            <ion-input placeholder="Enter Last Name" v-model="userDetails.lname" required></ion-input>
+                        </ion-item><br>
 
                         <ion-item>
-                            <ion-label position="floating">Contact Number:</ion-label>
-                            <ion-input type="tel" placeholder="Enter Contact Number" maxlength="11"
-                                v-model="userDetails.contact" readonly></ion-input>
+                            <ion-label>Admin Power:</ion-label>
+
+                            <ion-select placeholder="Yes/No" v-model="userDetails.admin_power">
+                                <ion-select-option v-bind:value="1">Yes</ion-select-option>
+                                <ion-select-option v-bind:value="0">No</ion-select-option>
+                            </ion-select>
                         </ion-item>
 
-                        <ion-item>
-                            <ion-label position="floating">Admin Power</ion-label>
-                            <ion-input placeholder="Enter Power" v-model="userDetails.result" readonly></ion-input>
-                        </ion-item>
 
-
-                        <!-- options -->
-                        <ion-card-content style="display: flex; justify-content: end;">
-                            <ion-button color="warning" :router-link="('/user/edit/' + userId)"><ion-icon
-                                    :icon="createOutline"></ion-icon>&nbsp; Edit</ion-button>
-                            <ion-button color="danger" @click="user_delete(userId)"><ion-icon :icon="trashOutline">
-                                </ion-icon>&nbsp;
-                                Del<span>ete</span></ion-button>
-                        </ion-card-content>
+                        <!-- Save -->
+                        <ion-button expand="block" class="theme" @click="user_edit">Save</ion-button>
 
                     </ion-list>
                 </ion-card-content>
@@ -90,6 +82,7 @@ import {
     alertController, toastController,
     IonBackButton,
     useIonRouter,
+    IonSelectOption, IonSelect
 
 } from '@ionic/vue';
 import { useRoute } from 'vue-router';
@@ -107,11 +100,12 @@ export default defineComponent({
         IonCardContent,
         IonButtons, IonHeader, IonToolbar,
         IonBackButton,
+        IonSelectOption, IonSelect
     },
     data() {
         return {
             userId: "",
-            userDetails: "",
+            userDetails: {},
         }
     },
     setup() {
@@ -134,49 +128,44 @@ export default defineComponent({
     },
     methods: {
         fetchUser() {
+            this.userId = this.router.params.id + "";
             fetch('http://localhost:5000/user/profile/' + this.userId)
                 .then((response) => response.json())
                 .then((json) => {
                     this.userDetails = json
-                    console.log(this.userDetails)
                 })
         },
-        async user_delete(userId: string) {
-            const alert = await alertController.create({
-                header: 'Are you sure you want to delete?',
-                buttons: [
-                    {
-                        text: 'Cancel',
-                        role: 'cancel'
-                    },
-                    {
-                        text: 'DELETE',
-                        role: 'confirm',
-                        handler: async () => {
-                            const toast = await toastController.create({
-                                duration: 1500,
-                                position: 'top'
-                            })
-                            const user_id = this.userId
+        async user_edit() {
+            const toast = await toastController.create({
+                duration: 1500,
+                position: 'top'
+            })
 
-                            fetch('http://localhost:5000/user/del/' + user_id, {
-                                method: 'put'
-                            })
-                                .then((data) => {
-                                    toast.message = 'Success!'
-                                    this.ionRouter.push('/user')
-                                })
-                                .catch((error) => {
-                                    toast.message = error
-                                });
+            const data = this.userDetails;
+            console.log(data);
 
-                            await toast.present();
-                        },
-                    },
-                ],
-            });
+            fetch('http://localhost:5000/user/edit/:id', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then((data) => {
+                    toast.message = 'Success!'
+                    this.userDetails = {
+                        fname: "",
+                        lname: "",
+                        username: "",
+                        admin_power: "",
+                    }
+                    this.ionRouter.push("/user");
+                })
+                .catch((error) => {
+                    toast.message = error
+                });
 
-            await alert.present();
+            await toast.present();
         }
     }
 });
