@@ -48,7 +48,6 @@ import {
 import { personOutline } from 'ionicons/icons';
 import router from '@/router';
 import SHA256 from 'crypto-js/sha256';
-import { useProfileStore } from '@/store/profile';
 
 export default defineComponent({
     name: 'ChildPage',
@@ -64,11 +63,8 @@ export default defineComponent({
         IonPage,
     },
     setup() {
-        const store = useProfileStore()
-
         return {
-            personOutline,
-            store
+            personOutline
         }
     },
     data() {
@@ -105,9 +101,9 @@ export default defineComponent({
                     // console.log(data)
                     if (data.message == "Success!") {
                         // store data
-                        sessionStorage.setItem('user_id', data.id)
-                        sessionStorage.setItem('fname', data.fname)
-                        sessionStorage.setItem('admin_power', data.admin_power)
+                        localStorage.setItem('user_id', data.id)
+                        localStorage.setItem('fname', data.fname)
+                        localStorage.setItem('admin_power', data.admin_power)
 
                         toast.message = data.message
                         this.loginDetails = {

@@ -28,7 +28,7 @@
           </ion-list>
 
         </ion-content>
-        <ion-button color="danger" @click="logout()" :router-link="('/login')"><ion-icon :icon="logOutOutline"></ion-icon>Logout</ion-button>
+        <ion-button color="danger" @click="logout()" router-link="/login"><ion-icon :icon="logOutOutline"></ion-icon>Logout</ion-button>
       </ion-menu>
       <ion-router-outlet id="main-content"></ion-router-outlet>
     </ion-split-pane>
@@ -48,7 +48,8 @@ import {
   IonMenuToggle,
   IonNote,
   IonRouterOutlet,
-  IonSplitPane
+  IonSplitPane,
+  onIonViewDidEnter,
 } from '@ionic/vue';
 // icons
 import {
@@ -72,43 +73,49 @@ export default defineComponent({
     IonSplitPane,
     IonIcon
   },
-  setup() {
-    const user_fname = sessionStorage.getItem('fname')
-    const admin_power = sessionStorage.getItem('admin_power')
+  ionViewWillEnter() {
+    this.user_fname = localStorage.getItem('fname') || ''
+    this.admin_power = localStorage.getItem('admin_power') || ''
 
+    if(this.admin_power && this.admin_power === '1') {
+      this.appPages.push(        
+        {
+          title: 'Accounts',
+          url: '/user',
+          iosIcon: personOutline,
+          mdIcon: personSharp
+        }
+      )
+    }
+    else {
+      this.appPages = [
+        {
+          title: 'Dashboard',
+          url: '/dashboard',
+          iosIcon: personOutline,
+          mdIcon: personSharp
+        },
+        {
+          title: 'Child',
+          url: '/child',
+          iosIcon: personOutline,
+          mdIcon: personSharp
+        },
+        {
+          title: 'Guardian',
+          url: '/guardian',
+          iosIcon: personOutline,
+          mdIcon: personSharp
+        }
+      ]
+    }
+  },
+  setup() {
     // sidebar pages
-    const appPages = [
-      {
-        title: 'Dashboard',
-        url: '/dashboard',
-        iosIcon: personOutline,
-        mdIcon: personSharp
-      },
-      {
-        title: 'Child',
-        url: '/child',
-        iosIcon: personOutline,
-        mdIcon: personSharp
-      },
-      {
-        title: 'Guardian',
-        url: '/guardian',
-        iosIcon: personOutline,
-        mdIcon: personSharp
-      },
-      {
-        title: 'Accounts',
-        url: '/user',
-        iosIcon: personOutline,
-        mdIcon: personSharp
-      },
-    ];
 
     const route = useRoute();
 
     return {
-      user_fname, admin_power,
-      appPages,
       personOutline,
       personSharp,
       logOutOutline,
@@ -116,16 +123,37 @@ export default defineComponent({
       isSelected: (url: string) => url === route.path ? 'selected' : ''
     }
   },
-  mounted(){
-    if(!this.user_fname){
-      router.push('/login')
+  data() {
+    return {
+      appPages: [
+        {
+          title: 'Dashboard',
+          url: '/dashboard',
+          iosIcon: personOutline,
+          mdIcon: personSharp
+        },
+        {
+          title: 'Child',
+          url: '/child',
+          iosIcon: personOutline,
+          mdIcon: personSharp
+        },
+        {
+          title: 'Guardian',
+          url: '/guardian',
+          iosIcon: personOutline,
+          mdIcon: personSharp
+        }
+      ],
+      user_fname: '',
+      admin_power: ''
     }
   },
   methods:{
     logout(){
-      sessionStorage.removeItem('user_id')
-      sessionStorage.removeItem('fname')
-      sessionStorage.removeItem('admin_power')
+      localStorage.removeItem('user_id')
+      localStorage.removeItem('fname')
+      localStorage.removeItem('admin_power')
     }
   }
 });

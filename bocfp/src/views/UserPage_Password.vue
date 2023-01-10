@@ -22,34 +22,16 @@
 
                     <ion-list>
                         <ion-item>
-                            <ion-label position="floating">Username</ion-label>
-                            <ion-input placeholder="Enter Username" v-model="userDetails.username" required></ion-input>
-                        </ion-item>
+                            <ion-label position="floating">Password</ion-label>
+                            <ion-input type="password" placeholder="Password" v-model="userNewPass"
+                                required></ion-input>
+                        </ion-item><br>
 
                         <ion-item>
-                            <ion-label position="floating">First Name</ion-label>
-                            <ion-input placeholder="Enter First Name" v-model="userDetails.fname" required></ion-input>
-                        </ion-item>
-
-                        <ion-item>
-                            <ion-label position="floating">Last Name</ion-label>
-                            <ion-input placeholder="Enter Last Name" v-model="userDetails.lname" required></ion-input>
-                        </ion-item>
-
-                        <ion-item>
-                            <ion-label position="floating">Contact Number:</ion-label>
-                            <ion-input type="tel" placeholder="Enter Contact Number" maxlength="11"
-                                v-model="userDetails.contact"></ion-input>
-                        </ion-item>
-
-                        <ion-item>
-                            <ion-label>Admin Power:</ion-label>
-
-                            <ion-select placeholder="Yes/No" v-model="userDetails.admin_power">
-                                <ion-select-option v-bind:value="1">Yes</ion-select-option>
-                                <ion-select-option v-bind:value="0">No</ion-select-option>
-                            </ion-select>
-                        </ion-item>
+                            <ion-label position="floating">Confirm Password</ion-label>
+                            <ion-input type="password" placeholder="Password" v-model="confirmPassword"
+                                required></ion-input>
+                        </ion-item><br>
 
 
                         <!-- Save -->
@@ -88,11 +70,10 @@ import {
     alertController, toastController,
     IonBackButton,
     useIonRouter,
-    IonSelectOption, IonSelect
 
 } from '@ionic/vue';
 import { useRoute } from 'vue-router';
-// import SHA256 from 'crypto-js/sha256';
+import SHA256 from 'crypto-js/sha256';
 
 export default defineComponent({
     name: 'ChildPage',
@@ -107,12 +88,12 @@ export default defineComponent({
         IonCardContent,
         IonButtons, IonHeader, IonToolbar,
         IonBackButton,
-        IonSelectOption, IonSelect
     },
     data() {
         return {
             userId: "",
-            userDetails: {},
+            userNewPass: "",
+            confirmPassword: ""
         }
     },
     setup() {
@@ -130,47 +111,39 @@ export default defineComponent({
     },
     mounted() {
         this.userId = this.router.params.id + "";
-
-        this.fetchUser()
     },
     methods: {
-        fetchUser() {
-            this.userId = this.router.params.id + "";
-            fetch('http://localhost:5000/user/profile/' + this.userId)
-                .then((response) => response.json())
-                .then((json) => {
-                    this.userDetails = json
-                })
-        },
         async user_edit() {
             const toast = await toastController.create({
                 duration: 1500,
                 position: 'top'
             })
 
-            const data = this.userDetails;
-            // data.password = SHA256(this.userDetails.password).toString()
+            if (this.userNewPass == this.confirmPassword) {
+                const data = {
+                    password: SHA256(this.userNewPass).toString()
+                }
 
-            fetch('http://localhost:5000/user/edit/:id', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-                .then((data) => {
-                    toast.message = 'Success!'
-                    this.userDetails = {
-                        fname: "",
-                        lname: "",
-                        username: "",
-                        admin_power: "",
-                    }
-                    this.ionRouter.push("/user");
+                fetch(`http://localhost:5000/user/edit/password/${this.userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
                 })
-                .catch((error) => {
-                    toast.message = error
-                });
+                    .then((data) => {
+                        toast.message = 'Success!'
+                        this.userNewPass = ""
+                        this.confirmPassword = ""
+                        this.ionRouter.push("/user");
+                    })
+                    .catch((error) => {
+                        toast.message = error
+                    });
+            }
+            else{
+                toast.message = "Password and Confirm Password does not match"
+            }
 
             await toast.present();
         }

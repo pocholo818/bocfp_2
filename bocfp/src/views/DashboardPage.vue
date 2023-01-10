@@ -62,10 +62,6 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 ChartJS.register(ArcElement, Tooltip, Legend)
 import PieChart from '@/components/PieChart.vue'
 
-import { useProfileStore } from '@/store/profile';
-import { storeToRefs } from 'pinia';
-
-
 export default defineComponent({
     name: 'ChildPage',
     components: {
@@ -83,15 +79,11 @@ export default defineComponent({
         //   ChildCard
     },
     setup() {
-        const store = useProfileStore()
-        const { user_id, fname } = storeToRefs(store)
         return {
             eyeOutline,
             createOutline,
             trashOutline,
-            addOutline,
-            user_id,
-            fname
+            addOutline
         }
     },
     data() {
@@ -105,7 +97,7 @@ export default defineComponent({
                 labels: ['Underweight', 'Normal', 'Overweight', 'Obese'],
                 datasets: [
                     {
-                        backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
+                        backgroundColor: ['#ADD8E6', '#41B883', '#FFFF00', '#DD1B16'],
                         data: [0]
                     }
                 ]

@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 
-import HomePage from '@/views/HomePage.vue'
+// import HomePage from '@/views/HomePage.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -14,7 +14,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/',
-    component: HomePage,
+    component: () => import('@/views/HomePage.vue'),
     children: [
       {
         path: '/child',
@@ -81,6 +81,10 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/UserPage_Edit.vue')
       },
       {
+        path: '/user/edit/password/:id',
+        component: () => import('@/views/UserPage_Password.vue')
+      },
+      {
         path: '/user/add',
         component: () => import('@/views/UserPage_Add.vue')
       }
@@ -96,6 +100,15 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
+})
+
+router.beforeEach((to, from) => {
+  const user_fname = localStorage.getItem('fname') as string
+
+  if (!user_fname && to.path !== '/login') {
+    // redirect the user to the login page
+    return { path: '/login' }
+  }
 })
 
 export default router

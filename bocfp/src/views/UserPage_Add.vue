@@ -37,17 +37,29 @@
                         <ion-item>
                             <ion-label position="floating">Contact Number:</ion-label>
                             <ion-input type="tel" placeholder="Enter Contact Number" maxlength="11"
-                                v-model="userDetails.contact"></ion-input>
+                                v-model="userDetails.contact" required></ion-input>
                         </ion-item>
 
                         <ion-item>
                             <ion-label>Admin Power:</ion-label>
 
-                            <ion-select placeholder="Yes/No" v-model="userDetails.admin_power">
+                            <ion-select placeholder="Yes/No" v-model="userDetails.admin_power" required>
                                 <ion-select-option v-bind:value="1">Yes</ion-select-option>
                                 <ion-select-option v-bind:value="0">No</ion-select-option>
                             </ion-select>
                         </ion-item>
+
+                        <ion-item>
+                            <ion-label position="floating">Password</ion-label>
+                            <ion-input type="password" placeholder="Password" v-model="userDetails.password"
+                                required></ion-input>
+                        </ion-item><br>
+
+                        <ion-item>
+                            <ion-label position="floating">Confirm Password</ion-label>
+                            <ion-input type="password" placeholder="Password" v-model="confirmPass"
+                                required></ion-input>
+                        </ion-item><br>
 
 
                         <!-- Save -->
@@ -89,6 +101,7 @@ import {
 
 } from '@ionic/vue';
 import { useRoute } from 'vue-router';
+import SHA256 from 'crypto-js/sha256';
 
 export default defineComponent({
     name: 'ChildPage',
@@ -107,9 +120,11 @@ export default defineComponent({
     data() {
         return {
             userId: "",
+            confirmPass: "",
             userDetails: {
                 "fname": "",
                 "lname": "",
+                "password": "",
                 "contact": "",
                 "admin_power": ""
             },
@@ -139,28 +154,37 @@ export default defineComponent({
                 position: 'top'
             })
 
-            const data = this.userDetails;
+            if (this.confirmPass == this.userDetails.password) {
 
-            fetch('http://localhost:5000/user', {
-                method: 'POST', // or 'PUT'
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-                .then((data) => {
-                    toast.message = 'Success!'
-                    this.userDetails = {
-                        fname: "",
-                        lname: "",
-                        contact: "",
-                        admin_power: ""
-                    }
-                    this.ionRouter.push("/user");
+                const data = this.userDetails;
+                data.password = SHA256(this.userDetails.password).toString()
+
+                fetch('http://localhost:5000/user', {
+                    method: 'POST', // or 'PUT'
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
                 })
-                .catch((error) => {
-                    toast.message = error
-                });
+                    .then((data) => {
+                        toast.message = 'Success!'
+                        this.userDetails = {
+                            fname: "",
+                            lname: "",
+                            contact: "",
+                            admin_power: "",
+                            password: ""
+                        }
+                        this.confirmPass = ""
+                        this.ionRouter.push("/user");
+                    })
+                    .catch((error) => {
+                        toast.message = error
+                    });
+            }
+            else {
+                toast.message = "Password and Confirm Password does not match"
+            }
 
             await toast.present();
         }

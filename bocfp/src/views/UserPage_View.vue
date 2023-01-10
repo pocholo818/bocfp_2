@@ -52,6 +52,8 @@
                         <ion-card-content style="display: flex; justify-content: end;">
                             <ion-button color="warning" :router-link="('/user/edit/' + userId)"><ion-icon
                                     :icon="createOutline"></ion-icon>&nbsp; Edit</ion-button>
+                            <ion-button color="warning" :router-link="('/user/edit/password/' + userId)"><ion-icon
+                                    :icon="createOutline"></ion-icon>&nbsp; Password</ion-button>
                             <ion-button color="danger" @click="user_delete(userId)"><ion-icon :icon="trashOutline">
                                 </ion-icon>&nbsp;
                                 Del<span>ete</span></ion-button>
@@ -138,7 +140,6 @@ export default defineComponent({
                 .then((response) => response.json())
                 .then((json) => {
                     this.userDetails = json
-                    console.log(this.userDetails)
                 })
         },
         async user_delete(userId: string) {

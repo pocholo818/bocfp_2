@@ -238,7 +238,7 @@ app.post('/user/login', (req, res) => {
       res.json({ "message": "Incorrect Username or Password" })
     }
     else if (rows[0].username == username && rows[0].password == password) {
-      res.json({ "message": "Success!", "id": `${rows[0].id}`, "fname": `${rows[0].fname}` })
+      res.json({ "message": "Success!", "id": `${rows[0].user_id}`, "fname": `${rows[0].fname}`, "admin_power": `${rows[0].admin_power}` })
     }
   })
 });
@@ -261,10 +261,10 @@ app.get('/user/profile/:id', (req, res) => {
 });
 // add new user
 app.post('/user', (req, res) => {
-  const { fname, lname, username, contact, admin_power } = req.body;
+  const { fname, lname, username, contact, admin_power, password } = req.body;
 
-  connection.query(`INSERT INTO user (fname, lname, username, contact, admin_power) 
-        VALUES ('${fname}', '${lname}', '${username}', '${contact}', '${admin_power}')`, (err, rows, fields) => {
+  connection.query(`INSERT INTO user (fname, lname, username, contact, admin_power, password) 
+        VALUES ('${fname}', '${lname}', '${username}', '${contact}', '${admin_power}', '${password}')`, (err, rows, fields) => {
     if (err) throw err
   })
   res.send("success")
@@ -273,11 +273,11 @@ app.post('/user', (req, res) => {
 
 // PUT
 // update child
-app.put('/childUpdate/:id', (req, res) => {
-  const { id, fname, lname, bdate, sex } = req.body;
+app.patch('/childUpdate/:id', (req, res) => {
+  const { id, fname, lname, bdate, sex, image } = req.body;
 
   connection.query(`UPDATE child SET fname = '${fname}', lname = '${lname}', bdate = '${bdate}', 
-      sex ='${sex}' WHERE id=${id}`, (err, rows, fields) => {
+      sex ='${sex}', image='${image}' WHERE id=${id}`, (err, rows, fields) => {
     if (err) throw err
   })
   res.send("success")
@@ -305,13 +305,24 @@ app.put('/guardUpdate/:id', (req, res) => {
   })
   res.send("success")
 });
-// update user
+// edit user
 app.put('/user/edit/:id', (req, res) => {
   const { user_id, fname, lname, contact, admin_power } = req.body;
 
   connection.query(`UPDATE user SET fname = '${fname}', lname = '${lname}',
       contact = '${contact}', admin_power = '${admin_power}'
       WHERE user_id=${user_id}`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+});
+// edit user password
+app.put('/user/edit/password/:id', (req, res) => {
+  const { id } = req.params
+  const { password } = req.body;
+  // console.log(req.body)
+
+  connection.query(`UPDATE user SET password = '${password}' WHERE user_id=${id}`, (err, rows, fields) => {
     if (err) throw err
   })
   res.send("success")

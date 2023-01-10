@@ -46,6 +46,10 @@
                                     v-model="childDetails.bdate" class="dateStyle"></ion-datetime>
                             </ion-modal>
                         </ion-item>
+
+                        <ion-item>
+                            <ion-button class="theme" @click="selectPic()">Upload image</ion-button>
+                        </ion-item>
                     </ion-list>
                 </ion-card-content>
             </ion-card>
@@ -78,15 +82,13 @@ import {
     IonButtons, IonHeader, IonToolbar, IonBackButton,
     toastController, useIonRouter,
     IonDatetime, IonDatetimeButton, IonModal,
-    IonSelect, IonSelectOption
+    IonSelect, IonSelectOption,
+    modalController
 } from '@ionic/vue';
 import { useRoute } from 'vue-router';
 import { IonRouter } from '@ionic/core/components';
-// import HeaderBar from '@/components/HeaderBar.vue';
-// import {
-//   IonContent,
-//   IonPage,
-// } from '@ionic/vue';
+import { FilePicker } from '@capawesome/capacitor-file-picker';
+import CropModal from '@/components/CropModal.vue'
 
 export default defineComponent({
     name: 'ChildPage2',
@@ -107,7 +109,13 @@ export default defineComponent({
     data() {
         return {
             childId: "",
-            childDetails: {}
+            childDetails: {
+                fname: "",
+                lname: "",
+                bdate: "",
+                sex: "",
+                image: ""
+            }
         }
     },
     setup() {
@@ -142,7 +150,7 @@ export default defineComponent({
             console.log(data);
 
             fetch('http://localhost:5000/childUpdate/:id', {
-                method: 'PUT',
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -155,9 +163,7 @@ export default defineComponent({
                         lname: "",
                         bdate: "",
                         sex: "",
-                        guardian: "",
-                        contact: "",
-                        address: ""
+                        image: ""
                     }
                     this.ionRouter.push("/child");
                 })
@@ -166,7 +172,50 @@ export default defineComponent({
                 });
 
             await toast.present();
+        },
+        async image() {
+            const result = await FilePicker.pickFiles({
+                types: ['image/png', 'image/jpeg'],
+                readData: true
+            });
+            const file = result.files[0]
+            console.log(file)
+            this.childDetails.image = `data:image/jpeg;base64,${file.data}`
+        },
+
+        async selectPic() {
+            const result = await FilePicker.pickFiles({
+                types: ['image/png', 'image/jpeg'],
+                readData: true
+            });
+            const file = result.files[0]
+
+            if (file.size > 3000000) { // 3mb 
+                const toast = await toastController.create({
+                    duration: 3000,
+                    position: 'top',
+                    cssClass: 'error',
+                    message: 'Please upload image less than 3mb'
+                });
+                await toast.present();
+            }
+            else
+                this.openCropModal(file.data as string)
+        },
+        async openCropModal(img: string) {
+            const modal = await modalController.create({
+                component: CropModal,
+                componentProps: { img: `data:image/jpeg;base64,${img}` }
+            });
+            modal.present();
+
+            const { data, role } = await modal.onWillDismiss();
+
+            if (role === 'confirm') {
+                this.childDetails.image = data
+            }
         }
+
     }
 });
 
