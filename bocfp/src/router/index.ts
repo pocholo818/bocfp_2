@@ -68,12 +68,24 @@ const routes: Array<RouteRecordRaw> = [
         path: '/link_add/:id',
         component: () => import('@/views/Link_Add.vue'),
       },
+      {
+        path: '/user',
+        component: () => import('@/views/UserPage.vue')
+      },
+      {
+        path: '/user/profile/:id',
+        component: () => import('@/views/UserPage_View.vue')
+      },
+      {
+        path: '/user/edit/:id',
+        component: () => import('@/views/UserPage_Edit.vue')
+      },
     ]
   },
   // if wrong
   {
     path: '/:pathMatch(.*)*',
-    redirect: '/'
+    redirect: '/login'
   },
 ]
 

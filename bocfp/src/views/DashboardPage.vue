@@ -59,10 +59,12 @@ import {
 import HeaderBar from '@/components/HeaderBar.vue';
 
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
-// import { Pie } from 'vue-chartjs'
 ChartJS.register(ArcElement, Tooltip, Legend)
 import PieChart from '@/components/PieChart.vue'
-// import * as chartConfig from './chartConfig.js'
+
+import { useProfileStore } from '@/store/profile';
+import { storeToRefs } from 'pinia';
+
 
 export default defineComponent({
     name: 'ChildPage',
@@ -81,11 +83,15 @@ export default defineComponent({
         //   ChildCard
     },
     setup() {
+        const store = useProfileStore()
+        const { user_id, fname } = storeToRefs(store)
         return {
             eyeOutline,
             createOutline,
             trashOutline,
-            addOutline
+            addOutline,
+            user_id,
+            fname
         }
     },
     data() {
@@ -140,7 +146,6 @@ export default defineComponent({
     watch: {
         $route() {
             this.$nextTick(this.fetchChildCount);
-            // this.$nextTick(this.fetchChildRemarks);
         }
     }
 });

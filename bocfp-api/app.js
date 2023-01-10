@@ -40,7 +40,7 @@ function bmi(height, weight, output) {
 // GET
 // get all child
 app.get('/childs', (req, res) => {
-  const {limit, offset} = req.query
+  const { limit, offset } = req.query
 
   connection.query(`SELECT * FROM child WHERE soft_delete = 0 ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
     if (rows.length) {
@@ -69,13 +69,13 @@ app.get('/child/search/:search', (req, res) => {
       res.json(rows)
     }
     else {
-      res.json({ "message": "No Child(s) Found"})
+      res.json({ "message": "No Child(s) Found" })
     }
   })
 });
 // get record
 app.get('/records/:id', (req, res) => {
-  const {limit, offset} = req.query
+  const { limit, offset } = req.query
 
   connection.query(`SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
     // connection.query(`SELECT * FROM child WHERE soft_delete = 0 ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
@@ -96,14 +96,14 @@ app.get('/record/:id', (req, res) => {
 });
 // get all guardian
 app.get('/guardians', (req, res) => {
-  const {limit, offset} = req.query
+  const { limit, offset } = req.query
 
-    connection.query(`SELECT * FROM guardian WHERE soft_delete = 0 ORDER BY guardian_id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
-    if(rows.length){
+  connection.query(`SELECT * FROM guardian WHERE soft_delete = 0 ORDER BY guardian_id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
+    if (rows.length) {
       res.json(rows)
     }
-    else{
-      res.json({ "message": "No Guardian(s) Found"})
+    else {
+      res.json({ "message": "No Guardian(s) Found" })
     }
   })
 });
@@ -124,7 +124,7 @@ app.get('/guardian/search/:search', (req, res) => {
       res.json(rows)
     }
     else {
-      res.json({ "message": "No Guardian(s) Found"})
+      res.json({ "message": "No Guardian(s) Found" })
     }
   })
 });
@@ -133,11 +133,11 @@ app.get('/guardian/link/:id', (req, res) => {
   connection.query(`SELECT *
       FROM link JOIN child ON link.id = child.id
       WHERE link.guardian_id = ${req.params.id} AND link.soft_delete = 0`, (err, rows, fields) => {
-    if(rows.length){
+    if (rows.length) {
       res.json(rows[0])
     }
-    else{
-      res.json({"message": "No Linked Child Yet", "relationship": ""})
+    else {
+      res.json({ "message": "No Linked Child Yet", "relationship": "" })
     }
   })
 });
@@ -147,11 +147,38 @@ app.get('/child/link/:id', (req, res) => {
       guardian.contact, link.relationship, guardian.guardian_id
       FROM link JOIN guardian ON link.guardian_id = guardian.guardian_id
       WHERE link.id = ${req.params.id} AND link.soft_delete = 0;`, (err, rows, fields) => {
-    if(rows.length){
+    if (rows.length) {
       res.json(rows[0])
     }
-    else{
-      res.json({"message": "No Linked Guardian Yet", "relationship": ""})
+    else {
+      res.json({ "message": "No Linked Guardian Yet", "relationship": "" })
+    }
+  })
+});
+// get users
+app.get('/users', (req, res) => {
+  const { limit, offset } = req.query
+
+  connection.query(`SELECT * FROM user WHERE soft_delete = 0 LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
+    if (rows.length) {
+      res.json(rows)
+    }
+    else {
+      res.json({ "message": "No User(s) Found", "id": "" })
+    }
+  })
+});
+// search user
+app.get('/user/search/:search', (req, res) => {
+  connection.query(`SELECT * FROM user WHERE 
+    soft_delete = 0 AND user_id LIKE "${req.params.search}"
+    OR soft_delete = 0 AND fname LIKE "%${req.params.search}%"
+    OR soft_delete = 0 AND lname LIKE"%${req.params.search}%"`, (err, rows, fields) => {
+    if (rows.length) {
+      res.json(rows)
+    }
+    else {
+      res.json({ "message": "No User(s) Found" })
     }
   })
 });
@@ -160,7 +187,7 @@ app.get('/child/link/:id', (req, res) => {
 // POST
 // add new child
 app.post('/child', (req, res) => {
-  const { fname, lname, bdate, sex, image} = req.body;
+  const { fname, lname, bdate, sex, image } = req.body;
 
   connection.query(`INSERT INTO child (fname, lname, bdate, sex, image) 
         VALUES ('${fname}', '${lname}', '${bdate}', '${sex}', '${image}')`, (err, rows, fields) => {
@@ -203,24 +230,41 @@ app.post('/link/add/:guardian_id', (req, res) => {
 });
 // get user
 app.post('/user/login', (req, res) => {
-  const {username, password} = req.body
+  const { username, password } = req.body
 
   connection.query(`SELECT * FROM user WHERE username='${username}' AND password='${password}'`, (err, rows, fields) => {
     // console.log(rows.length)
-    if(!rows.length){
-      res.json({"message": "Incorrect Username or Password"})
+    if (!rows.length) {
+      res.json({ "message": "Incorrect Username or Password" })
     }
-    else if(rows[0].username == username && rows[0].password == password){
-      res.json({"message": "Success!"})
+    else if (rows[0].username == username && rows[0].password == password) {
+      res.json({ "message": "Success!", "id": `${rows[0].id}`, "fname": `${rows[0].fname}` })
     }
   })
+});
+// get specific user
+app.get('/user/profile/:id', (req, res) => {
+  connection.query(`SELECT user_id, fname, lname, username, admin_power,
+    CASE 
+      WHEN admin_power = 1 THEN 'YES'
+      ELSE "NO"
+    END AS result
+    FROM user WHERE user_id=${req.params.id}`, (err, row, fields) => {
+    if (row) {
+      res.json(row[0])
+    }
+    else{
+      res.json({"message": "User not found"})
+    }
+  })
+
 });
 
 
 // PUT
 // update child
 app.put('/childUpdate/:id', (req, res) => {
-  const { id, fname, lname, bdate, sex} = req.body;
+  const { id, fname, lname, bdate, sex } = req.body;
 
   connection.query(`UPDATE child SET fname = '${fname}', lname = '${lname}', bdate = '${bdate}', 
       sex ='${sex}' WHERE id=${id}`, (err, rows, fields) => {
@@ -247,6 +291,17 @@ app.put('/guardUpdate/:id', (req, res) => {
   connection.query(`UPDATE guardian SET fname = '${fname}', lname = '${lname}',
       contact = '${contact}', address = '${address}'
       WHERE guardian_id=${guardian_id}`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+});
+// update user
+app.put('/user/update/:id', (req, res) => {
+  const { user_id, fname, lname, contact, admin_power } = req.body;
+
+  connection.query(`UPDATE user SET fname = '${fname}', lname = '${lname}',
+      contact = '${contact}', admin_power = '${admin_power}'
+      WHERE user_id=${user_id}`, (err, rows, fields) => {
     if (err) throw err
   })
   res.send("success")
@@ -290,6 +345,15 @@ app.put('/link/del/:guardian_id', (req, res) => {
   })
   res.send("success")
 });
+// soft delete user
+app.put('/user/del/:user_id', (req, res) => {
+  const { user_id } = req.params;
+
+  connection.query(`UPDATE user SET soft_delete='1'  WHERE user_id=${user_id}`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+});
 
 // dashboard stuff
 // get total child
@@ -318,16 +382,16 @@ app.get('/child/remarks', (req, res) => {
     "Underweight": 0,
     "Normal": 0,
     "Overweight": 0,
-    "Obese" : 0
+    "Obese": 0
   }
 
   connection.query(`SELECT remark FROM record t INNER JOIN (SELECT MAX(date) as maxdate FROM record GROUP BY id) tm ON t.date = tm.maxdate WHERE soft_delete = 0`, (err, rows, fields) => {
-    if(rows){
+    if (rows) {
       rows.forEach(item => results[item.remark] += 1)
       res.json(results)
     }
-    else{
-      res.json({"message": "No result(s)"})
+    else {
+      res.json({ "message": "No result(s)" })
     }
   })
 });

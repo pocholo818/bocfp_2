@@ -48,6 +48,7 @@ import {
 import { personOutline } from 'ionicons/icons';
 import router from '@/router';
 import SHA256 from 'crypto-js/sha256';
+import { useProfileStore } from '@/store/profile';
 
 export default defineComponent({
     name: 'ChildPage',
@@ -63,8 +64,11 @@ export default defineComponent({
         IonPage,
     },
     setup() {
+        const store = useProfileStore()
+
         return {
-            personOutline
+            personOutline,
+            store
         }
     },
     data() {
@@ -98,7 +102,13 @@ export default defineComponent({
             })
                 .then((response) => response.json())
                 .then(data => {
+                    // console.log(data)
                     if (data.message == "Success!") {
+                        // store data
+                        sessionStorage.setItem('user_id', data.id)
+                        sessionStorage.setItem('fname', data.fname)
+                        sessionStorage.setItem('admin_power', data.admin_power)
+
                         toast.message = data.message
                         this.loginDetails = {
                             username: "",
@@ -112,21 +122,15 @@ export default defineComponent({
                 })
             await toast.present();
         },
+        // createApp(){
+
+        // }
     },
     mounted() {
-        // const password = SHA256("passwordshit");
-        // const FromApiPassword = "ASDASDASDSAD!#!#@"
-        // let hash1 = SHA256("bocfp2022$")
-        // let hash2 = "0d3c456672f7646f6403659b91c8987e95ecc7012fd7f77cfa400ce6dd33c789"
-
-        // if(hash1.toString() === hash2){
-        //     console.log("hash1: ",hash1.toString())
-        //     console.log("hash2: ",hash2.toString())
-        //     console.log("yes")
+        // if(!sessionStorage.getItem('fname')){
+        //     router.push('/dashboard')
         // }
-        // else{
-        //     console.log("no")
-        // }
+        
     }
 });
 </script>

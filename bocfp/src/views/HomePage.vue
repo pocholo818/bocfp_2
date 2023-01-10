@@ -10,7 +10,8 @@
 
           <ion-list id="inbox-list">
             <ion-list-header>Barangay Old Cabalan</ion-list-header>
-            <ion-note>bofcp@gmail.com</ion-note>
+            <!-- <ion-note>bofcp@gmail.com</ion-note> -->
+            <ion-note>Hello {{ user_fname }}!</ion-note>
 
             <ion-menu-toggle auto-hide="false" v-for="(pages, i) in appPages" :key="i">
               <router-link :to="pages.url" activeClass="selected">
@@ -27,7 +28,7 @@
           </ion-list>
 
         </ion-content>
-        <ion-button color="danger"><ion-icon :icon="logOutOutline"></ion-icon>Logout</ion-button>
+        <ion-button color="danger" @click="logout()" :router-link="('/login')"><ion-icon :icon="logOutOutline"></ion-icon>Logout</ion-button>
       </ion-menu>
       <ion-router-outlet id="main-content"></ion-router-outlet>
     </ion-split-pane>
@@ -57,6 +58,7 @@ import {
 import { defineComponent, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { personOutline, personSharp } from 'ionicons/icons';
+import router from '@/router';
 
 export default defineComponent({
   name: 'HomePage',
@@ -71,6 +73,9 @@ export default defineComponent({
     IonIcon
   },
   setup() {
+    const user_fname = sessionStorage.getItem('fname')
+    const admin_power = sessionStorage.getItem('admin_power')
+
     // sidebar pages
     const appPages = [
       {
@@ -91,18 +96,36 @@ export default defineComponent({
         iosIcon: personOutline,
         mdIcon: personSharp
       },
+      {
+        title: 'Accounts',
+        url: '/user',
+        iosIcon: personOutline,
+        mdIcon: personSharp
+      },
     ];
 
     const route = useRoute();
 
     return {
-      // selectedIndex,
+      user_fname, admin_power,
       appPages,
       personOutline,
       personSharp,
       logOutOutline,
       eyeOutline,
       isSelected: (url: string) => url === route.path ? 'selected' : ''
+    }
+  },
+  mounted(){
+    if(!this.user_fname){
+      router.push('/login')
+    }
+  },
+  methods:{
+    logout(){
+      sessionStorage.removeItem('user_id')
+      sessionStorage.removeItem('fname')
+      sessionStorage.removeItem('admin_power')
     }
   }
 });

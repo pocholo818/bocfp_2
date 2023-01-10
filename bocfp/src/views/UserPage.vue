@@ -1,0 +1,184 @@
+<template>
+  <ion-page>
+
+    <ion-header>
+      <ion-toolbar class="theme">
+        <ion-buttons slot="start">
+          <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Accounts</ion-title>
+        <PageButtons :prev="prevData" :next="nextData" />
+      </ion-toolbar>
+    </ion-header>
+
+    <!-- content -->
+    <ion-content>
+
+
+      <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
+
+
+      <div v-if="userList.message">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-subtitle style="text-align: center;">{{ userList.message }}</ion-card-subtitle>
+          </ion-card-header>
+        </ion-card>
+      </div>
+
+      <div v-else>
+        <ion-card v-for="user in userList" style="cursor: pointer" :key="user.user_id"
+          :router-link="('/user/profile/' + user.user_id)">
+          <ion-item>
+
+            <ion-card-header>
+              <ion-card-title>{{ user.fname }} {{ user.lname }}</ion-card-title>
+              <!-- <ion-card-subtitle>ID: {{ user.user_id }}</ion-card-subtitle> -->
+            </ion-card-header>
+
+          </ion-item>
+        </ion-card>
+      </div>
+
+    </ion-content>
+
+    <!-- Add user button -->
+    <ion-fab slot="fixed" vertical="bottom" horizontal="end" router-link="/child_add">
+      <ion-fab-button @click="setOpen(true)" class="theme">
+        <ion-icon :icon="addOutline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+
+  </ion-page>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+// ionic stuff
+import {
+  IonSearchbar,
+  IonFab,
+  IonFabButton,
+  IonIcon,
+  IonCard,
+  IonCardSubtitle,
+  IonCardHeader,
+  IonCardTitle,
+  IonToolbar,
+  IonHeader, IonMenuButton,
+  IonButtons,
+  IonTitle
+} from '@ionic/vue';
+// icons
+import {
+  addOutline
+} from 'ionicons/icons';
+import PageButtons from '@/components/PageButtons.vue';
+
+export default defineComponent({
+  name: 'ChildPage',
+  components: {
+    IonSearchbar,
+    PageButtons,
+    IonFab,
+    IonFabButton,
+    IonIcon,
+    IonCard,
+    IonCardSubtitle,
+    IonCardHeader,
+    IonCardTitle,
+    IonToolbar,
+    IonHeader, IonMenuButton,
+    IonButtons,
+    IonTitle
+  },
+  setup() {
+    return {
+      addOutline
+    }
+  },
+  data() {
+    return {
+      isOpen: false,
+      userList: "",
+      search: "",
+      limit: 20,
+      offset: 0
+    };
+  },
+  methods: {
+    searchData(search: string) {
+      search = search.trim()
+      if (search.length) {
+        setTimeout(() => {
+          fetch('http://localhost:5000/user/search/' + search)
+            .then((response) => response.json())
+            .then((json) => {
+              this.userList = json
+            })
+        }, 1000)
+      }
+      else {
+        this.fetchData()
+      }
+
+    },
+    setOpen(isOpen: boolean) {
+      this.isOpen = isOpen;
+    },
+    fetchData() {
+      fetch(`http://localhost:5000/users?limit=${this.limit}&offset=${this.offset}`)
+        .then((response) => response.json())
+        .then((json) => {
+          this.userList = json
+        })
+    },
+    prevData() {
+      const offset = this.offset -= this.limit
+      if (offset <= 0) {
+        this.offset = 0
+      }
+      else {
+        this.offset = offset
+      }
+
+      this.fetchData()
+    },
+    nextData() {
+      this.offset += this.limit
+
+      this.fetchData()
+    },
+  },
+  // get data
+  mounted() {
+    this.fetchData()
+  },
+  watch: {
+    $route() {
+      this.$nextTick(this.fetchData);
+    }
+  }
+});
+</script>
+
+<style scoped>
+ion-button {
+  --border-width: 100%;
+}
+
+.icon {
+  width: 60px;
+  height: 60px;
+}
+
+img[src=""] {
+  content: url('~@/assets/images/noPic.png');
+}
+
+@media only screen and (max-width: 768px) {
+  span {
+    display: none;
+  }
+}
+</style>
