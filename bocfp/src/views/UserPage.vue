@@ -39,11 +39,9 @@
         </ion-card>
       </div>
 
-      <div class="pagination">
-        <PageButtons :prev="prevData" :next="nextData" />
-      </div>
-
     </ion-content>
+
+    <PageButtons :prev="prevData" :next="nextData" />
 
     <!-- Add user button -->
     <ion-fab slot="fixed" vertical="bottom" horizontal="end" router-link="/user/add">

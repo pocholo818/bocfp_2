@@ -51,12 +51,12 @@
         </ion-card>
       </div>
 
-      <div class="pagination">
-        <PageButtons :prev="prevData" :next="nextData" />
-      </div>
+
 
     </ion-content>
 
+    <PageButtons :prev="prevData" :next="nextData" />
+    
     <!-- Add child button -->
     <ion-fab slot="fixed" vertical="bottom" horizontal="end" router-link="/child_add">
       <ion-fab-button @click="setOpen(true)" class="theme">

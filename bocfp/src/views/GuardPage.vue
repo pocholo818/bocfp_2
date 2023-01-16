@@ -36,12 +36,9 @@
                 </ion-card>
             </div>
 
-            <div class="pagination">
-                <PageButtons :prev="prevData" :next="nextData" />
-            </div>
-
-
         </ion-content>
+
+        <PageButtons :prev="prevData" :next="nextData" />
 
         <!-- Add child button -->
         <ion-fab slot="fixed" vertical="bottom" horizontal="end" router-link="/guardian_add">
