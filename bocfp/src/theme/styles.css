@@ -16,5 +16,17 @@
 }
 
 .dateStyle{
-    background-color: #168554;
+    /* background-color: #168554; */
+}
+
+ion-modal.datetime-modal * {
+    color: #000;
+}
+
+.pagination {
+    position: absolute;
+    left: 50%;
+    bottom: 12px;
+
+    transform: translateX(-50%);
 }
