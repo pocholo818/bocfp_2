@@ -39,7 +39,7 @@
             </ion-card-header>
 
             <div slot="end" style="z-index: 999">
-              <ion-button color="warning" :router-link="('/child_edit/' + child.id)">
+              <ion-button color="warning" @click.prevent="() => $router.push('/child_edit/' + child.id)">
                 <ion-icon :icon="createOutline"></ion-icon><span class="hide-on-mobile">&nbsp; Edit</span>
               </ion-button>
               <ion-button color="danger" @click.prevent="child_delete(child.id)">
