@@ -104,10 +104,15 @@ const router = createRouter({
 
 router.beforeEach((to, from) => {
   const user_fname = localStorage.getItem('fname') as string
+  const admin_power = localStorage.getItem('admin_power') as string
 
   if (!user_fname && to.path !== '/login') {
     // redirect the user to the login page
     return { path: '/login' }
+  }
+
+  if (to.fullPath.includes('user') && admin_power !== '1') {
+    return { path: '/' }
   }
 })
 
