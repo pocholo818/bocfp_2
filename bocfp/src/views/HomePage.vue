@@ -78,14 +78,32 @@ export default defineComponent({
     this.admin_power = localStorage.getItem('admin_power') || ''
 
     if(this.admin_power && this.admin_power === '1') {
-      this.appPages.push(        
+      this.appPages = [
+        {
+          title: 'Dashboard',
+          url: '/dashboard',
+          iosIcon: personOutline,
+          mdIcon: personSharp
+        },
+        {
+          title: 'Children',
+          url: '/child',
+          iosIcon: personOutline,
+          mdIcon: personSharp
+        },
+        {
+          title: 'Guardian',
+          url: '/guardian',
+          iosIcon: personOutline,
+          mdIcon: personSharp
+        },
         {
           title: 'Accounts',
           url: '/user',
           iosIcon: personOutline,
           mdIcon: personSharp
         }
-      )
+      ]    
     }
     else {
       this.appPages = [
@@ -125,26 +143,24 @@ export default defineComponent({
   },
   data() {
     return {
-      appPages: [
-        {
-          title: 'Dashboard',
-          url: '/dashboard',
-          iosIcon: personOutline,
-          mdIcon: personSharp
-        },
-        {
-          title: 'Child',
-          url: '/child',
-          iosIcon: personOutline,
-          mdIcon: personSharp
-        },
-        {
-          title: 'Guardian',
-          url: '/guardian',
-          iosIcon: personOutline,
-          mdIcon: personSharp
-        }
-      ],
+      appPages: [{
+        title: 'Dashboard',
+        url: '/dashboard',
+        iosIcon: personOutline,
+        mdIcon: personSharp
+      },
+      {
+        title: 'Child',
+        url: '/child',
+        iosIcon: personOutline,
+        mdIcon: personSharp
+      },
+      {
+        title: 'Guardian',
+        url: '/guardian',
+        iosIcon: personOutline,
+        mdIcon: personSharp
+      }],
       user_fname: '',
       admin_power: ''
     }
