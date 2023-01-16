@@ -6,8 +6,7 @@
         <ion-buttons slot="start">
           <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title>Child</ion-title>
-        <PageButtons :prev="prevData" :next="nextData"/>
+        <ion-title>Children</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -36,10 +35,24 @@
 
             <ion-card-header>
               <ion-card-title>{{ child.fname }} {{ child.lname }}</ion-card-title>
-              <ion-card-subtitle>CHLDID: {{ child.id }}</ion-card-subtitle>
+              <ion-card-subtitle>ID: {{ child.id }}</ion-card-subtitle>
             </ion-card-header>
+
+            <div slot="end" style="z-index: 999">
+              <ion-button color="warning" :router-link="('/child_edit/' + child.id)">
+                <ion-icon :icon="createOutline"></ion-icon><span class="hide-on-mobile">&nbsp; Edit</span>
+              </ion-button>
+              <ion-button color="danger" @click.prevent="child_delete(child.id)">
+                <ion-icon :icon="trashOutline"></ion-icon><span class="hide-on-mobile">&nbsp;Delete</span>
+              </ion-button>
+            </div>
+
           </ion-item>
         </ion-card>
+      </div>
+
+      <div class="pagination">
+        <PageButtons :prev="prevData" :next="nextData" />
       </div>
 
     </ion-content>
@@ -70,11 +83,14 @@ import {
   IonToolbar,
   IonHeader, IonMenuButton,
   IonButtons,
-  IonTitle
+  alertController,
+  toastController,
+  IonTitle,
+  useIonRouter
 } from '@ionic/vue';
 // icons
 import {
-  addOutline
+  addOutline, createOutline, trashOutline
 } from 'ionicons/icons';
 import PageButtons from '@/components/PageButtons.vue';
 
@@ -97,7 +113,12 @@ export default defineComponent({
     IonTitle
   },
   setup() {
+    const ionRouter = useIonRouter()
+
     return {
+      ionRouter,
+      createOutline,
+      trashOutline,
       addOutline
     }
   },
@@ -107,7 +128,8 @@ export default defineComponent({
       childList: { "image": "" },
       search: "",
       limit: 20,
-      offset: 0
+      offset: 0,
+      isNextEnabled: true
     };
   },
   methods: {
@@ -136,6 +158,14 @@ export default defineComponent({
         .then((json) => {
           this.childList = json
 
+          if (json.message) {
+            this.isNextEnabled = false
+            return
+          }
+          else {
+            this.isNextEnabled = true
+          }
+
           if (this.childList.image) {
             this.childList.image = `data:image/jpeg;base64,${json.image}`
           }
@@ -146,6 +176,8 @@ export default defineComponent({
     },
     prevData() {
       const offset = this.offset -= this.limit
+
+      // disable negative offset
       if (offset <= 0) {
         this.offset = 0
       }
@@ -156,10 +188,50 @@ export default defineComponent({
       this.fetchData()
     },
     nextData() {
-      this.offset += this.limit
-
-      this.fetchData()
+      if (this.isNextEnabled) {
+        this.offset += this.limit
+        this.fetchData()
+      }
     },
+    async child_delete(id: string) {
+      const alert = await alertController.create({
+        header: 'Are you sure you want to delete?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel'
+          },
+          {
+            text: 'DELETE',
+            role: 'confirm',
+            handler: async () => {
+              const toast = await toastController.create({
+                duration: 1500,
+                position: 'top'
+              })
+
+              const childId = id
+
+              fetch('http://localhost:5000/child/del/' + childId, {
+                method: 'PUT'
+              })
+                .then((data) => {
+                  toast.message = 'Success!'
+                  this.$emit('deleted')
+                })
+                .catch((error) => {
+                  toast.message = error
+                });
+
+              await toast.present();
+              this.fetchData()
+            },
+          },
+        ],
+      });
+
+      await alert.present();
+    }
   },
   // get data
   mounted() {
@@ -189,6 +261,10 @@ img[src=""] {
 
 @media only screen and (max-width: 768px) {
   span {
+    display: none;
+  }
+
+  .hide-on-mobile {
     display: none;
   }
 }

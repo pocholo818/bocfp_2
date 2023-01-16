@@ -7,7 +7,6 @@
           <ion-menu-button></ion-menu-button>
         </ion-buttons>
         <ion-title>Accounts</ion-title>
-        <PageButtons :prev="prevData" :next="nextData" />
       </ion-toolbar>
     </ion-header>
 
@@ -38,6 +37,10 @@
 
           </ion-item>
         </ion-card>
+      </div>
+
+      <div class="pagination">
+        <PageButtons :prev="prevData" :next="nextData" />
       </div>
 
     </ion-content>
@@ -103,7 +106,8 @@ export default defineComponent({
       userList: "",
       search: "",
       limit: 20,
-      offset: 0
+      offset: 0,
+      isNextEnabled: true
     };
   },
   methods: {
@@ -131,6 +135,14 @@ export default defineComponent({
         .then((response) => response.json())
         .then((json) => {
           this.userList = json
+
+          if (json.message) {
+            this.isNextEnabled = false
+            return
+          }
+          else {
+            this.isNextEnabled = true
+          }
         })
     },
     prevData() {
@@ -145,9 +157,10 @@ export default defineComponent({
       this.fetchData()
     },
     nextData() {
-      this.offset += this.limit
-
-      this.fetchData()
+      if (this.isNextEnabled) {
+        this.offset += this.limit
+        this.fetchData()
+      }
     },
   },
   // get data

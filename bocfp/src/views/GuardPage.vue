@@ -7,7 +7,6 @@
                     <ion-menu-button></ion-menu-button>
                 </ion-buttons>
                 <ion-title>Guardian</ion-title>
-                <PageButtons :prev="prevData" :next="nextData" />
             </ion-toolbar>
         </ion-header>
 
@@ -30,11 +29,15 @@
                     <ion-item>
                         <ion-card-header>
                             <ion-card-title>{{ guard.fname }} {{ guard.lname }}</ion-card-title>
-                            <ion-card-subtitle>GRDNID: {{ guard.guardian_id }}</ion-card-subtitle>
+                            <ion-card-subtitle>ID: {{ guard.guardian_id }}</ion-card-subtitle>
                         </ion-card-header>
                     </ion-item>
 
                 </ion-card>
+            </div>
+
+            <div class="pagination">
+                <PageButtons :prev="prevData" :next="nextData" />
             </div>
 
 
@@ -108,7 +111,8 @@ export default defineComponent({
             guardianDel: "",
             search: "",
             limit: 20,
-            offset: 0
+            offset: 0,
+            isNextEnabled: true
         };
     },
     methods: {
@@ -136,6 +140,14 @@ export default defineComponent({
                 .then((response) => response.json())
                 .then((json) => {
                     this.guardianList = json
+
+                    if (json.message) {
+                        this.isNextEnabled = false
+                        return
+                    }
+                    else {
+                        this.isNextEnabled = true
+                    }
                 })
         },
         prevData() {
@@ -150,9 +162,10 @@ export default defineComponent({
             this.fetchData()
         },
         nextData() {
-            this.offset += this.limit
-
-            this.fetchData()
+            if (this.isNextEnabled) {
+                this.offset += this.limit
+                this.fetchData()
+            }
         },
     },
     // get data
