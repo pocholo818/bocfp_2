@@ -22,7 +22,7 @@
                                 v-model="loginDetails.password"></ion-input>
                         </ion-item><br>
 
-                        <ion-button class="theme" @click="login()" expand="block">Login</ion-button>
+                        <ion-button @click="login()" expand="block">Login</ion-button>
                     </ion-card-content>
                 </ion-card>
             </div>

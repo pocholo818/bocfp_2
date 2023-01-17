@@ -5,6 +5,15 @@
         <!-- content -->
         <ion-content class="ion-padding">
 
+            <ion-card id="app-info" class="ion-margin-bottom">
+                <ion-card-content>
+                    BOCFP is an app that monitors children's BMI to ensure healthy growth and development.
+                    It helps identify health issues early, enables early intervention and tracks growth.
+                    It is done by calculating BMI using height and weight and comparing it to standard charts for
+                    children of that age and gender.
+                </ion-card-content>
+            </ion-card>
+
             <ion-card class="ion-margin-bottom">
                 <ion-card-header>
                     <ion-card-title>{{ childCount }}</ion-card-title>
@@ -44,6 +53,7 @@ import {
     IonCardTitle,
     IonCardSubtitle,
     IonCardHeader,
+    IonCardContent,
     // IonCardContent,
     // IonSearchbar,
     // toastController,
@@ -74,7 +84,7 @@ export default defineComponent({
         IonCardTitle,
         IonCardSubtitle,
         IonCardHeader,
-        // IonCardContent,
+        IonCardContent,
         // IonSearchbar
         //   ChildCard
     },
@@ -144,5 +154,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
+#app-info {
+    --background: rgba(0, 0, 0, 0.24);
+    --color: white;
+    text-align: center;
+    box-shadow: none;
+}
 </style>
