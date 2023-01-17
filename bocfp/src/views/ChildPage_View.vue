@@ -270,9 +270,10 @@ export default defineComponent({
             let age = parseInt(currentDate.split("-")[0]) - parseInt(birthDate.split("-")[0]);
             let month = parseInt(currentDate.split("-")[1]) - parseInt(birthDate.split("-")[1]);
 
-            if (month < 0 || (month == 0 && parseInt(currentDate.split("-")[1]) < parseInt(birthDate.split("-")[1]))) {
-                age--;
-            }
+            // month age thingy
+            // if (month < 0 || (month == 0 && parseInt(currentDate.split("-")[1]) < parseInt(birthDate.split("-")[1]))) {
+            //     age--;
+            // }
 
             return age;
 
