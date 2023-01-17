@@ -11,22 +11,22 @@
     </ion-header>
 
     <!-- content -->
-    <ion-content>
+    <ion-content class="ion-padding">
 
 
       <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
 
 
-      <div v-if="userList.message">
+      <template v-if="userList.message">
         <ion-card>
           <ion-card-header>
             <ion-card-subtitle style="text-align: center;">{{ userList.message }}</ion-card-subtitle>
           </ion-card-header>
         </ion-card>
-      </div>
+      </template>
 
-      <div v-else>
-        <ion-card v-for="user in userList" style="cursor: pointer" :key="user.user_id"
+      <template v-else>
+        <ion-card v-for="user in userList" style="cursor: pointer" class="ion-margin-bottom" :key="user.user_id"
           :router-link="('/user/profile/' + user.user_id)">
           <ion-item>
 
@@ -37,7 +37,7 @@
 
           </ion-item>
         </ion-card>
-      </div>
+      </template>
 
     </ion-content>
 

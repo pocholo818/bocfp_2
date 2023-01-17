@@ -3,16 +3,16 @@
         <HeaderBar title="Dashboard" />
 
         <!-- content -->
-        <ion-content>
+        <ion-content class="ion-padding">
 
-            <ion-card>
+            <ion-card class="ion-margin-bottom">
                 <ion-card-header>
                     <ion-card-title>{{ childCount }}</ion-card-title>
                     <ion-card-subtitle>Total Child</ion-card-subtitle>
                 </ion-card-header>
             </ion-card>
 
-            <ion-card>
+            <ion-card class="ion-margin-bottom">
                 <ion-card-header>
                     <ion-card-title>Remarks</ion-card-title>
                     <!-- <ion-card-subtitle v-for="remarks in childRemarks" :key="remarks.recordId">{{ remarks.remark }}: {{ remarks.total }} ({{ (remarks.total/countTotalRemarks*100).toFixed(2) }}%)</ion-card-subtitle> -->
@@ -23,7 +23,7 @@
                 </ion-card-header>
             </ion-card>
 
-            <ion-card>
+            <ion-card class="ion-margin-bottom">
                 <!-- <Pie :data="data" :options="options" /> -->
                 <PieChart :data="data" :options="options" />
             </ion-card>

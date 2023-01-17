@@ -11,22 +11,22 @@
     </ion-header>
 
     <!-- content -->
-    <ion-content>
+    <ion-content class="ion-padding">
 
 
       <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
 
 
-      <div v-if="childList.message">
+      <template v-if="childList.message">
         <ion-card>
           <ion-card-header>
             <ion-card-subtitle style="text-align: center;">{{ childList.message }}</ion-card-subtitle>
           </ion-card-header>
         </ion-card>
-      </div>
+      </template>
 
-      <div v-else>
-        <ion-card v-for="child in childList" style="cursor: pointer" :key="child.id"
+      <template v-else>
+        <ion-card v-for="child in childList" style="cursor: pointer" class="ion-margin-bottom" :key="child.id"
           :router-link="('/child_view/' + child.id)">
           <ion-item>
             <ion-thumbnail slot="start">
@@ -49,7 +49,7 @@
 
           </ion-item>
         </ion-card>
-      </div>
+      </template>
 
 
 

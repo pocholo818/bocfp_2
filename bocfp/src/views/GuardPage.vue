@@ -11,20 +11,20 @@
         </ion-header>
 
         <!-- content -->
-        <ion-content>
+        <ion-content class="ion-padding">
 
             <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
 
-            <div v-if="guardianList.message">
+            <template v-if="guardianList.message">
                 <ion-card>
                     <ion-card-header>
                         <ion-card-subtitle style="text-align: center;">{{ guardianList.message }}</ion-card-subtitle>
                     </ion-card-header>
                 </ion-card>
-            </div>
+            </template>
 
-            <div v-else>
-                <ion-card v-for="guard in guardianList" :key="guard.guardian_id"
+            <template v-else>
+                <ion-card v-for="guard in guardianList" class="ion-margin-bottom" :key="guard.guardian_id"
                     :router-link="('/guardian_profile/' + guard.guardian_id)" style="cursor: pointer">
                     <ion-item>
                         <ion-card-header>
@@ -34,7 +34,7 @@
                     </ion-item>
 
                 </ion-card>
-            </div>
+            </template>
 
         </ion-content>
 
