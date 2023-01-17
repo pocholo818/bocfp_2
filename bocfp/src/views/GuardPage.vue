@@ -2,7 +2,7 @@
     <ion-page>
 
         <ion-header>
-            <ion-toolbar class="theme">
+            <ion-toolbar>
                 <ion-buttons slot="start">
                     <ion-menu-button></ion-menu-button>
                 </ion-buttons>
@@ -42,7 +42,7 @@
 
         <!-- Add child button -->
         <ion-fab slot="fixed" vertical="bottom" horizontal="end" router-link="/guardian_add">
-            <ion-fab-button @click="setOpen(true)" class="theme">
+            <ion-fab-button @click="setOpen(true)">
                 <ion-icon :icon="addOutline"></ion-icon>
             </ion-fab-button>
         </ion-fab>

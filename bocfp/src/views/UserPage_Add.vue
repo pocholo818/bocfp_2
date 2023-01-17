@@ -63,7 +63,7 @@
 
 
                         <!-- Save -->
-                        <ion-button expand="block" class="theme" @click="user_add">Save</ion-button>
+                        <ion-button expand="block" @click="user_add">Save</ion-button>
 
                     </ion-list>
                 </ion-card-content>

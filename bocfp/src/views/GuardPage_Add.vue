@@ -42,7 +42,7 @@
             </ion-card>
 
             <!-- Save -->
-            <ion-button expand="block" class="theme" @click="guardian_add">Save</ion-button><br><br><br>
+            <ion-button expand="block" @click="guardian_add">Save</ion-button><br><br><br>
             </ion-content>
 
         </ion-content>

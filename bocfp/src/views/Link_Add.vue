@@ -69,7 +69,7 @@
 
         <!-- Save -->
         <!-- <ion-button expand="block" class="theme" @click="link_add">Link Child</ion-button><br><br><br> -->
-        <ion-button expand="block" class="theme" @click="link_add">Link Child</ion-button><br><br><br>
+        <ion-button expand="block" @click="link_add">Link Child</ion-button><br><br><br>
       </ion-content>
 
     </ion-content>

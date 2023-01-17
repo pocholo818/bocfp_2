@@ -1,6 +1,6 @@
-.theme{
+ion-header ion-toolbar {
     --background: #168554;
-    color: white;
+    --color: white;
 }
 
 @media only screen and (min-width: 768px){

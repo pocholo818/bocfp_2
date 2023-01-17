@@ -21,7 +21,7 @@
                     <!-- <img alt="picture" class="icon" src="@/assets/images/noPic.png"> -->
                     <img alt="picture" class="icon" :src="childDetails.image">
 
-                    
+
                     <ion-card-subtitle style="text-align: center;">CHLDID: {{ childId }}</ion-card-subtitle>
 
                     <ion-list>
@@ -60,7 +60,7 @@
                             <ion-button color="warning" :router-link="('/child_edit/' + childId)"><ion-icon
                                     :icon="createOutline"></ion-icon>&nbsp; Edit</ion-button>
                             <ion-button color="danger" @click="child_delete(childId)"><ion-icon :icon="trashOutline">
-                            </ion-icon>&nbsp;
+                                </ion-icon>&nbsp;
                                 Del<span>ete</span></ion-button>
                         </ion-card-content>
 
@@ -106,8 +106,7 @@
                         <!-- latest record -->
                         <ion-card-header>
                             <div style="position: absolute; right: 0; z-index: 1;padding-right: 1.5vw">
-                                <span><ion-button class="theme"
-                                        :router-link="('/record_add/' + childId)">+</ion-button></span>
+                                <span><ion-button :router-link="('/record_add/' + childId)">+</ion-button></span>
                             </div>
                             <ion-card-title>Record</ion-card-title>
                             <ion-card-subtitle>Displaying the latest record</ion-card-subtitle>
@@ -135,7 +134,7 @@
                                 <ion-input placeholder="Enter Weight" v-model="childNewRecord.weight"
                                     readonly></ion-input>
                             </ion-item>
-                            <ion-button class="theme" :router-link="('/record_view/' + childId)">View all
+                            <ion-button :router-link="('/record_view/' + childId)">View all
                                 Records</ion-button>
                         </div>
 
@@ -201,7 +200,7 @@ export default defineComponent({
     data() {
         return {
             childId: "",
-            childDetails: {"image": ""},
+            childDetails: { "image": "" },
             childRecords: "",
             childNewRecord: "",
             childAge: 0,
@@ -231,8 +230,8 @@ export default defineComponent({
             .then((response) => response.json())
             .then((json) => {
                 this.childDetails = json
-                
-                if(!this.childDetails.image){
+
+                if (!this.childDetails.image) {
                     this.childDetails.image = require("@/assets/images/noPic.png")
                 }
 

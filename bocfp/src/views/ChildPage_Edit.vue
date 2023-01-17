@@ -48,14 +48,14 @@
                         </ion-item>
 
                         <ion-item>
-                            <ion-button class="theme" @click="selectPic()">Upload image</ion-button>
+                            <ion-button @click="selectPic()">Upload image</ion-button>
                         </ion-item>
                     </ion-list>
                 </ion-card-content>
             </ion-card>
 
             <!-- Save -->
-            <ion-button expand="block" class="theme" @click="child_edit">Save</ion-button>
+            <ion-button expand="block" @click="child_edit">Save</ion-button>
 
         </ion-content>
     </ion-page>

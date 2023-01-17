@@ -32,7 +32,7 @@
         </ion-card>
 
         <!-- Save -->
-        <ion-button expand="block" class="theme" @click="record_edit">Edit Record</ion-button><br><br><br>
+        <ion-button expand="block" @click="record_edit">Edit Record</ion-button><br><br><br>
       </ion-content>
 
     </ion-content>
