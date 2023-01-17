@@ -13,10 +13,9 @@
     <!-- content -->
     <ion-content class="ion-padding">
 
+      <div style="max-width: 800px; margin: auto;">
 
       <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
-
-
       <template v-if="childList.message">
         <ion-card>
           <ion-card-header>
@@ -53,12 +52,12 @@
         </ion-card>
       </template>
 
-
+      </div>
 
     </ion-content>
 
     <PageButtons :prev="prevData" :next="nextData" />
-    
+
     <!-- Add child button -->
     <ion-fab slot="fixed" vertical="bottom" horizontal="end" router-link="/child_add">
       <ion-fab-button @click="setOpen(true)">

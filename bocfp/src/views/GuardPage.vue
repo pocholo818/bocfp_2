@@ -13,29 +13,35 @@
         <!-- content -->
         <ion-content class="ion-padding">
 
-            <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
+            <div style="max-width: 800px; margin: auto;">
 
-            <template v-if="guardianList.message">
-                <ion-card>
-                    <ion-card-header>
-                        <ion-card-subtitle style="text-align: center;">{{ guardianList.message }}</ion-card-subtitle>
-                    </ion-card-header>
-                </ion-card>
-            </template>
+                <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
 
-            <template v-else>
-                <ion-card v-for="guard in guardianList" class="ion-margin-bottom" :key="guard.guardian_id"
-                    :router-link="('/guardian_profile/' + guard.guardian_id)" style="cursor: pointer">
-                    <ion-card-content class="ion-no-padding">
-                        <ion-item lines="none">
-                            <ion-card-header>
-                                <ion-card-title>{{ guard.fname }} {{ guard.lname }}</ion-card-title>
-                                <ion-card-subtitle>ID: {{ guard.guardian_id }}</ion-card-subtitle>
-                            </ion-card-header>
-                        </ion-item>
-                    </ion-card-content>
-                </ion-card>
-            </template>
+                <template v-if="guardianList.message">
+                    <ion-card>
+                        <ion-card-header>
+                            <ion-card-subtitle style="text-align: center;">{{
+                                guardianList.message
+                            }}</ion-card-subtitle>
+                        </ion-card-header>
+                    </ion-card>
+                </template>
+
+                <template v-else>
+                    <ion-card v-for="guard in guardianList" class="ion-margin-bottom" :key="guard.guardian_id"
+                        :router-link="('/guardian_profile/' + guard.guardian_id)" style="cursor: pointer">
+                        <ion-card-content class="ion-no-padding">
+                            <ion-item lines="none">
+                                <ion-card-header>
+                                    <ion-card-title>{{ guard.fname }} {{ guard.lname }}</ion-card-title>
+                                    <ion-card-subtitle>ID: {{ guard.guardian_id }}</ion-card-subtitle>
+                                </ion-card-header>
+                            </ion-item>
+                        </ion-card-content>
+                    </ion-card>
+                </template>
+
+            </div>
 
         </ion-content>
 
@@ -47,6 +53,7 @@
                 <ion-icon :icon="addOutline"></ion-icon>
             </ion-fab-button>
         </ion-fab>
+
 
     </ion-page>
 </template>

@@ -147,7 +147,6 @@ export default defineComponent({
             })
 
             const data = this.childDetails;
-            console.log(data);
 
             fetch('http://localhost:5000/childUpdate/:id', {
                 method: 'PATCH',
@@ -179,7 +178,6 @@ export default defineComponent({
                 readData: true
             });
             const file = result.files[0]
-            console.log(file)
             this.childDetails.image = `data:image/jpeg;base64,${file.data}`
         },
 

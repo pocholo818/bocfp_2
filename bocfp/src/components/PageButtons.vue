@@ -46,6 +46,11 @@ export default defineComponent({
       chevronBack, chevronForward
     }
   },
+  methods: {
+    right(){
+      console.log("rights")
+    }
+  }
 });
 </script> 
 

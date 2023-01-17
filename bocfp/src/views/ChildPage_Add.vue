@@ -58,7 +58,7 @@
         </ion-card>
 
         <!-- Save -->
-        <ion-button expand="block" @click="child_add">Save</ion-button><br><br><br>
+        <ion-button expand="block" @click="child_add()">Save</ion-button><br><br><br>
       </ion-content>
 
     </ion-content>
@@ -118,6 +118,7 @@ export default defineComponent({
       childDetails: {
         fname: "",
         lname: "",
+        sex: "",
         bdate: "",
         image: ""
       }
@@ -140,14 +141,50 @@ export default defineComponent({
       })
 
       const currentDate = new Date()
-      const bdate = new Date(this.childDetails.bdate)
-      const dateDifference = Math.abs(bdate.getFullYear() - currentDate.getFullYear())
 
-      if(dateDifference > 12) { // no child greater than 12 years old 
-        toast.message = 'too old!'
-        await toast.present();
-        return
+      const bdate = new Date(this.childDetails.bdate)
+      const dateDifference = currentDate.getFullYear() - bdate.getFullYear()
+      const data = this.childDetails;
+
+      // checks if empty child details
+      if (this.childDetails.fname && this.childDetails.lname && this.childDetails.sex && this.childDetails.bdate) {
+        // checks child bdate
+        if (bdate.toISOString().split("T")[0] == currentDate.toISOString().split("T")[0] || dateDifference <= 0) {
+          toast.message = "Invalid Child Birthdate"
+        }
+        else {
+          fetch('http://localhost:5000/child', {
+            method: 'POST', // or 'PUT'
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          })
+            .then((data) => {
+              toast.message = 'Success!'
+              this.childDetails = {
+                fname: "",
+                lname: "",
+                sex: "",
+                bdate: "",
+                image: "",
+              }
+              this.router.push("/child");
+            })
+            .catch((error) => {
+              toast.message = error
+            });
+        }
+      } else {
+        toast.message = "Child's details are incomplete"
       }
+
+
+      // if(dateDifference > 12) { // no child greater than 12 years old 
+      //   toast.message = 'too old!'
+      //   await toast.present();
+      //   return
+      // }
 
       // const data = this.childDetails;
       // fetch('http://localhost:5000/child', {
@@ -171,7 +208,7 @@ export default defineComponent({
       //     toast.message = error
       //   });
 
-      // await toast.present();
+      await toast.present();
     },
     async image() {
       const result = await FilePicker.pickFiles({

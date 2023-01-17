@@ -197,6 +197,24 @@ export default defineComponent({
         IonDatetime, IonDatetimeButton, IonModal,
         IonBackButton,
     },
+    ionViewWillEnter() {
+        this.childId = this.router.params.id + "";
+
+        fetch('http://localhost:5000/child/profile/' + this.childId)
+            .then((response) => response.json())
+            .then((json) => {
+                this.childDetails = json
+
+                if (!this.childDetails.image) {
+                    this.childDetails.image = require("@/assets/images/noPic.png")
+                }
+
+                this.childBdate = json.bdate;
+                this.childAge = this.computeAge();
+            })
+        this.fetchGuardian()
+        this.fetchLatestRecord()
+    },
     data() {
         return {
             childId: "",
@@ -222,24 +240,6 @@ export default defineComponent({
             arrowBack,
             ionRouter
         }
-    },
-    mounted() {
-        this.childId = this.router.params.id + "";
-
-        fetch('http://localhost:5000/child/profile/' + this.childId)
-            .then((response) => response.json())
-            .then((json) => {
-                this.childDetails = json
-
-                if (!this.childDetails.image) {
-                    this.childDetails.image = require("@/assets/images/noPic.png")
-                }
-
-                this.childBdate = json.bdate;
-                this.childAge = this.computeAge();
-            })
-        this.fetchGuardian()
-        this.fetchLatestRecord()
     },
     methods: {
         fetchGuardian() {
