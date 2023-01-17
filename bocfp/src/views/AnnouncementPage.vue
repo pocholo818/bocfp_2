@@ -16,24 +16,22 @@
 
       <!-- <template> -->
         <ion-list>
-          <ion-list-header>
+          <!-- <ion-list-header>
             <ion-label>Today</ion-label>
-          </ion-list-header>
+          </ion-list-header> -->
 
-          <ion-card class="ion-margin-bottom">
-            <ion-card-content>
-              <ion-item lines="none">
-                <ion-card-header>
-                  <ion-card-title></ion-card-title>
-                  <ion-card-subtitle></ion-card-subtitle>
-                </ion-card-header>
-              </ion-item>
-            </ion-card-content>
-          </ion-card>
+          <AnnouncementCard title="title" content="
+            contentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontent
+            contentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontent
+            contentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontent
+            contentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontent
+            contentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontent
+            contentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontent
+            " date="01-17-23" />
 
-          <ion-list-header>
+          <!-- <ion-list-header>
             <ion-label>IDK DATE</ion-label>
-          </ion-list-header>
+          </ion-list-header> -->
         </ion-list>
       <!-- </template> -->
 
@@ -68,11 +66,10 @@
         <ion-item :counter="96">
           <ion-label position="floating">Enter title</ion-label>
           <ion-input type="text" maxLength="96"></ion-input>
-          <ion-note slot="error">Invalid email</ion-note>
         </ion-item>
 
         <ion-item :counter="512">
-          <ion-textarea placeholder="Type in announcement details" :autoGrow="true" maxLength="512">
+          <ion-textarea placeholder="Type in announcement content" :autoGrow="true" maxLength="512">
           </ion-textarea>
         </ion-item>
       </ion-content>
@@ -90,8 +87,6 @@ import {
   IonCard,
   IonCardSubtitle,
   IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
   IonModal,
   IonHeader,
   IonToolbar,
@@ -99,15 +94,15 @@ import {
   IonButtons,
   IonInput,
   IonTextarea,
-  IonNote,
   IonList,
-  IonListHeader,
+  // IonListHeader,
   IonLabel,
   alertController,
   toastController,
   useIonRouter
 } from '@ionic/vue';
 import HeaderBar from '@/components/HeaderBar.vue';
+import AnnouncementCard from '@/components/AnnouncementCard.vue'
 // icons
 import {
   addOutline, createOutline, trashOutline
@@ -118,6 +113,7 @@ export default defineComponent({
   name: 'AnnouncementPage',
   components: {
     HeaderBar,
+    AnnouncementCard,
     PageButtons,
     IonSearchbar,
     IonFab,
@@ -126,8 +122,6 @@ export default defineComponent({
     IonCard,
     IonCardSubtitle,
     IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
     IonModal,
     IonHeader,
     IonToolbar,
@@ -135,9 +129,8 @@ export default defineComponent({
     IonButtons,
     IonInput,
     IonTextarea,
-    IonNote,
     IonList,
-    IonListHeader,
+    // IonListHeader,
     IonLabel
   },
   setup() {
