@@ -28,14 +28,16 @@
       <template v-else>
         <ion-card v-for="user in userList" style="cursor: pointer" class="ion-margin-bottom" :key="user.user_id"
           :router-link="('/user/profile/' + user.user_id)">
-          <ion-item>
+          <ion-card-content class="ion-no-padding">
+            <ion-item lines="none">
 
-            <ion-card-header>
-              <ion-card-title>{{ user.fname }} {{ user.lname }}</ion-card-title>
-              <!-- <ion-card-subtitle>ID: {{ user.user_id }}</ion-card-subtitle> -->
-            </ion-card-header>
+              <ion-card-header>
+                <ion-card-title>{{ user.fname }} {{ user.lname }}</ion-card-title>
+                <!-- <ion-card-subtitle>ID: {{ user.user_id }}</ion-card-subtitle> -->
+              </ion-card-header>
 
-          </ion-item>
+            </ion-item>
+          </ion-card-content>
         </ion-card>
       </template>
 
@@ -65,6 +67,7 @@ import {
   IonCardSubtitle,
   IonCardHeader,
   IonCardTitle,
+  IonCardContent,
   IonToolbar,
   IonHeader, IonMenuButton,
   IonButtons,
@@ -88,6 +91,7 @@ export default defineComponent({
     IonCardSubtitle,
     IonCardHeader,
     IonCardTitle,
+    IonCardContent,
     IonToolbar,
     IonHeader, IonMenuButton,
     IonButtons,

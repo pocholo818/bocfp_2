@@ -26,13 +26,14 @@
             <template v-else>
                 <ion-card v-for="guard in guardianList" class="ion-margin-bottom" :key="guard.guardian_id"
                     :router-link="('/guardian_profile/' + guard.guardian_id)" style="cursor: pointer">
-                    <ion-item>
-                        <ion-card-header>
-                            <ion-card-title>{{ guard.fname }} {{ guard.lname }}</ion-card-title>
-                            <ion-card-subtitle>ID: {{ guard.guardian_id }}</ion-card-subtitle>
-                        </ion-card-header>
-                    </ion-item>
-
+                    <ion-card-content class="ion-no-padding">
+                        <ion-item lines="none">
+                            <ion-card-header>
+                                <ion-card-title>{{ guard.fname }} {{ guard.lname }}</ion-card-title>
+                                <ion-card-subtitle>ID: {{ guard.guardian_id }}</ion-card-subtitle>
+                            </ion-card-header>
+                        </ion-item>
+                    </ion-card-content>
                 </ion-card>
             </template>
 
@@ -61,6 +62,7 @@ import {
     IonCardTitle,
     IonCardSubtitle,
     IonCardHeader,
+    IonCardContent,
     IonSearchbar,
     IonToolbar,
     IonHeader, IonMenuButton,
@@ -87,6 +89,7 @@ export default defineComponent({
         IonCardTitle,
         IonCardSubtitle,
         IonCardHeader,
+        IonCardContent,
         IonSearchbar,
         IonToolbar,
         IonHeader, IonMenuButton,
