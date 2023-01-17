@@ -15,14 +15,26 @@
       </template>
 
       <!-- <template> -->
-      <ion-card class="ion-margin-bottom">
-        <ion-item>
-          <ion-card-header>
-            <ion-card-title></ion-card-title>
-            <ion-card-subtitle></ion-card-subtitle>
-          </ion-card-header>
-        </ion-item>
-      </ion-card>
+        <ion-list>
+          <ion-list-header>
+            <ion-label>Today</ion-label>
+          </ion-list-header>
+
+          <ion-card class="ion-margin-bottom">
+            <ion-card-content>
+              <ion-item lines="none">
+                <ion-card-header>
+                  <ion-card-title></ion-card-title>
+                  <ion-card-subtitle></ion-card-subtitle>
+                </ion-card-header>
+              </ion-item>
+            </ion-card-content>
+          </ion-card>
+
+          <ion-list-header>
+            <ion-label>IDK DATE</ion-label>
+          </ion-list-header>
+        </ion-list>
       <!-- </template> -->
 
     </ion-content>
@@ -79,6 +91,7 @@ import {
   IonCardSubtitle,
   IonCardHeader,
   IonCardTitle,
+  IonCardContent,
   IonModal,
   IonHeader,
   IonToolbar,
@@ -87,6 +100,9 @@ import {
   IonInput,
   IonTextarea,
   IonNote,
+  IonList,
+  IonListHeader,
+  IonLabel,
   alertController,
   toastController,
   useIonRouter
@@ -111,6 +127,7 @@ export default defineComponent({
     IonCardSubtitle,
     IonCardHeader,
     IonCardTitle,
+    IonCardContent,
     IonModal,
     IonHeader,
     IonToolbar,
@@ -118,7 +135,10 @@ export default defineComponent({
     IonButtons,
     IonInput,
     IonTextarea,
-    IonNote
+    IonNote,
+    IonList,
+    IonListHeader,
+    IonLabel
   },
   setup() {
     const ionRouter = useIonRouter()

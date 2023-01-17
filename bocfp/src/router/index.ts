@@ -29,6 +29,10 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/DashboardPage.vue'),
       },
       {
+        path: '/announcement',
+        component: () => import('@/views/AnnouncementPage.vue'),
+      },
+      {
         path: '/record_view/:id',
         component: () => import('@/views/Record_View.vue'),
       },

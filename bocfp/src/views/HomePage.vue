@@ -86,6 +86,12 @@ export default defineComponent({
           mdIcon: personSharp
         },
         {
+          title: 'Announcement',
+          url: '/announcement',
+          iosIcon: personOutline,
+          mdIcon: personSharp
+        },
+        {
           title: 'Children',
           url: '/child',
           iosIcon: personOutline,
