@@ -38,17 +38,19 @@
               </ion-item>
 
               <ion-item>
-                <ion-label>Birth Date:</ion-label>
-                <ion-datetime-button datetime="dateOfBirth"></ion-datetime-button>
+                <!-- <ion-label>Birth Date:</ion-label>
+                <ion-datetime-button datetime="dateOfBirth"></ion-datetime-button> -->
 
-                <ion-modal :keep-contents-mounted="true" class="datetime-modal">
+                <input type="date" v-model="childDetails.bdate" max="2099-12-31" />
+
+                <!-- <ion-modal :keep-contents-mounted="true" class="datetime-modal">
                   <ion-datetime id="dateOfBirth" displayFormat="YYYY.MM.DD" class="dateStyle" presentation="date"
                     v-model="childDetails.bdate"></ion-datetime>
-                </ion-modal>
+                </ion-modal> -->
               </ion-item>
 
               <ion-item>
-                <ion-button class="theme" @click="selectPic()">Upload image</ion-button>
+                <ion-button @click="selectPic()">Upload image</ion-button>
               </ion-item>
 
             </ion-list>
@@ -56,7 +58,7 @@
         </ion-card>
 
         <!-- Save -->
-        <ion-button expand="block" class="theme" @click="child_add">Save</ion-button><br><br><br>
+        <ion-button expand="block" @click="child_add">Save</ion-button><br><br><br>
       </ion-content>
 
     </ion-content>
@@ -106,7 +108,7 @@ export default defineComponent({
     IonCardContent,
     IonBackButton,
     IonButtons, IonHeader, IonToolbar,
-    IonDatetime, IonDatetimeButton, IonModal,
+    // IonDatetime, IonDatetimeButton, IonModal,
     IonItem, IonSelect, IonSelectOption,
     IonCardHeader,
     IonCardTitle
@@ -137,29 +139,39 @@ export default defineComponent({
         position: 'top'
       })
 
-      const data = this.childDetails;
-      fetch('http://localhost:5000/child', {
-        method: 'POST', // or 'PUT'
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-        .then((data) => {
-          toast.message = 'Success!'
-          this.childDetails = {
-            fname: "",
-            lname: "",
-            bdate: "",
-            image: ""
-          }
-          this.router.push("/child");
-        })
-        .catch((error) => {
-          toast.message = error
-        });
+      const currentDate = new Date()
+      const bdate = new Date(this.childDetails.bdate)
+      const dateDifference = Math.abs(bdate.getFullYear() - currentDate.getFullYear())
 
-      await toast.present();
+      if(dateDifference > 12) { // no child greater than 12 years old 
+        toast.message = 'too old!'
+        await toast.present();
+        return
+      }
+
+      // const data = this.childDetails;
+      // fetch('http://localhost:5000/child', {
+      //   method: 'POST', // or 'PUT'
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(data),
+      // })
+      //   .then((data) => {
+      //     toast.message = 'Success!'
+      //     this.childDetails = {
+      //       fname: "",
+      //       lname: "",
+      //       bdate: "",
+      //       image: ""
+      //     }
+      //     this.router.push("/child");
+      //   })
+      //   .catch((error) => {
+      //     toast.message = error
+      //   });
+
+      // await toast.present();
     },
     async image() {
       const result = await FilePicker.pickFiles({
@@ -203,7 +215,6 @@ export default defineComponent({
         this.childDetails.image = data
       }
     }
-
   }
 }
 );
