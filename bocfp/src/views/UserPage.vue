@@ -13,6 +13,7 @@
     <!-- content -->
     <ion-content class="ion-padding">
 
+      <div style="max-width: 800px; margin: auto;">
 
       <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
 
@@ -40,6 +41,8 @@
           </ion-card-content>
         </ion-card>
       </template>
+
+      </div>
 
     </ion-content>
 
