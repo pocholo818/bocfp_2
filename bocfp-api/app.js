@@ -233,7 +233,7 @@ app.post('/link/add/:guardian_id', (req, res) => {
 app.post('/user/login', (req, res) => {
   const { username, password } = req.body
 
-  connection.query(`SELECT * FROM user WHERE username='${username}' AND password='${password}'`, (err, rows, fields) => {
+  connection.query(`SELECT * FROM user WHERE username='${username}' AND password='${password}' AND soft_delete = 0`, (err, rows, fields) => {
     // console.log(rows.length)
     if (!rows.length) {
       res.json({ "message": "Incorrect Username or Password" })

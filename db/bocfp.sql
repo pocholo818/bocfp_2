@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 10, 2023 at 06:32 PM
+-- Generation Time: Jan 19, 2023 at 03:46 PM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -20,6 +20,18 @@ SET time_zone = "+00:00";
 --
 -- Database: `bocfp`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `announcement`
+--
+
+CREATE TABLE `announcement` (
+  `annou_id` int(11) NOT NULL,
+  `title` varchar(96) NOT NULL,
+  `content` varchar(512) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -194,6 +206,12 @@ INSERT INTO `user` (`user_id`, `fname`, `lname`, `username`, `password`, `contac
 --
 
 --
+-- Indexes for table `announcement`
+--
+ALTER TABLE `announcement`
+  ADD PRIMARY KEY (`annou_id`);
+
+--
 -- Indexes for table `child`
 --
 ALTER TABLE `child`
@@ -227,6 +245,12 @@ ALTER TABLE `user`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `announcement`
+--
+ALTER TABLE `announcement`
+  MODIFY `annou_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `child`
