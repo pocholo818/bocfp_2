@@ -270,6 +270,16 @@ app.post('/user', (req, res) => {
   })
   res.send("success")
 });
+// add new announcement
+app.post('/announcement/new', (req, res) => {
+  const { title, content } = req.body;
+
+  connection.query(`INSERT INTO announcement (title, content) 
+        VALUES ('${title}', '${content}')`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+});
 
 
 // PUT

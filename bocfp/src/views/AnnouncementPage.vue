@@ -39,15 +39,17 @@
 
     <PageButtons :prev="prevData" :next="nextData" />
 
-    <!-- Add child button -->
-    <ion-fab 
-      id="open-post-announcement-modal" 
-      slot="fixed" vertical="bottom" horizontal="end"
-    >
-      <ion-fab-button>
-        <ion-icon :icon="addOutline"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
+    <!-- Add announcement button// only shows if user has admin_power -->
+    <template v-if='user_id == "1"'>
+      <ion-fab 
+        id="open-post-announcement-modal" 
+        slot="fixed" vertical="bottom" horizontal="end"
+      >
+        <ion-fab-button>
+          <ion-icon :icon="addOutline"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+    </template>
 
     <!-- post announcement modal -->
     <ion-modal ref="postAnnouncementModal" trigger="open-post-announcement-modal" @didDismiss="clearInputs()">
@@ -146,10 +148,20 @@ export default defineComponent({
   data() {
     return {
       search: "",
-      limit: 20,
+      limit: 1,
       offset: 0,
-      isNextEnabled: true
+      isNextEnabled: true,
+      annou: "",
+      user_id: ''
     };
+  },
+  mounted(){
+    // test data
+    // console.log("id: ",localStorage.getItem('admin_power'))
+    // console.log("id: ",localStorage.getItem('user_id'))
+  },
+  ionViewWillEnter(){
+    this.user_id = localStorage.getItem('user_id') || ''
   },
   methods: {
     searchData(search: string) {
@@ -177,7 +189,7 @@ export default defineComponent({
       console.log('clear inputs')
     },
     fetchData() {
-      // fetch(`http://localhost:5000/`)
+      // fetch(`http://localhost:5000/announcement`)
       //   .then((response) => response.json())
       //   .then((json) => {
 
