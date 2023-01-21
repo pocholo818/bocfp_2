@@ -187,12 +187,12 @@ app.get('/user/search/:search', (req, res) => {
 app.get('/announcements', (req, res) => {
   const { limit, offset } = req.query
 
-  connection.query(`SELECT * FROM announcement WHERE soft_delete = 0 ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
-    if (rows) {
+  connection.query(`SELECT * FROM announcement WHERE soft_delete = 0 ORDER BY annou_id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
+    if (rows.length) {
       res.json(rows)
     }
     else {
-      res.json({ "message": "No Announcement(s) Found!" })
+      res.json({ "message": "No Announcement(s) Found!", "user_id": "" })
     }
   })
 
@@ -286,10 +286,10 @@ app.post('/user', (req, res) => {
 });
 // add new announcement
 app.post('/announcement/new', (req, res) => {
-  const { title, content } = req.body;
+  const { title, content, user_id } = req.body;
 
-  connection.query(`INSERT INTO announcement (title, content) 
-        VALUES ('${title}', '${content}')`, (err, rows, fields) => {
+  connection.query(`INSERT INTO announcement (title, content, user_id) 
+        VALUES ('${title}', '${content}', '${user_id}')`, (err, rows, fields) => {
     if (err) throw err
   })
   res.send("success")

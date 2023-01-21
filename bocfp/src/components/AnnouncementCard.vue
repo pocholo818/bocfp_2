@@ -2,7 +2,7 @@
     <ion-card class="ion-margin-bottom">
         <ion-card-header>
             <ion-card-title>{{ title }}</ion-card-title>
-            <ion-card-subtitle>{{ date }}</ion-card-subtitle>
+            <ion-card-subtitle>{{ date.split("T")[0] }}</ion-card-subtitle>
         </ion-card-header>
         <ion-card-content>
             {{ content }}
