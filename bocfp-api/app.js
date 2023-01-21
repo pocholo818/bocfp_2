@@ -183,6 +183,20 @@ app.get('/user/search/:search', (req, res) => {
     }
   })
 });
+// get all post
+app.get('/announcements', (req, res) => {
+  const { limit, offset } = req.query
+
+  connection.query(`SELECT * FROM announcement WHERE soft_delete = 0 ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
+    if (rows.length) {
+      res.json(rows)
+    }
+    else {
+      res.json({ "message": "No Announcement(s) Found" })
+    }
+  })
+
+});
 
 
 // POST

@@ -41,7 +41,7 @@
 
     <!-- Add announcement button// only shows if user has admin_power -->
     <template v-if='user_id == "1"'>
-      <ion-fab 
+      <ion-fab
         id="open-post-announcement-modal" 
         slot="fixed" vertical="bottom" horizontal="end"
       >
@@ -49,7 +49,6 @@
           <ion-icon :icon="addOutline"></ion-icon>
         </ion-fab-button>
       </ion-fab>
-    </template>
 
     <!-- post announcement modal -->
     <ion-modal ref="postAnnouncementModal" trigger="open-post-announcement-modal" @didDismiss="clearInputs()">
@@ -58,24 +57,33 @@
           <ion-buttons slot="start">
             <ion-button @click="cancel()">Cancel</ion-button>
           </ion-buttons>
+
           <ion-title>Post Announcement</ion-title>
           <ion-buttons slot="end">
             <ion-button :strong="true" color="primary" @click="postAnnouncement()">Post</ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
+
       <ion-content class="ion-padding">
         <ion-item :counter="96">
           <ion-label position="floating">Enter title</ion-label>
-          <ion-input type="text" maxLength="96"></ion-input>
+          <ion-input type="text" maxLength="96" v-model="newAnnou.title"></ion-input>
         </ion-item>
 
         <ion-item :counter="512">
-          <ion-textarea placeholder="Type in announcement content" :autoGrow="true" maxLength="512">
+          <ion-textarea v-model="newAnnou.content" placeholder="Type in announcement content" :autoGrow="true" maxLength="512">
           </ion-textarea>
         </ion-item>
+
+        <div style="display: flex; justify-content: end;">
+          <ion-button @click="addAnnou">Post</ion-button>
+        </div>
+
       </ion-content>
     </ion-modal>
+    </template>
+
   </ion-page>
 </template>
 
@@ -152,6 +160,10 @@ export default defineComponent({
       offset: 0,
       isNextEnabled: true,
       annou: "",
+      newAnnou: {
+        title: "",
+        content: ""
+      },
       user_id: ''
     };
   },
@@ -164,6 +176,27 @@ export default defineComponent({
     this.user_id = localStorage.getItem('user_id') || ''
   },
   methods: {
+    async addAnnou() {  
+      const toast = await toastController.create({
+        duration: 1500,
+        position: 'top'
+      })
+      
+      const data = this.newAnnou;
+
+      // checks if empty post details
+      if (this.newAnnou.title && this.newAnnou.content) {
+          // console.log(this.newAnnou)
+          this.clearInputs()
+          toast.message = "Announcement Posted!"
+          this.cancel()
+        }
+      else {
+        toast.message = "Announcement content are incomplete"
+      }
+
+      await toast.present();
+    },
     searchData(search: string) {
       search = search.trim()
       if (search.length) {
@@ -186,7 +219,7 @@ export default defineComponent({
       console.log('tae');
     },
     clearInputs() {
-      console.log('clear inputs')
+      this.newAnnou = {"title": "", "content": ""}
     },
     fetchData() {
       // fetch(`http://localhost:5000/announcement`)
