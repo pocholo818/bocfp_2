@@ -20,14 +20,27 @@
             <ion-label>Today</ion-label>
           </ion-list-header> -->
 
-          <AnnouncementCard title="title" content="
+          <!-- <AnnouncementCard title="title" content="
             contentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontent
             contentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontent
             contentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontent
             contentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontent
             contentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontent
             contentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontent
-            " date="01-17-23" />
+            " date="01-17-23" /> -->
+            
+          <template v-if="annou.message">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-subtitle style="text-align: center;">{{ annou.message }}</ion-card-subtitle>
+              </ion-card-header>
+            </ion-card>
+          </template>
+
+          <template v-else>
+            <AnnouncementCard v-for="annous in annou" :title="annous.title" :content="annous.content" :date="annous.date" 
+              :key="annous.annou_id" />
+          </template>
 
           <!-- <ion-list-header>
             <ion-label>IDK DATE</ion-label>
@@ -168,6 +181,7 @@ export default defineComponent({
     };
   },
   mounted(){
+    this.fetchData()
     // test data
     // console.log("id: ",localStorage.getItem('admin_power'))
     // console.log("id: ",localStorage.getItem('user_id'))
@@ -222,11 +236,11 @@ export default defineComponent({
       this.newAnnou = {"title": "", "content": ""}
     },
     fetchData() {
-      // fetch(`http://localhost:5000/announcement`)
-      //   .then((response) => response.json())
-      //   .then((json) => {
-
-      //   })
+      fetch(`http://localhost:5000/announcements`)
+        .then((response) => response.json())
+        .then((json) => {
+          this.annou = json
+        })
     },
     prevData() {
       const offset = this.offset -= this.limit
