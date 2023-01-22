@@ -93,7 +93,7 @@ app.get('/child/search/:search', (req, res) => {
   connection.query(`SELECT * FROM child WHERE 
     soft_delete = 0 AND id LIKE "${req.params.search}"
     OR soft_delete = 0 AND fname LIKE "%${req.params.search}%"
-    OR soft_delete = 0 AND lname LIKE"%${req.params.search}%"`, (err, rows, fields) => {
+    OR soft_delete = 0 AND lname LIKE"%${req.params.search}%" LIMIT 5`, (err, rows, fields) => {
     if (rows.length) {
       res.json(rows)
     }
@@ -107,7 +107,7 @@ app.get('/child/search/male/:search', (req, res) => {
   connection.query(`SELECT * FROM child WHERE 
     soft_delete = 0 AND sex = 'M' AND id LIKE "${req.params.search}"
     OR soft_delete = 0 AND sex = 'M' AND fname LIKE "%${req.params.search}%"
-    OR soft_delete = 0 AND sex = 'M' AND lname LIKE"%${req.params.search}%"`, (err, rows, fields) => {
+    OR soft_delete = 0 AND sex = 'M' AND lname LIKE"%${req.params.search}%" LIMIT 5`, (err, rows, fields) => {
     if (rows.length) {
       res.json(rows)
     }
@@ -121,7 +121,7 @@ app.get('/child/search/female/:search', (req, res) => {
   connection.query(`SELECT * FROM child WHERE 
     soft_delete = 0 AND sex = 'F' AND id LIKE "${req.params.search}"
     OR soft_delete = 0 AND sex = 'F' AND fname LIKE "%${req.params.search}%"
-    OR soft_delete = 0 AND sex = 'F' AND lname LIKE"%${req.params.search}%"`, (err, rows, fields) => {
+    OR soft_delete = 0 AND sex = 'F' AND lname LIKE"%${req.params.search}%" LIMIT 5`, (err, rows, fields) => {
     if (rows.length) {
       res.json(rows)
     }
@@ -176,7 +176,7 @@ app.get('/guardian/search/:search', (req, res) => {
   connection.query(`SELECT * FROM guardian WHERE 
     soft_delete = 0 AND guardian_id LIKE "${req.params.search}"
     OR soft_delete = 0 AND fname LIKE "%${req.params.search}%"
-    OR soft_delete = 0 AND lname LIKE"%${req.params.search}%"`, (err, rows, fields) => {
+    OR soft_delete = 0 AND lname LIKE"%${req.params.search}%" LIMIT 5`, (err, rows, fields) => {
     if (rows.length) {
       res.json(rows)
     }
@@ -230,7 +230,7 @@ app.get('/user/search/:search', (req, res) => {
   connection.query(`SELECT * FROM user WHERE 
     soft_delete = 0 AND user_id LIKE "${req.params.search}"
     OR soft_delete = 0 AND fname LIKE "%${req.params.search}%"
-    OR soft_delete = 0 AND lname LIKE"%${req.params.search}%"`, (err, rows, fields) => {
+    OR soft_delete = 0 AND lname LIKE"%${req.params.search}%" LIMIT 5`, (err, rows, fields) => {
     if (rows.length) {
       res.json(rows)
     }
