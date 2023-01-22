@@ -159,15 +159,46 @@ export default defineComponent({
       search = search.trim()
       if (search.length) {
         setTimeout(() => {
-          fetch('http://localhost:5000/child/search/' + search)
-            .then((response) => response.json())
-            .then((json) => {
-              this.childList = json
-            })
+          // search for male child
+          if (this.childFilter == 'm') {
+            fetch('http://localhost:5000/child/search/male/' + search)
+              .then((response) => response.json())
+              .then((json) => {
+                this.childList = { "image": "" },
+                  this.childList = json
+              })
+          }
+          // search for female child
+          else if (this.childFilter == 'f') {
+            fetch('http://localhost:5000/child/search/female/' + search)
+              .then((response) => response.json())
+              .then((json) => {
+                this.childList = { "image": "" },
+                  this.childList = json
+              })
+          }
+          // search for all child
+          else if (this.childFilter == 'a') {
+            fetch('http://localhost:5000/child/search/' + search)
+              .then((response) => response.json())
+              .then((json) => {
+                this.childList = { "image": "" },
+                this.childList = json
+              })
+          }
         }, 1000)
       }
+      // if empty search
       else {
-        this.fetchData()
+        if(this.childFilter == 'm'){
+          this.fetchMale()
+        }
+        else if(this.childFilter == 'f'){
+          this.fetchFemale()
+        }
+        else if(this.childFilter == 'a'){
+          this.fetchData()
+        }
       }
     },
     setOpen(isOpen: boolean) {
@@ -297,18 +328,18 @@ export default defineComponent({
 
       await alert.present();
     },
-    filterChild(){
-      if(this.childFilter == 'a'){
+    filterChild() {
+      if (this.childFilter == 'all') {
         this.childList = { "image": "" },
-        this.fetchData()
+          this.fetchData()
       }
-      else if(this.childFilter == 'm'){
+      else if (this.childFilter == 'm') {
         this.childList = { "image": "" },
-        this.fetchMale()
+          this.fetchMale()
       }
-      else if(this.childFilter == 'f'){
+      else if (this.childFilter == 'f') {
         this.childList = { "image": "" },
-        this.fetchFemale()
+          this.fetchFemale()
       }
     }
   },

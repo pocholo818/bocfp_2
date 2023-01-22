@@ -102,6 +102,34 @@ app.get('/child/search/:search', (req, res) => {
     }
   })
 });
+// search male child
+app.get('/child/search/male/:search', (req, res) => {
+  connection.query(`SELECT * FROM child WHERE 
+    soft_delete = 0 AND sex = 'M' AND id LIKE "${req.params.search}"
+    OR soft_delete = 0 AND sex = 'M' AND fname LIKE "%${req.params.search}%"
+    OR soft_delete = 0 AND sex = 'M' AND lname LIKE"%${req.params.search}%"`, (err, rows, fields) => {
+    if (rows.length) {
+      res.json(rows)
+    }
+    else {
+      res.json({ "message": "No Child(s) Found" })
+    }
+  })
+});
+// search female child
+app.get('/child/search/female/:search', (req, res) => {
+  connection.query(`SELECT * FROM child WHERE 
+    soft_delete = 0 AND sex = 'F' AND id LIKE "${req.params.search}"
+    OR soft_delete = 0 AND sex = 'F' AND fname LIKE "%${req.params.search}%"
+    OR soft_delete = 0 AND sex = 'F' AND lname LIKE"%${req.params.search}%"`, (err, rows, fields) => {
+    if (rows.length) {
+      res.json(rows)
+    }
+    else {
+      res.json({ "message": "No Child(s) Found" })
+    }
+  })
+});
 // get record
 app.get('/records/:id', (req, res) => {
   const { limit, offset } = req.query
