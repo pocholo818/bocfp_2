@@ -159,44 +159,61 @@ export default defineComponent({
       search = search.trim()
       if (search.length) {
         setTimeout(() => {
-          // search for male child
-          if (this.childFilter == 'm') {
-            fetch('http://localhost:5000/child/search/male/' + search)
-              .then((response) => response.json())
-              .then((json) => {
-                this.childList = { "image": "" },
-                  this.childList = json
-              })
+          if (this.childFilter) {
+            // search for male child
+            if (this.childFilter == 'm') {
+              fetch('http://localhost:5000/child/search/male/' + search)
+                .then((response) => response.json())
+                .then((json) => {
+                  this.childList = { "image": "" },
+                    this.childList = json
+                })
+            }
+            // search for female child
+            else if (this.childFilter == 'f') {
+              fetch('http://localhost:5000/child/search/female/' + search)
+                .then((response) => response.json())
+                .then((json) => {
+                  this.childList = { "image": "" },
+                    this.childList = json
+                })
+            }
+            // search for all child
+            else if (this.childFilter == 'all') {
+              fetch('http://localhost:5000/child/search/' + search)
+                .then((response) => response.json())
+                .then((json) => {
+                  this.childList = { "image": "" },
+                    this.childList = json
+                })
+            }
           }
-          // search for female child
-          else if (this.childFilter == 'f') {
-            fetch('http://localhost:5000/child/search/female/' + search)
-              .then((response) => response.json())
-              .then((json) => {
-                this.childList = { "image": "" },
-                  this.childList = json
-              })
-          }
-          // search for all child
-          else if (this.childFilter == 'a') {
+          else {
             fetch('http://localhost:5000/child/search/' + search)
               .then((response) => response.json())
               .then((json) => {
                 this.childList = { "image": "" },
-                this.childList = json
+                  this.childList = json
               })
           }
         }, 1000)
       }
       // if empty search
       else {
-        if(this.childFilter == 'm'){
-          this.fetchMale()
+        // if childfilter has value
+        if (this.childFilter) {
+          if (this.childFilter == 'm') {
+            this.fetchMale()
+          }
+          else if (this.childFilter == 'f') {
+            this.fetchFemale()
+          }
+          else if (this.childFilter == 'all') {
+            this.fetchData()
+          }
         }
-        else if(this.childFilter == 'f'){
-          this.fetchFemale()
-        }
-        else if(this.childFilter == 'a'){
+        // if childfilter has no value
+        else {
           this.fetchData()
         }
       }
