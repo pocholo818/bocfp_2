@@ -252,6 +252,14 @@ export default defineComponent({
         .then((response) => response.json())
         .then((json) => {
           this.annou = json
+
+          if (json.message) {
+            this.isNextEnabled = false
+            return
+          }
+          else {
+            this.isNextEnabled = true
+          }
         })
     },
     prevData() {

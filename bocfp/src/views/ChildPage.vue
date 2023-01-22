@@ -13,9 +13,9 @@
     <!-- content -->
     <ion-content class="ion-padding">
 
-      <ion-refresher slot="fixed" @ionRefresh="refresh()">
+      <!-- <ion-refresher slot="fixed" @ionRefresh="refresh()">
         <ion-refresher-content></ion-refresher-content>
-      </ion-refresher>
+      </ion-refresher> -->
 
       <div style="max-width: 800px; margin: auto;">
 
@@ -104,7 +104,7 @@ import {
   IonTitle,
   useIonRouter,
   IonSelect, IonSelectOption,
-  IonRefresher, IonRefresherContent
+  // IonRefresher, IonRefresherContent
 } from '@ionic/vue';
 // icons
 import {
@@ -131,7 +131,7 @@ export default defineComponent({
     IonButtons,
     IonTitle,
     IonSelect, IonSelectOption,
-    IonRefresher, IonRefresherContent
+    // IonRefresher, IonRefresherContent
   },
   setup() {
     const ionRouter = useIonRouter()
