@@ -165,6 +165,8 @@ export default defineComponent({
     }
   },
   data() {
+    const user_id = localStorage.getItem('user_id')
+
     return {
       search: "",
       limit: 1,
@@ -173,7 +175,8 @@ export default defineComponent({
       annou: "",
       newAnnou: {
         title: "",
-        content: ""
+        content: "",
+        user_id: user_id,
       },
       user_id: ''
     };
@@ -207,10 +210,10 @@ export default defineComponent({
           body: JSON.stringify(data),
         })
           .then((data) => {
+            this.fetchData()
             this.clearInputs()
             toast.message = "Announcement Posted!"
             this.cancel()
-            this.fetchData
           })
           .catch((error) => {
             toast.message = error
@@ -245,7 +248,7 @@ export default defineComponent({
       console.log('tae');
     },
     clearInputs() {
-      this.newAnnou = { "title": "", "content": "" }
+      this.newAnnou = { "title": "", "content": "", "user_id": this.user_id }
     },
     fetchData() {
       fetch(`http://localhost:5000/announcements?limit=${this.limit}&offset=${this.offset}`)
