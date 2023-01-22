@@ -13,44 +13,58 @@
     <!-- content -->
     <ion-content class="ion-padding">
 
+      <ion-refresher slot="fixed" @ionRefresh="refresh()">
+        <ion-refresher-content></ion-refresher-content>
+      </ion-refresher>
+
       <div style="max-width: 800px; margin: auto;">
 
-      <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
-      <template v-if="childList.message">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-subtitle style="text-align: center;">{{ childList.message }}</ion-card-subtitle>
-          </ion-card-header>
-        </ion-card>
-      </template>
+        <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
 
-      <template v-else>
-        <ion-card v-for="child in childList" style="cursor: pointer" class="ion-margin-bottom" :key="child.id"
-          :router-link="('/child_view/' + child.id)">
-          <ion-card-content class="ion-no-padding">
-            <ion-item lines="none">
-              <ion-thumbnail slot="start">
-                <img alt="picture" class="icon" :src="child.image">
-              </ion-thumbnail>
+        <!-- search filter -->
+        <ion-item>
+          <ion-select @ion-change="filterChild()" v-model="childFilter" placeholder="Select Filter">
+            <ion-select-option value="all">All</ion-select-option>
+            <ion-select-option value="m">Male</ion-select-option>
+            <ion-select-option value="f">Female</ion-select-option>
+          </ion-select>
+        </ion-item>
 
-              <ion-card-header>
-                <ion-card-title>{{ child.fname }} {{ child.lname }}</ion-card-title>
-                <ion-card-subtitle>ID: {{ child.id }}</ion-card-subtitle>
-              </ion-card-header>
+        <template v-if="childList.message">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-subtitle style="text-align: center;">{{ childList.message }}</ion-card-subtitle>
+            </ion-card-header>
+          </ion-card>
+        </template>
 
-              <div slot="end" style="z-index: 999">
-                <ion-button color="warning" @click.prevent="() => $router.push('/child_edit/' + child.id)">
-                  <ion-icon :icon="createOutline"></ion-icon><span class="hide-on-mobile">&nbsp; Edit</span>
-                </ion-button>
-                <ion-button color="danger" @click.prevent="child_delete(child.id)">
-                  <ion-icon :icon="trashOutline"></ion-icon><span class="hide-on-mobile">&nbsp;Delete</span>
-                </ion-button>
-              </div>
+        <template v-else>
+          <ion-card v-for="child in childList" style="cursor: pointer" class="ion-margin-bottom" :key="child.id"
+            :router-link="('/child_view/' + child.id)">
+            <ion-card-content class="ion-no-padding">
+              <ion-item lines="none">
+                <ion-thumbnail slot="start">
+                  <img alt="picture" class="icon" :src="child.image">
+                </ion-thumbnail>
 
-            </ion-item>
-          </ion-card-content>
-        </ion-card>
-      </template>
+                <ion-card-header>
+                  <ion-card-title>{{ child.fname }} {{ child.lname }}</ion-card-title>
+                  <ion-card-subtitle>ID: {{ child.id }}</ion-card-subtitle>
+                </ion-card-header>
+
+                <div slot="end" style="z-index: 999">
+                  <ion-button color="warning" @click.prevent="() => $router.push('/child_edit/' + child.id)">
+                    <ion-icon :icon="createOutline"></ion-icon><span class="hide-on-mobile">&nbsp; Edit</span>
+                  </ion-button>
+                  <ion-button color="danger" @click.prevent="child_delete(child.id)">
+                    <ion-icon :icon="trashOutline"></ion-icon><span class="hide-on-mobile">&nbsp;Delete</span>
+                  </ion-button>
+                </div>
+
+              </ion-item>
+            </ion-card-content>
+          </ion-card>
+        </template>
 
       </div>
 
@@ -88,7 +102,9 @@ import {
   alertController,
   toastController,
   IonTitle,
-  useIonRouter
+  useIonRouter,
+  IonSelect, IonSelectOption,
+  IonRefresher, IonRefresherContent
 } from '@ionic/vue';
 // icons
 import {
@@ -113,7 +129,9 @@ export default defineComponent({
     IonToolbar,
     IonHeader, IonMenuButton,
     IonButtons,
-    IonTitle
+    IonTitle,
+    IonSelect, IonSelectOption,
+    IonRefresher, IonRefresherContent
   },
   setup() {
     const ionRouter = useIonRouter()
@@ -132,7 +150,8 @@ export default defineComponent({
       search: "",
       limit: 20,
       offset: 0,
-      isNextEnabled: true
+      isNextEnabled: true,
+      childFilter: ""
     };
   },
   methods: {
@@ -156,6 +175,50 @@ export default defineComponent({
     },
     fetchData() {
       fetch(`http://localhost:5000/childs?limit=${this.limit}&offset=${this.offset}`)
+        .then((response) => response.json())
+        .then((json) => {
+          this.childList = json
+
+          if (json.message) {
+            this.isNextEnabled = false
+            return
+          }
+          else {
+            this.isNextEnabled = true
+          }
+
+          if (this.childList.image) {
+            this.childList.image = `data:image/jpeg;base64,${json.image}`
+          }
+          else {
+            this.childList.image = require("@/assets/images/noPic.png")
+          }
+        })
+    },
+    fetchMale() {
+      fetch(`http://localhost:5000/childs/male?limit=${this.limit}&offset=${this.offset}`)
+        .then((response) => response.json())
+        .then((json) => {
+          this.childList = json
+
+          if (json.message) {
+            this.isNextEnabled = false
+            return
+          }
+          else {
+            this.isNextEnabled = true
+          }
+
+          if (this.childList.image) {
+            this.childList.image = `data:image/jpeg;base64,${json.image}`
+          }
+          else {
+            this.childList.image = require("@/assets/images/noPic.png")
+          }
+        })
+    },
+    fetchFemale() {
+      fetch(`http://localhost:5000/childs/female?limit=${this.limit}&offset=${this.offset}`)
         .then((response) => response.json())
         .then((json) => {
           this.childList = json
@@ -233,6 +296,20 @@ export default defineComponent({
       });
 
       await alert.present();
+    },
+    filterChild(){
+      if(this.childFilter == 'a'){
+        this.childList = { "image": "" },
+        this.fetchData()
+      }
+      else if(this.childFilter == 'm'){
+        this.childList = { "image": "" },
+        this.fetchMale()
+      }
+      else if(this.childFilter == 'f'){
+        this.childList = { "image": "" },
+        this.fetchFemale()
+      }
     }
   },
   // get data

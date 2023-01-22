@@ -53,6 +53,34 @@ app.get('/childs', (req, res) => {
   })
 
 });
+// get all male child
+app.get('/childs/male', (req, res) => {
+  const { limit, offset } = req.query
+
+  connection.query(`SELECT * FROM child WHERE soft_delete = 0 and sex = 'M' ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
+    if (rows.length) {
+      res.json(rows)
+    }
+    else {
+      res.json({ "message": "No Child(s) Found", "id": "" })
+    }
+  })
+
+});
+// get all female child
+app.get('/childs/female', (req, res) => {
+  const { limit, offset } = req.query
+
+  connection.query(`SELECT * FROM child WHERE soft_delete = 0 and sex = 'F' ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
+    if (rows.length) {
+      res.json(rows)
+    }
+    else {
+      res.json({ "message": "No Child(s) Found", "id": "" })
+    }
+  })
+
+});
 // get specific child
 app.get('/child/profile/:id', (req, res) => {
   connection.query(`SELECT * FROM child WHERE id=${req.params.id}`, (err, rows, fields) => {
