@@ -12,7 +12,7 @@
     <ion-content>
       <ion-content class="ion-padding">
         <ion-card>
-          <ion-card-content>  
+          <ion-card-content>
             <ion-card-header>
               <ion-card-title>Edit Guardian Information</ion-card-title>
             </ion-card-header>
@@ -30,7 +30,7 @@
 
               <ion-item>
                 <ion-label position="floating">Contact Number:</ion-label>
-                <ion-input type="tel" placeholder="Enter Contact Number" maxlength="11"
+                <ion-input type="tel" @keypress="numOnly($event)" placeholder="Enter Contact Number" maxlength="11"
                   v-model="guardProfile.contact"></ion-input>
               </ion-item>
 
@@ -43,7 +43,7 @@
         </ion-card>
 
         <!-- Save -->
-        <ion-button expand="block" color="success" @click="guardian_edit">Save</ion-button>
+        <ion-button expand="block" class="theme" @click="guardian_edit">Save</ion-button>
 
       </ion-content>
     </ion-content>
@@ -156,6 +156,14 @@ export default defineComponent({
         });
 
       await toast.present();
+    },
+    numOnly(evt: KeyboardEvent): void {
+      const keysAllowed: string[] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+      const keyPressed: string = evt.key;
+
+      if (!keysAllowed.includes(keyPressed)) {
+        evt.preventDefault()
+      }
     }
 
   }
