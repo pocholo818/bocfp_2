@@ -184,9 +184,6 @@ export default defineComponent({
   },
   mounted() {
     this.fetchData()
-    // test data
-    // console.log("id: ",localStorage.getItem('admin_power'))
-    // console.log("id: ",localStorage.getItem('user_id'))
   },
   ionViewWillEnter() {
     this.user_id = localStorage.getItem('user_id') || ''
@@ -287,7 +284,7 @@ export default defineComponent({
     },
     format_date(value: string) {
       if (value) {
-        return moment(String(value)).format('MMM DD,YYYY hh:mm A')
+        return moment(String(value)).format('MMM DD, YYYY hh:mm A')
       }
     }
 
