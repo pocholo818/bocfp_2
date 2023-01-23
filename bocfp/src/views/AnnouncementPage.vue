@@ -38,7 +38,7 @@
         </template>
 
         <template v-else>
-          <AnnouncementCard v-for="annous in annou" :title="annous.title" :content="annous.content" :date="annous.date"
+          <AnnouncementCard v-for="annous in annou" :title="annous.title" :content="annous.content" :date="format_date(annous.date)"
             :key="annous.annou_id" />
         </template>
 
@@ -124,6 +124,7 @@ import {
 } from '@ionic/vue';
 import HeaderBar from '@/components/HeaderBar.vue';
 import AnnouncementCard from '@/components/AnnouncementCard.vue'
+import moment from 'moment'
 // icons
 import {
   addOutline, createOutline, trashOutline
@@ -284,6 +285,12 @@ export default defineComponent({
         this.fetchData()
       }
     },
+    format_date(value: string) {
+      if (value) {
+        return moment(String(value)).format('MMM DD,YYYY hh:mm A')
+      }
+    }
+
   }
 })
 </script>
