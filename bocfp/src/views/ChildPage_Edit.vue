@@ -147,28 +147,44 @@ export default defineComponent({
             })
 
             const data = this.childDetails;
+            const currentDate = new Date()
 
-            fetch('http://localhost:5000/childUpdate/:id', {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-                .then((data) => {
-                    toast.message = 'Success!'
-                    this.childDetails = {
-                        fname: "",
-                        lname: "",
-                        bdate: "",
-                        sex: "",
-                        image: ""
-                    }
-                    this.ionRouter.push("/child");
-                })
-                .catch((error) => {
-                    toast.message = error
-                });
+            const bdate = new Date(this.childDetails.bdate)
+            const dateDifference = currentDate.getFullYear() - bdate.getFullYear()
+
+            // checks if empty inputs
+            if (this.childDetails.fname && this.childDetails.lname) {
+                // checks bdate
+                if (bdate.toISOString().split("T")[0] == currentDate.toISOString().split("T")[0] || dateDifference <= 0) {
+                    toast.message = "Invalid Child Birthdate"
+                }
+                else {
+                    fetch('http://localhost:5000/childUpdate/:id', {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    })
+                        .then((data) => {
+                            toast.message = 'Success!'
+                            this.childDetails = {
+                                fname: "",
+                                lname: "",
+                                bdate: "",
+                                sex: "",
+                                image: ""
+                            }
+                            this.ionRouter.push("/child");
+                        })
+                        .catch((error) => {
+                            toast.message = error
+                        });
+                }
+            }
+            else {
+                toast.message = "Child's details are incomplete"
+            }
 
             await toast.present();
         },

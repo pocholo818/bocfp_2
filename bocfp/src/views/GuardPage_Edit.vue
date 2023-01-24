@@ -97,7 +97,12 @@ export default defineComponent({
   data() {
     return {
       guardId: "",
-      guardProfile: {}
+      guardProfile: {
+        fname: "",
+        lname: "",
+        contact: "",
+        address: ""
+      }
     }
   },
   setup() {
@@ -134,26 +139,32 @@ export default defineComponent({
 
       const data = this.guardProfile;
 
-      fetch('http://localhost:5000/guardUpdate/:id', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-        .then((data) => {
-          toast.message = 'Success!'
-          this.guardProfile = {
-            fname: "",
-            lname: "",
-            contact: "",
-            address: ""
-          }
-          this.ionRouter.back()
+      // checks if empty inputs
+      if (this.guardProfile.fname && this.guardProfile.lname && this.guardProfile.contact && this.guardProfile.address) {
+        fetch('http://localhost:5000/guardUpdate/:id', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
         })
-        .catch((error) => {
-          toast.message = error
-        });
+          .then((data) => {
+            toast.message = 'Success!'
+            this.guardProfile = {
+              fname: "",
+              lname: "",
+              contact: "",
+              address: ""
+            }
+            this.ionRouter.back()
+          })
+          .catch((error) => {
+            toast.message = error
+          });
+      }
+      else {
+        toast.message = "Guardian's details are incomplete"
+      }
 
       await toast.present();
     },

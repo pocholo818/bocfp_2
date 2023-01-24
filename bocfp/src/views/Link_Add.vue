@@ -172,7 +172,7 @@ export default defineComponent({
                 .then((json) => {
                   this.check = json
 
-                  // check if guardian has link
+                  // check if guardian has link // to be removed
                   if (this.check.relationship) {
                     toast.message = "Guardian is already linked"
                   }

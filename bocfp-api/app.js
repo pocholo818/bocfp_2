@@ -130,10 +130,9 @@ app.get('/child/search/female/:search', (req, res) => {
   })
 });
 // search child fname and lname
-app.get('/child/search/', (req, res) => {
+app.get('/child/duplicate/', (req, res) => {
   const { fname, lname } = req.query
-  console.log(fname)
-  console.log(lname)
+
   connection.query(`SELECT * FROM child WHERE fname = "${fname}"
     AND lname = "${lname}"`, (err, rows, fields) => {
     if (rows.length) {
@@ -196,6 +195,20 @@ app.get('/guardian/search/:search', (req, res) => {
     }
     else {
       res.json({ "message": "No Guardian(s) Found" })
+    }
+  })
+});
+// search guardian fname and lname
+app.get('/guardian/duplicate/', (req, res) => {
+  const { fname, lname } = req.query
+
+  connection.query(`SELECT * FROM guardian WHERE fname = "${fname}"
+    AND lname = "${lname}"`, (err, rows, fields) => {
+    if (rows.length) {
+      res.json(rows)
+    }
+    else {
+      res.json({"message": "1"})
     }
   })
 });

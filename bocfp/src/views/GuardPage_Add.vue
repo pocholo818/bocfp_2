@@ -99,7 +99,8 @@ export default defineComponent({
         lname: "",
         contact: "",
         address: ""
-      }
+      },
+      checker: { "message": "" }
     }
   },
   setup() {
@@ -118,27 +119,49 @@ export default defineComponent({
         position: 'top'
       })
 
-      const data = this.guardianDetails;
-      fetch('http://localhost:5000/guardian/new', {
-        method: 'POST', // or 'PUT'
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-        .then((data) => {
-          toast.message = 'Success!'
-          this.guardianDetails = {
-            fname: "",
-            lname: "",
-            contact: "",
-            address: ""
-          }
-          this.router.push("/guardian");
-        })
-        .catch((error) => {
-          toast.message = error
-        });
+
+      // check if inputs r empty
+      if (this.guardianDetails.fname && this.guardianDetails.lname && this.guardianDetails.contact && this.guardianDetails.address) {
+
+        fetch(`http://localhost:5000/guardian/duplicate?fname=${this.guardianDetails.fname}&lname=${this.guardianDetails.lname}`)
+          .then((response) => response.json())
+          .then((json) => {
+            this.checker = json
+
+            // not proceed if existed
+            if (!this.checker.message) {
+              toast.message = "Guardian already existed"
+            }
+            else {
+              const data = this.guardianDetails;
+
+              fetch('http://localhost:5000/guardian/new', {
+                method: 'POST', // or 'PUT'
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+              })
+                .then((data) => {
+                  toast.message = 'Success!'
+                  this.guardianDetails = {
+                    fname: "",
+                    lname: "",
+                    contact: "",
+                    address: ""
+                  }
+                  this.router.push("/guardian");
+                })
+                .catch((error) => {
+                  toast.message = error
+                });
+            }
+          })
+
+      }
+      else {
+        toast.message = "Guardian's details are incomplete"
+      }
 
       await toast.present();
     },
