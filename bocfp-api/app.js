@@ -415,10 +415,10 @@ app.put('/guardUpdate/:id', (req, res) => {
 });
 // edit user
 app.put('/user/edit/:id', (req, res) => {
-  const { user_id, fname, lname, contact, admin_power } = req.body;
+  const { user_id, fname, lname, contact, admin_power, username } = req.body;
 
   connection.query(`UPDATE user SET fname = '${fname}', lname = '${lname}',
-      contact = '${contact}', admin_power = '${admin_power}'
+      contact = '${contact}', admin_power = '${admin_power}', username = '${username}'
       WHERE user_id=${user_id}`, (err, rows, fields) => {
     if (err) throw err
   })

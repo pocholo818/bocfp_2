@@ -36,8 +36,8 @@
 
                         <ion-item>
                             <ion-label position="floating">Contact Number:</ion-label>
-                            <ion-input type="tel" placeholder="Enter Contact Number" maxlength="11"
-                                v-model="userDetails.contact" required></ion-input>
+                            <ion-input type="tel" @keypress="numOnly($event)" placeholder="Enter Contact Number"
+                                maxlength="11" v-model="userDetails.contact" required></ion-input>
                         </ion-item>
 
                         <ion-item>
@@ -154,40 +154,57 @@ export default defineComponent({
                 position: 'top'
             })
 
-            if (this.confirmPass == this.userDetails.password) {
+            // checks if empty input
+            if (this.userDetails.fname && this.userDetails.lname && this.userDetails.password
+                && this.userDetails.contact && this.userDetails.admin_power && this.confirmPass) {
+                // confirmation if user pass match
+                if (this.confirmPass == this.userDetails.password) {
 
-                const data = this.userDetails;
-                data.password = SHA256(this.userDetails.password).toString()
+                    const data = this.userDetails;
+                    data.password = SHA256(this.userDetails.password).toString()
 
-                fetch('http://localhost:5000/user', {
-                    method: 'POST', // or 'PUT'
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                })
-                    .then((data) => {
-                        toast.message = 'Success!'
-                        this.userDetails = {
-                            fname: "",
-                            lname: "",
-                            contact: "",
-                            admin_power: "",
-                            password: ""
-                        }
-                        this.confirmPass = ""
-                        this.ionRouter.push("/user");
+                    fetch('http://localhost:5000/user', {
+                        method: 'POST', // or 'PUT'
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
                     })
-                    .catch((error) => {
-                        toast.message = error
-                    });
+                        .then((data) => {
+                            toast.message = 'Success!'
+                            this.userDetails = {
+                                fname: "",
+                                lname: "",
+                                contact: "",
+                                admin_power: "",
+                                password: ""
+                            }
+                            this.confirmPass = ""
+                            this.ionRouter.push("/user");
+                        })
+                        .catch((error) => {
+                            toast.message = error
+                        });
+                }
+                else {
+                    toast.message = "Password and Confirm Password does not match"
+                }
             }
             else {
-                toast.message = "Password and Confirm Password does not match"
+                toast.message = "User's details are incomplete"
             }
 
             await toast.present();
+        },
+        numOnly(evt: KeyboardEvent): void {
+            const keysAllowed: string[] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            const keyPressed: string = evt.key;
+
+            if (!keysAllowed.includes(keyPressed)) {
+                evt.preventDefault()
+            }
         }
+        
     }
 });
 
