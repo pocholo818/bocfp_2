@@ -20,12 +20,12 @@
             <ion-list>
               <ion-item>
                 <ion-label position="floating">Height (cm):</ion-label>
-                <ion-input placeholder="Enter Height" v-model="recordDetails.height"></ion-input>
+                <ion-input @keypress="numOnly($event)" maxlength="3" placeholder="Enter Height" v-model="recordDetails.height"></ion-input>
               </ion-item>
 
               <ion-item>
                 <ion-label position="floating">Weight (kg):</ion-label>
-                <ion-input placeholder="Enter Weight" v-model="recordDetails.weight"></ion-input>
+                <ion-input @keypress="numOnly($event)" maxlength="3" placeholder="Enter Weight" v-model="recordDetails.weight"></ion-input>
               </ion-item>
             </ion-list>
           </ion-card-content>
@@ -112,28 +112,43 @@ export default defineComponent({
         position: 'top'
       })
 
-      const data = this.recordDetails;
-      fetch('http://localhost:5000/record/' + this.childId, {
-        method: 'POST', // or 'PUT'
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-        .then((data) => {
-          toast.message = 'Success!'
-          this.recordDetails = {
-            height: "",
-            weight: ""
-          }
-          this.ionRouter.push("/record_view/" + this.childId);
+      // checks if empty
+      if (this.recordDetails.height && this.recordDetails.weight) {
+        const data = this.recordDetails;
+        fetch('http://localhost:5000/record/' + this.childId, {
+          method: 'POST', // or 'PUT'
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
         })
-        .catch((error) => {
-          toast.message = error
-        });
+          .then((data) => {
+            toast.message = 'Success!'
+            this.recordDetails = {
+              height: "",
+              weight: ""
+            }
+            this.ionRouter.push("/record_view/" + this.childId);
+          })
+          .catch((error) => {
+            toast.message = error
+          });
+      }
+      else {
+        toast.message = "Record is incomplete"
+      }
 
       await toast.present();
+    },
+    numOnly(evt: KeyboardEvent): void {
+      const keysAllowed: string[] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+      const keyPressed: string = evt.key;
+
+      if (!keysAllowed.includes(keyPressed)) {
+        evt.preventDefault()
+      }
     }
+
   }
 });
 
