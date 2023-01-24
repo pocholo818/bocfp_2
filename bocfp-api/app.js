@@ -51,7 +51,6 @@ app.get('/childs', (req, res) => {
       res.json({ "message": "No Child(s) Found", "id": "" })
     }
   })
-
 });
 // get all male child
 app.get('/childs/male', (req, res) => {
@@ -127,6 +126,21 @@ app.get('/child/search/female/:search', (req, res) => {
     }
     else {
       res.json({ "message": "No Child(s) Found" })
+    }
+  })
+});
+// search child fname and lname
+app.get('/child/search/', (req, res) => {
+  const { fname, lname } = req.query
+  console.log(fname)
+  console.log(lname)
+  connection.query(`SELECT * FROM child WHERE fname = "${fname}"
+    AND lname = "${lname}"`, (err, rows, fields) => {
+    if (rows.length) {
+      res.json(rows)
+    }
+    else {
+      res.json({"message": "1"})
     }
   })
 });
