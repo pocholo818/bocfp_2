@@ -435,6 +435,17 @@ app.put('/user/edit/password/:id', (req, res) => {
   })
   res.send("success")
 });
+// edit announcement
+app.put('/announcement/edit/:annou_id', (req, res) => {
+  const { annou_id } = req.params
+  const { title, content } = req.body;
+
+  connection.query(`UPDATE announcement SET title = '${title}', content = '${content}'
+      WHERE annou_id=${annou_id}`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+});
 
 
 // SOFT DELETE
@@ -483,6 +494,15 @@ app.put('/user/del/:user_id', (req, res) => {
   })
   res.send("success")
 });
+// soft delete announcement
+app.put('/announcement/del/:annou_id', (req, res) => {
+  const { annou_id } = req.params;
+
+  connection.query(`UPDATE announcement SET soft_delete='1'  WHERE annou_id=${annou_id}`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+})
 
 // dashboard stuff
 // get total child

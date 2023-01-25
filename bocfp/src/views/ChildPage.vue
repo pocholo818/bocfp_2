@@ -12,10 +12,9 @@
 
     <!-- content -->
     <ion-content class="ion-padding">
-
-      <!-- <ion-refresher slot="fixed" @ionRefresh="refresh()">
+      <ion-refresher slot="fixed" @ionRefresh="handleRefresh($event)">
         <ion-refresher-content></ion-refresher-content>
-      </ion-refresher> -->
+      </ion-refresher>
 
       <div style="max-width: 800px; margin: auto;">
 
@@ -136,11 +135,19 @@ export default defineComponent({
   setup() {
     const ionRouter = useIonRouter()
 
+    const handleRefresh = (event: any) => {
+      setTimeout(() => {
+        // Any calls to load data go here
+        event.target.complete();
+      }, 2000);
+    };
+
     return {
       ionRouter,
       createOutline,
       trashOutline,
-      addOutline
+      addOutline,
+      handleRefresh
     }
   },
   data() {

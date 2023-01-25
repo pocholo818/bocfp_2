@@ -22,3 +22,7 @@ ion-header ion-toolbar {
 ion-modal.datetime-modal * {
     color: #000;
 }
+
+.hide-on-mobile {
+    display: none;
+}
