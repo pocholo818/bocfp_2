@@ -131,7 +131,7 @@ export default defineComponent({
       // check if inputs r empty
       if (this.guardianDetails.fname && this.guardianDetails.lname && this.guardianDetails.contact
         && this.guardianDetails.address && this.guardianDetails.household_id) {
-        // 
+        // check if household id is less than 7
         if (this.guardianDetails.household_id.length == 7) {
           fetch(`http://localhost:5000/guardian/duplicate?fname=${this.guardianDetails.fname}&lname=${this.guardianDetails.lname}`)
             .then((response) => response.json())

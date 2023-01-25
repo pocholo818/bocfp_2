@@ -122,12 +122,15 @@ export default defineComponent({
             userId: "",
             confirmPass: "",
             userDetails: {
+                "username": "",
                 "fname": "",
                 "lname": "",
                 "password": "",
                 "contact": "",
                 "admin_power": ""
             },
+            checker: { "message": "" },
+            checker2: { "message": "" },
         }
     },
     setup() {
@@ -156,35 +159,66 @@ export default defineComponent({
 
             // checks if empty input
             if (this.userDetails.fname && this.userDetails.lname && this.userDetails.password
-                && this.userDetails.contact && this.userDetails.admin_power && this.confirmPass) {
+                && this.userDetails.contact && this.userDetails.admin_power !== "" && this.confirmPass) {
                 // confirmation if user pass match
                 if (this.confirmPass == this.userDetails.password) {
+                    // checks fname and lname
+                    fetch(`http://localhost:5000/user/duplicate?fname=${this.userDetails.fname}&lname=${this.userDetails.lname}`)
+                        .then((response) => response.json())
+                        .then((json) => {
+                            this.checker = json
 
-                    const data = this.userDetails;
-                    data.password = SHA256(this.userDetails.password).toString()
-
-                    fetch('http://localhost:5000/user', {
-                        method: 'POST', // or 'PUT'
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data),
-                    })
-                        .then((data) => {
-                            toast.message = 'Success!'
-                            this.userDetails = {
-                                fname: "",
-                                lname: "",
-                                contact: "",
-                                admin_power: "",
-                                password: ""
+                            // not proceed if existed
+                            if (!this.checker.message) {
+                                toast.message = "User already has existed"
                             }
-                            this.confirmPass = ""
-                            this.ionRouter.push("/user");
+                            else {
+                                // checks username
+                                // checks fname and lname
+                                fetch(`http://localhost:5000/user/username/duplicate?username=${this.userDetails.username}`)
+                                    .then((response) => response.json())
+                                    .then((json) => {
+                                        this.checker2 = json
+
+                                        // not proceed if existed
+                                        if (!this.checker2.message) {
+                                            toast.message = "Username already taken"
+                                        }
+                                        else {
+                                            const data = this.userDetails;
+                                            data.password = SHA256(this.userDetails.password).toString()
+
+                                            fetch('http://localhost:5000/user', {
+                                                method: 'POST', // or 'PUT'
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                },
+                                                body: JSON.stringify(data),
+                                            })
+                                                .then((data) => {
+                                                    toast.message = 'Success!'
+                                                    this.userDetails = {
+                                                        "username": "",
+                                                        fname: "",
+                                                        lname: "",
+                                                        contact: "",
+                                                        admin_power: "",
+                                                        password: ""
+                                                    }
+                                                    this.confirmPass = ""
+                                                    this.ionRouter.push("/user");
+                                                })
+                                                .catch((error) => {
+                                                    toast.message = error
+                                                });
+
+                                        }
+                                    })
+
+
+                            }
                         })
-                        .catch((error) => {
-                            toast.message = error
-                        });
+
                 }
                 else {
                     toast.message = "Password and Confirm Password does not match"
@@ -204,7 +238,7 @@ export default defineComponent({
                 evt.preventDefault()
             }
         }
-        
+
     }
 });
 

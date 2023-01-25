@@ -265,6 +265,33 @@ app.get('/users', (req, res) => {
     }
   })
 });
+// search user fname and lname
+app.get('/user/duplicate/', (req, res) => {
+  const { fname, lname } = req.query
+
+  connection.query(`SELECT * FROM user WHERE fname = "${fname}"
+    AND lname = "${lname}"`, (err, rows, fields) => {
+    if (rows.length) {
+      res.json(rows)
+    }
+    else {
+      res.json({"message": "1"})
+    }
+  })
+});
+// search user username
+app.get('/user/username/duplicate/', (req, res) => {
+  const { username } = req.query
+
+  connection.query(`SELECT * FROM user WHERE username = "${username}"`, (err, rows, fields) => {
+    if (rows.length) {
+      res.json(rows)
+    }
+    else {
+      res.json({"message": "1"})
+    }
+  })
+});
 // search user
 app.get('/user/search/:search', (req, res) => {
   connection.query(`SELECT * FROM user WHERE 
