@@ -13,18 +13,20 @@
             <!-- <ion-note>bofcp@gmail.com</ion-note> -->
             <ion-note>Hello {{ user_fname }}!</ion-note>
 
-            <ion-menu-toggle auto-hide="false" v-for="(pages, i) in appPages" :key="i">
-              <router-link :to="pages.url" activeClass="selected">
-                <ion-item
-                  lines="none" detail="false" class="hydrated"
-                  :class="{'selected': $route.name === pages.url}"
-                >
-                  <ion-icon slot="start" :ios="pages.iosIcon" :md="pages.mdIcon"></ion-icon>
-                  <ion-label>{{ pages.title }}</ion-label>
-                </ion-item>
-              </router-link>
+            <template v-if="isLoaded">
+              <ion-menu-toggle auto-hide="false" v-for="(pages, i) in appPages" :key="i">
+                <router-link :to="pages.url" activeClass="selected">
+                  <ion-item
+                    lines="none" detail="false" class="hydrated"
+                    :class="{'selected': $route.name === pages.url}"
+                  >
+                    <ion-icon slot="start" :icon="pages.icon"></ion-icon>
+                    <ion-label>{{ pages.title }}</ion-label>
+                  </ion-item>
+                </router-link>
 
-            </ion-menu-toggle>
+              </ion-menu-toggle>
+            </template>
           </ion-list>
 
         </ion-content>
@@ -54,11 +56,15 @@ import {
 // icons
 import {
   logOutOutline,
-  eyeOutline
+  eyeOutline,
+  grid,
+  alertCircle,
+  person, 
+  peopleCircle,
+  accessibility
 } from 'ionicons/icons';
 import { defineComponent, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { personOutline, personSharp } from 'ionicons/icons';
 import router from '@/router';
 
 export default defineComponent({
@@ -77,77 +83,52 @@ export default defineComponent({
     this.user_fname = localStorage.getItem('fname') || ''
     this.admin_power = localStorage.getItem('admin_power') || ''
 
+    const appPages = [
+      {
+        title: 'Dashboard',
+        url: '/dashboard',
+        icon: grid
+      },
+      {
+        title: 'Announcement',
+        url: '/announcement',
+        icon: alertCircle
+      },
+      {
+        title: 'Children',
+        url: '/child',
+        icon: accessibility
+      },
+      {
+        title: 'Guardian',
+        url: '/guardian',
+        icon: peopleCircle
+      },
+    ]
+
+    // admin
     if(this.admin_power && this.admin_power === '1') {
       this.appPages = [
-        {
-          title: 'Dashboard',
-          url: '/dashboard',
-          iosIcon: personOutline,
-          mdIcon: personSharp
-        },
-        {
-          title: 'Announcement',
-          url: '/announcement',
-          iosIcon: personOutline,
-          mdIcon: personSharp
-        },
-        {
-          title: 'Children',
-          url: '/child',
-          iosIcon: personOutline,
-          mdIcon: personSharp
-        },
-        {
-          title: 'Guardian',
-          url: '/guardian',
-          iosIcon: personOutline,
-          mdIcon: personSharp
-        },
+        ...appPages, // copy object content
         {
           title: 'Accounts',
           url: '/user',
-          iosIcon: personOutline,
-          mdIcon: personSharp
+          icon: person
         }
       ]    
     }
+    // staff
     else {
-      this.appPages = [
-        {
-          title: 'Dashboard',
-          url: '/dashboard',
-          iosIcon: personOutline,
-          mdIcon: personSharp
-        },
-        {
-          title: 'Announcement',
-          url: '/announcement',
-          iosIcon: personOutline,
-          mdIcon: personSharp
-        },
-        {
-          title: 'Child',
-          url: '/child',
-          iosIcon: personOutline,
-          mdIcon: personSharp
-        },
-        {
-          title: 'Guardian',
-          url: '/guardian',
-          iosIcon: personOutline,
-          mdIcon: personSharp
-        }
-      ]
+      this.appPages = appPages
     }
+
+    this.isLoaded = true
   },
   setup() {
     // sidebar pages
-
     const route = useRoute();
 
     return {
-      personOutline,
-      personSharp,
       logOutOutline,
       eyeOutline,
       isSelected: (url: string) => url === route.path ? 'selected' : ''
@@ -155,24 +136,8 @@ export default defineComponent({
   },
   data() {
     return {
-      appPages: [{
-        title: 'Dashboard',
-        url: '/dashboard',
-        iosIcon: personOutline,
-        mdIcon: personSharp
-      },
-      {
-        title: 'Child',
-        url: '/child',
-        iosIcon: personOutline,
-        mdIcon: personSharp
-      },
-      {
-        title: 'Guardian',
-        url: '/guardian',
-        iosIcon: personOutline,
-        mdIcon: personSharp
-      }],
+      isLoaded: false,
+      appPages: [{}],
       user_fname: '',
       admin_power: ''
     }

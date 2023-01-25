@@ -76,7 +76,6 @@ export default defineComponent({
   methods: {
     async deleteAnnouncement() {
       const alert = await alertController.create({
-        
         header: 'Are you sure you want to delete?',
         buttons: [
           {
@@ -93,15 +92,15 @@ export default defineComponent({
               })
 
               fetch('http://localhost:5000/announcement/del/' + this.annou_id, {
-                method: 'put'
+                method: 'PUT'
               })
-                .then((data) => {
-                  toast.message = 'Success!'
-                  this.$emit('updateAnnouncementList')
-                })
-                .catch((error) => {
-                  toast.message = error
-                });
+              .then((data) => {
+                toast.message = 'Success!'
+                this.$emit('updateAnnouncementList')
+              })
+              .catch((error) => {
+                toast.message = error
+              });
 
               await toast.present();
             },

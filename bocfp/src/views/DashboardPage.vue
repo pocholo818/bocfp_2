@@ -5,6 +5,10 @@
         <!-- content -->
         <ion-content class="ion-padding">
 
+            <ion-refresher slot="fixed" @ionRefresh="handleRefresh($event)">
+                <ion-refresher-content></ion-refresher-content>
+            </ion-refresher>
+
             <ion-card id="app-info" class="ion-margin-bottom">
                 <ion-card-content>
                     BOCFP is an app that monitors children's BMI to ensure healthy growth and development.
@@ -138,6 +142,15 @@ export default defineComponent({
                 .then((json) => {
                     this.childCount = json
                 })
+        },
+        handleRefresh(event: any) {
+            setTimeout(() => {
+                // Any calls to load data go here
+                this.fetchChildRemarks()
+                this.fetchChildCount()
+
+                event.target.complete();
+            }, 1000);
         }
     },
     // get data

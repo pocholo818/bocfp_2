@@ -38,31 +38,33 @@
         </template>
 
         <template v-else>
-          <ion-card v-for="child in childList" style="cursor: pointer" class="ion-margin-bottom" :key="child.id"
-            :router-link="('/child_view/' + child.id)">
-            <ion-card-content class="ion-no-padding">
-              <ion-item lines="none">
-                <ion-thumbnail slot="start">
-                  <img alt="picture" class="icon" :src="child.image">
-                </ion-thumbnail>
+          <TransitionGroup name="fade">
+            <ion-card v-for="child in childList" style="cursor: pointer" class="ion-margin-bottom" :key="child.id"
+              :router-link="('/child_view/' + child.id)">
+              <ion-card-content class="ion-no-padding">
+                <ion-item lines="none">
+                  <ion-thumbnail slot="start">
+                    <img alt="picture" class="icon" :src="child.image">
+                  </ion-thumbnail>
 
-                <ion-card-header>
-                  <ion-card-title>{{ child.fname }} {{ child.lname }}</ion-card-title>
-                  <ion-card-subtitle>ID: {{ child.id }}</ion-card-subtitle>
-                </ion-card-header>
+                  <ion-card-header>
+                    <ion-card-title>{{ child.fname }} {{ child.lname }}</ion-card-title>
+                    <ion-card-subtitle>ID: {{ child.id }}</ion-card-subtitle>
+                  </ion-card-header>
 
-                <div slot="end" style="z-index: 999">
-                  <ion-button color="warning" @click.prevent="() => $router.push('/child_edit/' + child.id)">
-                    <ion-icon :icon="createOutline"></ion-icon><span class="hide-on-mobile">&nbsp; Edit</span>
-                  </ion-button>
-                  <ion-button color="danger" @click.prevent="child_delete(child.id)">
-                    <ion-icon :icon="trashOutline"></ion-icon><span class="hide-on-mobile">&nbsp;Delete</span>
-                  </ion-button>
-                </div>
+                  <div slot="end" style="z-index: 999">
+                    <ion-button color="warning" @click.prevent="() => $router.push('/child_edit/' + child.id)">
+                      <ion-icon :icon="createOutline"></ion-icon><span class="hide-on-mobile">&nbsp; Edit</span>
+                    </ion-button>
+                    <ion-button color="danger" @click.prevent="child_delete(child.id)">
+                      <ion-icon :icon="trashOutline"></ion-icon><span class="hide-on-mobile">&nbsp;Delete</span>
+                    </ion-button>
+                  </div>
 
-              </ion-item>
-            </ion-card-content>
-          </ion-card>
+                </ion-item>
+              </ion-card-content>
+            </ion-card>
+          </TransitionGroup>
         </template>
 
       </div>
@@ -135,19 +137,11 @@ export default defineComponent({
   setup() {
     const ionRouter = useIonRouter()
 
-    const handleRefresh = (event: any) => {
-      setTimeout(() => {
-        // Any calls to load data go here
-        event.target.complete();
-      }, 2000);
-    };
-
     return {
       ionRouter,
       createOutline,
       trashOutline,
-      addOutline,
-      handleRefresh
+      addOutline
     }
   },
   data() {
@@ -365,6 +359,14 @@ export default defineComponent({
         this.childList = { "image": "" },
           this.fetchFemale()
       }
+    },
+    handleRefresh(event: any) {
+      setTimeout(() => {
+        // Any calls to load data go here
+        this.fetchData()
+
+        event.target.complete();
+      }, 1000);
     }
   },
   // get data

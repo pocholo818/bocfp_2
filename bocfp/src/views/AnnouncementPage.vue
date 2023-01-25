@@ -3,6 +3,10 @@
     <HeaderBar title="Announcement" />
 
     <ion-content class="ion-padding">
+      <ion-refresher slot="fixed" @ionRefresh="handleRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+      </ion-refresher>
+
       <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
 
       <template>
@@ -24,19 +28,18 @@
         </template>
 
         <template v-else>
-          <AnnouncementCard 
-            v-for="annous in annou" 
-            :title="annous.title" 
-            :content="annous.content"
-            :date="format_date(annous.date)" 
-            :user_id="user_id"
-            :annou_id="annous.annou_id"
-            :key="annous.annou_id" 
-            :update-announcement-list="fetchData()"
-          />
+          <TransitionGroup name="fade">
+            <AnnouncementCard v-for="annous in annou" :title="annous.title" :content="annous.content"
+              :date="format_date(annous.date)" :user_id="user_id" :annou_id="annous.annou_id" :key="annous.annou_id"
+              @update-announcement-list="fetchData()" />
+          </TransitionGroup>
         </template>
 
+
+        <!--  -->
       </ion-list>
+
+      <!-- <ion-button @click="fetchData()">refresh</ion-button> -->
 
     </ion-content>
 
@@ -92,7 +95,7 @@ export default defineComponent({
     IonIcon,
     IonCard,
     IonCardSubtitle,
-    IonCardHeader,  
+    IonCardHeader,
     IonList,
   },
   setup() {
@@ -194,13 +197,21 @@ export default defineComponent({
       if (value) {
         return moment(String(value)).format('MMM DD, YYYY hh:mm A')
       }
+    },
+    handleRefresh(event: any) {
+      setTimeout(() => {
+        // Any calls to load data go here
+        this.fetchData()
+
+        event.target.complete();
+      }, 1000);
     }
   }
 })
 </script>
 
 <style scoped>
-  .hide-on-mobile {
-    display: none;
-  }
+.hide-on-mobile {
+  display: none;
+}
 </style>
