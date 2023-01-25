@@ -36,6 +36,12 @@
               </ion-item>
 
               <ion-item>
+                <ion-label position="floating">Household ID:</ion-label>
+                <ion-input type="text" placeholder="Enter Household ID" maxlength="7" v-model="guardProfile.household_id"
+                  readonly></ion-input>
+              </ion-item>
+
+              <ion-item>
                 <ion-label position="floating">Address:</ion-label>
                 <ion-input type="text" placeholder="Enter Address" v-model="guardProfile.address" readonly></ion-input>
               </ion-item>

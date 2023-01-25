@@ -212,6 +212,19 @@ app.get('/guardian/duplicate/', (req, res) => {
     }
   })
 });
+// search guardian household id
+app.get('/guardian/household/', (req, res) => {
+  const { household_id } = req.query
+
+  connection.query(`SELECT * FROM guardian WHERE household_id = "${household_id}"`, (err, rows, fields) => {
+    if (rows.length) {
+      res.json(rows)
+    }
+    else {
+      res.json({"message": "1"})
+    }
+  })
+});
 // get linked guardian to child
 app.get('/guardian/link/:id', (req, res) => {
   connection.query(`SELECT *
@@ -307,10 +320,10 @@ app.post('/record/:id', (req, res) => {
 });
 // add new guardian
 app.post('/guardian/new', (req, res) => {
-  const { fname, lname, contact, address } = req.body;
+  const { fname, lname, contact, address, household_id } = req.body;
 
-  connection.query(`INSERT INTO guardian (fname, lname, contact, address) 
-        VALUES ('${fname}', '${lname}', '${contact}', '${address}')`, (err, rows, fields) => {
+  connection.query(`INSERT INTO guardian (fname, lname, contact, address, household_id) 
+        VALUES ('${fname}', '${lname}', '${contact}', '${address}', '${household_id}')`, (err, rows, fields) => {
     if (err) throw err
   })
   res.send("success")

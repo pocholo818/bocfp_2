@@ -35,6 +35,12 @@
               </ion-item>
 
               <ion-item>
+                <ion-label position="floating">Household ID:</ion-label>
+                <ion-input type="text" @keyup="uppercase()" placeholder="Enter Household ID" maxlength="7"
+                  v-model="guardProfile.household_id"></ion-input>
+              </ion-item>
+
+              <ion-item>
                 <ion-label position="floating">Address:</ion-label>
                 <ion-input type="text" placeholder="Enter Address" v-model="guardProfile.address"></ion-input>
               </ion-item>
@@ -101,6 +107,7 @@ export default defineComponent({
         fname: "",
         lname: "",
         contact: "",
+        household_id: "",
         address: ""
       }
     }
@@ -140,27 +147,35 @@ export default defineComponent({
       const data = this.guardProfile;
 
       // checks if empty inputs
-      if (this.guardProfile.fname && this.guardProfile.lname && this.guardProfile.contact && this.guardProfile.address) {
-        fetch('http://localhost:5000/guardUpdate/:id', {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        })
-          .then((data) => {
-            toast.message = 'Success!'
-            this.guardProfile = {
-              fname: "",
-              lname: "",
-              contact: "",
-              address: ""
-            }
-            this.ionRouter.back()
+      if (this.guardProfile.fname && this.guardProfile.lname && this.guardProfile.contact
+        && this.guardProfile.address && this.guardProfile.household_id) {
+        // check if household id is less than 7
+        if (this.guardProfile.household_id.length == 7) {
+          fetch('http://localhost:5000/guardUpdate/:id', {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
           })
-          .catch((error) => {
-            toast.message = error
-          });
+            .then((data) => {
+              toast.message = 'Success!'
+              this.guardProfile = {
+                fname: "",
+                lname: "",
+                contact: "",
+                household_id: "",
+                address: ""
+              }
+              this.ionRouter.back()
+            })
+            .catch((error) => {
+              toast.message = error
+            });
+        }
+        else{
+          toast.message = "Household ID is incomplete"
+        }
       }
       else {
         toast.message = "Guardian's details are incomplete"
@@ -175,6 +190,9 @@ export default defineComponent({
       if (!keysAllowed.includes(keyPressed)) {
         evt.preventDefault()
       }
+    },
+    uppercase() {
+      this.guardProfile.household_id = this.guardProfile.household_id.toUpperCase();
     }
 
   }

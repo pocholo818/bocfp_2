@@ -34,7 +34,7 @@
                             <ion-item lines="none">
                                 <ion-card-header>
                                     <ion-card-title>{{ guard.fname }} {{ guard.lname }}</ion-card-title>
-                                    <ion-card-subtitle>ID: {{ guard.guardian_id }}</ion-card-subtitle>
+                                    <ion-card-subtitle>Household ID: {{ guard.household_id }}</ion-card-subtitle>
                                 </ion-card-header>
                             </ion-item>
                         </ion-card-content>

@@ -35,6 +35,12 @@
               </ion-item>
 
               <ion-item>
+                <ion-label position="floating">Household ID:</ion-label>
+                <ion-input type="text" @keyup="uppercase()" placeholder="Enter Household ID" maxlength="7"
+                  v-model="guardianDetails.household_id"></ion-input>
+              </ion-item>
+
+              <ion-item>
                 <ion-label position="floating">Address:</ion-label>
                 <ion-input type="text" placeholder="Enter Address" v-model="guardianDetails.address"></ion-input>
               </ion-item>
@@ -98,9 +104,11 @@ export default defineComponent({
         fname: "",
         lname: "",
         contact: "",
+        household_id: "",
         address: ""
       },
-      checker: { "message": "" }
+      checker: { "message": "" },
+      checker2: { "message": "" }
     }
   },
   setup() {
@@ -121,42 +129,64 @@ export default defineComponent({
 
 
       // check if inputs r empty
-      if (this.guardianDetails.fname && this.guardianDetails.lname && this.guardianDetails.contact && this.guardianDetails.address) {
+      if (this.guardianDetails.fname && this.guardianDetails.lname && this.guardianDetails.contact
+        && this.guardianDetails.address && this.guardianDetails.household_id) {
+        // 
+        if (this.guardianDetails.household_id.length == 7) {
+          fetch(`http://localhost:5000/guardian/duplicate?fname=${this.guardianDetails.fname}&lname=${this.guardianDetails.lname}`)
+            .then((response) => response.json())
+            .then((json) => {
+              this.checker = json
 
-        fetch(`http://localhost:5000/guardian/duplicate?fname=${this.guardianDetails.fname}&lname=${this.guardianDetails.lname}`)
-          .then((response) => response.json())
-          .then((json) => {
-            this.checker = json
+              // not proceed if existed
+              if (!this.checker.message) {
+                toast.message = "Guardian already existed"
+              }
+              else {
+                // check if household id is taken
+                fetch(`http://localhost:5000/guardian/household?household_id=${this.guardianDetails.household_id}`)
+                  .then((response) => response.json())
+                  .then((json) => {
+                    this.checker2 = json
 
-            // not proceed if existed
-            if (!this.checker.message) {
-              toast.message = "Guardian already existed"
-            }
-            else {
-              const data = this.guardianDetails;
+                    // not proceed if existed
+                    if (!this.checker2.message) {
+                      toast.message = "Household ID already Taken"
+                    }
+                    else {
+                      const data = this.guardianDetails;
 
-              fetch('http://localhost:5000/guardian/new', {
-                method: 'POST', // or 'PUT'
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-              })
-                .then((data) => {
-                  toast.message = 'Success!'
-                  this.guardianDetails = {
-                    fname: "",
-                    lname: "",
-                    contact: "",
-                    address: ""
-                  }
-                  this.router.push("/guardian");
-                })
-                .catch((error) => {
-                  toast.message = error
-                });
-            }
-          })
+                      fetch('http://localhost:5000/guardian/new', {
+                        method: 'POST', // or 'PUT'
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                      })
+                        .then((data) => {
+                          toast.message = 'Success!'
+                          this.guardianDetails = {
+                            fname: "",
+                            lname: "",
+                            contact: "",
+                            household_id: "",
+                            address: ""
+                          }
+                          this.router.push("/guardian");
+                        })
+                        .catch((error) => {
+                          toast.message = error
+                        });
+
+                    }
+                  })
+
+              }
+            })
+        }
+        else {
+          toast.message = "Household ID is incomplete"
+        }
 
       }
       else {
@@ -172,6 +202,9 @@ export default defineComponent({
       if (!keysAllowed.includes(keyPressed)) {
         evt.preventDefault()
       }
+    },
+    uppercase() {
+      this.guardianDetails.household_id = this.guardianDetails.household_id.toUpperCase();
     }
 
   }
