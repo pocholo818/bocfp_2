@@ -37,6 +37,11 @@ function bmi(height, weight, output) {
 
   return [remark, bmi];
 };
+// name format
+function nameFormat(string) {
+  string = string.toLowerCase()
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 // GET
 // get all child
@@ -279,6 +284,18 @@ app.get('/user/duplicate/', (req, res) => {
     }
   })
 });
+// search user fname, lname and household_id #HERE
+app.get('/user/duplicate/name/hid/', (req, res) => {
+  const { fname, lname, household_id } = req.query
+
+  connection.query(`SELECT
+  (SELECT COUNT(*) FROM guardian WHERE fname = "${fname}" AND lname = "${lname}") AS nameResult,
+  (SELECT COUNT(*) FROM guardian WHERE household_id = "${household_id}") AS idResult`, (err, rows, fields) => {
+    if (rows.length) {
+      res.json(rows)
+    }
+  })
+});
 // search user username
 app.get('/user/username/duplicate/', (req, res) => {
   const { username } = req.query
@@ -325,7 +342,11 @@ app.get('/announcements', (req, res) => {
 // POST
 // add new child
 app.post('/child', (req, res) => {
-  const { fname, lname, bdate, sex, image } = req.body;
+  let { fname, lname } = req.body
+  const { bdate, sex, image } = req.body;
+
+  fname = nameFormat(fname)
+  lname = nameFormat(lname)
 
   connection.query(`INSERT INTO child (fname, lname, bdate, sex, image) 
         VALUES ('${fname}', '${lname}', '${bdate}', '${sex}', '${image}')`, (err, rows, fields) => {
@@ -347,7 +368,11 @@ app.post('/record/:id', (req, res) => {
 });
 // add new guardian
 app.post('/guardian/new', (req, res) => {
-  const { fname, lname, contact, address, household_id } = req.body;
+  let { fname, lname } = req.body
+  const { contact, address, household_id } = req.body;
+
+  fname = nameFormat(fname)
+  lname = nameFormat(lname)
 
   connection.query(`INSERT INTO guardian (fname, lname, contact, address, household_id) 
         VALUES ('${fname}', '${lname}', '${contact}', '${address}', '${household_id}')`, (err, rows, fields) => {
@@ -399,7 +424,11 @@ app.get('/user/profile/:id', (req, res) => {
 });
 // add new user
 app.post('/user', (req, res) => {
-  const { fname, lname, username, contact, admin_power, password } = req.body;
+  let { fname, lname } = req.body
+  const { username, contact, admin_power, password } = req.body;
+
+  fname = nameFormat(fname)
+  lname = nameFormat(lname)
 
   connection.query(`INSERT INTO user (fname, lname, username, contact, admin_power, password) 
         VALUES ('${fname}', '${lname}', '${username}', '${contact}', '${admin_power}', '${password}')`, (err, rows, fields) => {
@@ -422,7 +451,11 @@ app.post('/announcement/new', (req, res) => {
 // PUT
 // update child
 app.patch('/childUpdate/:id', (req, res) => {
-  const { id, fname, lname, bdate, sex, image } = req.body;
+  let { fname, lname } = req.body
+  const { id, bdate, sex, image } = req.body;
+
+  fname = nameFormat(fname)
+  lname = nameFormat(lname)
 
   connection.query(`UPDATE child SET fname = '${fname}', lname = '${lname}', bdate = '${bdate}', 
       sex ='${sex}', image='${image}' WHERE id=${id}`, (err, rows, fields) => {
@@ -444,7 +477,11 @@ app.put('/record/:id', (req, res) => {
 });
 // update guardian
 app.put('/guardUpdate/:id', (req, res) => {
-  const { guardian_id, fname, lname, contact, address } = req.body;
+  let { fname, lname } = req.body
+  const { guardian_id, contact, address } = req.body;
+
+  fname = nameFormat(fname)
+  lname = nameFormat(lname)
 
   connection.query(`UPDATE guardian SET fname = '${fname}', lname = '${lname}',
       contact = '${contact}', address = '${address}'
@@ -455,7 +492,11 @@ app.put('/guardUpdate/:id', (req, res) => {
 });
 // edit user
 app.put('/user/edit/:id', (req, res) => {
-  const { user_id, fname, lname, contact, admin_power, username } = req.body;
+  let { fname, lname } = req.body
+  const { user_id, contact, admin_power, username } = req.body;
+
+  fname = nameFormat(fname)
+  lname = nameFormat(lname)
 
   connection.query(`UPDATE user SET fname = '${fname}', lname = '${lname}',
       contact = '${contact}', admin_power = '${admin_power}', username = '${username}'
@@ -468,7 +509,6 @@ app.put('/user/edit/:id', (req, res) => {
 app.put('/user/edit/password/:id', (req, res) => {
   const { id } = req.params
   const { password } = req.body;
-  // console.log(req.body)
 
   connection.query(`UPDATE user SET password = '${password}' WHERE user_id=${id}`, (err, rows, fields) => {
     if (err) throw err
