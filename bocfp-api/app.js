@@ -203,30 +203,15 @@ app.get('/guardian/search/:search', (req, res) => {
     }
   })
 });
-// search guardian fname and lname
-app.get('/guardian/duplicate/', (req, res) => {
-  const { fname, lname } = req.query
+// search guardian fname, lname and household_id #HERE
+app.get('/guardian/duplicate/name/hid/', (req, res) => {
+  const { fname, lname, household_id } = req.query
 
-  connection.query(`SELECT * FROM guardian WHERE fname = "${fname}"
-    AND lname = "${lname}"`, (err, rows, fields) => {
+  connection.query(`SELECT
+  (SELECT COUNT(*) FROM guardian WHERE fname = "${fname}" AND lname = "${lname}") AS nameResult,
+  (SELECT COUNT(*) FROM guardian WHERE household_id = "${household_id}") AS idResult`, (err, rows, fields) => {
     if (rows.length) {
-      res.json(rows)
-    }
-    else {
-      res.json({"message": "1"})
-    }
-  })
-});
-// search guardian household id
-app.get('/guardian/household/', (req, res) => {
-  const { household_id } = req.query
-
-  connection.query(`SELECT * FROM guardian WHERE household_id = "${household_id}"`, (err, rows, fields) => {
-    if (rows.length) {
-      res.json(rows)
-    }
-    else {
-      res.json({"message": "1"})
+      res.json(rows[0])
     }
   })
 });
@@ -281,18 +266,6 @@ app.get('/user/duplicate/', (req, res) => {
     }
     else {
       res.json({"message": "1"})
-    }
-  })
-});
-// search user fname, lname and household_id #HERE
-app.get('/user/duplicate/name/hid/', (req, res) => {
-  const { fname, lname, household_id } = req.query
-
-  connection.query(`SELECT
-  (SELECT COUNT(*) FROM guardian WHERE fname = "${fname}" AND lname = "${lname}") AS nameResult,
-  (SELECT COUNT(*) FROM guardian WHERE household_id = "${household_id}") AS idResult`, (err, rows, fields) => {
-    if (rows.length) {
-      res.json(rows)
     }
   })
 });
