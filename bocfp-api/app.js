@@ -203,7 +203,7 @@ app.get('/guardian/search/:search', (req, res) => {
     }
   })
 });
-// search guardian fname, lname and household_id #HERE
+// search guardian fname, lname and household_id
 app.get('/guardian/duplicate/name/hid/', (req, res) => {
   const { fname, lname, household_id } = req.query
 
@@ -317,10 +317,22 @@ app.get('/announcements', (req, res) => {
       res.json(rows)
     }
     else {
-      res.json({ "message": "No Announcement(s) Found!", "user_id": "" })
+      res.json({ "message": "No Announcement(s) Found", "user_id": "" })
     }
   })
 
+});
+// search announcement
+app.get('/announcement/search/:search', (req, res) => {
+  connection.query(`SELECT * FROM announcement WHERE 
+    soft_delete = 0 AND title LIKE "%${req.params.search}%" LIMIT 3`, (err, rows, fields) => {
+    if (rows.length) {
+      res.json(rows)
+    }
+    else {
+      res.json({ "message": "No Announcement(s) Found" })
+    }
+  })
 });
 
 

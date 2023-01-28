@@ -136,11 +136,12 @@ export default defineComponent({
       search = search.trim()
       if (search.length) {
         setTimeout(() => {
-          // fetch('http://localhost:5000/child/search/' + search)
-          //   .then((response) => response.json())
-          //   .then((json) => {
-
-          //   })
+          fetch('http://localhost:5000/announcement/search/' + search)
+            .then((response) => response.json())
+            .then((json) => {
+              this.annou = ""
+              this.annou = json
+            })
         }, 1000)
       }
       else {
