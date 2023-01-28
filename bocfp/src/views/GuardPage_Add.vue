@@ -140,7 +140,7 @@ export default defineComponent({
 
               // not proceed if existed
               if (this.checker.nameResult == "1" && this.checker.idResult == "1") {
-                toast.message = "Guardian and Household ID already taken"
+                toast.message = "Guardian and Household ID already been taken"
               }
               else if (this.checker.nameResult == "1") {
                 toast.message = "Guardian already existed"

@@ -129,8 +129,7 @@ export default defineComponent({
                 "contact": "",
                 "admin_power": ""
             },
-            checker: { "message": "" },
-            checker2: { "message": "" },
+            checker: { "nameResult": "", "usernameResult": "" },
         }
     },
     setup() {
@@ -162,59 +161,49 @@ export default defineComponent({
                 && this.userDetails.contact && this.userDetails.admin_power !== "" && this.confirmPass) {
                 // confirmation if user pass match
                 if (this.confirmPass == this.userDetails.password) {
-                    // checks fname and lname
-                    fetch(`http://localhost:5000/user/duplicate?fname=${this.userDetails.fname}&lname=${this.userDetails.lname}`)
+                    // checks fname, lname and username
+                    fetch(`http://localhost:5000/user/duplicate/name/username?fname=${this.userDetails.fname}
+                                &lname=${this.userDetails.lname}&username=${this.userDetails.username}`)
                         .then((response) => response.json())
                         .then((json) => {
                             this.checker = json
 
-                            // not proceed if existed
-                            if (!this.checker.message) {
-                                toast.message = "User already has existed"
+                            if (this.checker.nameResult == "1" && this.checker.usernameResult == "1") {
+                                toast.message = "User's name and Username already been taken"
+                            }
+                            else if (this.checker.nameResult == "1") {
+                                toast.message = "User's name already existed"
+                            }
+                            else if (this.checker.usernameResult == "1") {
+                                toast.message = "Username already taken"
                             }
                             else {
-                                // checks username
-                                // checks fname and lname
-                                fetch(`http://localhost:5000/user/username/duplicate?username=${this.userDetails.username}`)
-                                    .then((response) => response.json())
-                                    .then((json) => {
-                                        this.checker2 = json
+                                const data = this.userDetails;
+                                data.password = SHA256(this.userDetails.password).toString()
 
-                                        // not proceed if existed
-                                        if (!this.checker2.message) {
-                                            toast.message = "Username already taken"
+                                fetch('http://localhost:5000/user', {
+                                    method: 'POST', // or 'PUT'
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify(data),
+                                })
+                                    .then((data) => {
+                                        toast.message = 'Success!'
+                                        this.userDetails = {
+                                            "username": "",
+                                            fname: "",
+                                            lname: "",
+                                            contact: "",
+                                            admin_power: "",
+                                            password: ""
                                         }
-                                        else {
-                                            const data = this.userDetails;
-                                            data.password = SHA256(this.userDetails.password).toString()
-
-                                            fetch('http://localhost:5000/user', {
-                                                method: 'POST', // or 'PUT'
-                                                headers: {
-                                                    'Content-Type': 'application/json',
-                                                },
-                                                body: JSON.stringify(data),
-                                            })
-                                                .then((data) => {
-                                                    toast.message = 'Success!'
-                                                    this.userDetails = {
-                                                        "username": "",
-                                                        fname: "",
-                                                        lname: "",
-                                                        contact: "",
-                                                        admin_power: "",
-                                                        password: ""
-                                                    }
-                                                    this.confirmPass = ""
-                                                    this.ionRouter.push("/user");
-                                                })
-                                                .catch((error) => {
-                                                    toast.message = error
-                                                });
-
-                                        }
+                                        this.confirmPass = ""
+                                        this.ionRouter.push("/user");
                                     })
-
+                                    .catch((error) => {
+                                        toast.message = error
+                                    });
 
                             }
                         })

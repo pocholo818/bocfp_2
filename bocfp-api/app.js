@@ -282,6 +282,18 @@ app.get('/user/username/duplicate/', (req, res) => {
     }
   })
 });
+// search user fname, lname and household_id #HERE
+app.get('/user/duplicate/name/username/', (req, res) => {
+  const { fname, lname, username } = req.query
+
+  connection.query(`SELECT
+  (SELECT COUNT(*) FROM user WHERE fname = "${fname}" AND lname = "${lname}") AS nameResult,
+  (SELECT COUNT(*) FROM user WHERE username = "${username}") AS usernameResult`, (err, rows, fields) => {
+    if (rows.length) {
+      res.json(rows[0])
+    }
+  })
+});
 // search user
 app.get('/user/search/:search', (req, res) => {
   connection.query(`SELECT * FROM user WHERE 
