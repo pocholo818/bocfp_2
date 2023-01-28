@@ -194,7 +194,9 @@ app.get('/guardian/search/:search', (req, res) => {
   connection.query(`SELECT * FROM guardian WHERE 
     soft_delete = 0 AND guardian_id LIKE "${req.params.search}"
     OR soft_delete = 0 AND fname LIKE "%${req.params.search}%"
-    OR soft_delete = 0 AND lname LIKE"%${req.params.search}%" LIMIT 5`, (err, rows, fields) => {
+    OR soft_delete = 0 AND lname LIKE"%${req.params.search}%" 
+    OR soft_delete = 0 AND household_id LIKE"%${req.params.search}%" 
+    LIMIT 5`, (err, rows, fields) => {
     if (rows.length) {
       res.json(rows)
     }
