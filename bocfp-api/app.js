@@ -61,7 +61,7 @@ app.get('/childs', (req, res) => {
 app.get('/childs/male', (req, res) => {
   const { limit, offset } = req.query
 
-  connection.query(`SELECT * FROM child WHERE soft_delete = 0 and sex = 'M' ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
+  connection.query(`SELECT * FROM child WHERE soft_delete = 0 AND sex = 'M' ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
     if (rows.length) {
       res.json(rows)
     }
@@ -75,7 +75,22 @@ app.get('/childs/male', (req, res) => {
 app.get('/childs/female', (req, res) => {
   const { limit, offset } = req.query
 
-  connection.query(`SELECT * FROM child WHERE soft_delete = 0 and sex = 'F' ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
+  connection.query(`SELECT * FROM child WHERE soft_delete = 0 AND sex = 'F' ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
+    if (rows.length) {
+      res.json(rows)
+    }
+    else {
+      res.json({ "message": "No Child(s) Found", "id": "" })
+    }
+  })
+
+});
+// get all by age child
+app.get('/childs/age', (req, res) => {
+  const { limit, offset } = req.query
+
+  connection.query(`SELECT *, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), bdate)), '%Y') + 0 AS age 
+      FROM child WHERE soft_delete = 0 ORDER BY age DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
     if (rows.length) {
       res.json(rows)
     }
@@ -88,7 +103,7 @@ app.get('/childs/female', (req, res) => {
 // get specific child
 app.get('/child/profile/:id', (req, res) => {
   connection.query(`SELECT *, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), bdate)), '%Y') + 0 AS age
-                    FROM child WHERE id=${req.params.id}`, (err, rows, fields) => {
+      FROM child WHERE id=${req.params.id}`, (err, rows, fields) => {
     if (err) throw err
     res.json(rows[0])
   })
@@ -135,6 +150,18 @@ app.get('/child/search/female/:search', (req, res) => {
     }
   })
 });
+// search age child
+// app.get('/child/search/age/:search', (req, res) => {
+//   connection.query(`SELECT *, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), bdate)), '%Y') + 0 AS age 
+//     FROM child WHERE soft_delete = 0 AND age LIKE "%${req.params.search}%" LIMIT 5`, (err, rows, fields) => {
+//     if (rows.length) {
+//       res.json(rows)
+//     }
+//     else {
+//       res.json({ "message": "No Child(s) Found" })
+//     }
+//   })
+// });
 // search child fname and lname
 app.get('/child/duplicate/', (req, res) => {
   const { fname, lname } = req.query
