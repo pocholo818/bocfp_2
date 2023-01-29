@@ -87,7 +87,8 @@ app.get('/childs/female', (req, res) => {
 });
 // get specific child
 app.get('/child/profile/:id', (req, res) => {
-  connection.query(`SELECT * FROM child WHERE id=${req.params.id}`, (err, rows, fields) => {
+  connection.query(`SELECT *, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), bdate)), '%Y') + 0 AS age
+                    FROM child WHERE id=${req.params.id}`, (err, rows, fields) => {
     if (err) throw err
     res.json(rows[0])
   })

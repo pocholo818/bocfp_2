@@ -52,7 +52,7 @@
 
                         <ion-item>
                             <ion-label position="floating">Age</ion-label>
-                            <ion-input placeholder="Enter Age" v-model="childAge" readonly></ion-input>
+                            <ion-input placeholder="Enter Age" v-model="childDetails.age" readonly></ion-input>
                         </ion-item><br>
 
                         <!-- options -->
@@ -208,9 +208,6 @@ export default defineComponent({
                 if (!this.childDetails.image) {
                     this.childDetails.image = require("@/assets/images/noPic.png")
                 }
-
-                this.childBdate = json.bdate;
-                this.childAge = this.computeAge();
             })
         this.fetchGuardian()
         this.fetchLatestRecord()
@@ -221,8 +218,6 @@ export default defineComponent({
             childDetails: { "image": "" },
             childRecords: "",
             childNewRecord: "",
-            childAge: 0,
-            childBdate: "",
             totalRemark: "",
             guardianDetails: "",
             guardianName: ""
@@ -263,20 +258,6 @@ export default defineComponent({
                         this.totalRemark = `${json.remark} (${json.output.toFixed(2)})`
                     }
                 });
-        },
-        computeAge: function () {
-            let currentDate = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`;
-            let birthDate = this.childBdate;
-            let age = parseInt(currentDate.split("-")[0]) - parseInt(birthDate.split("-")[0]);
-            let month = parseInt(currentDate.split("-")[1]) - parseInt(birthDate.split("-")[1]);
-
-            // month age thingy
-            // if (month < 0 || (month == 0 && parseInt(currentDate.split("-")[1]) < parseInt(birthDate.split("-")[1]))) {
-            //     age--;
-            // }
-
-            return age;
-
         },
         async record_delete(record_id: string) {
             const alert = await alertController.create({
