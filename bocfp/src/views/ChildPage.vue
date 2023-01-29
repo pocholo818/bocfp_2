@@ -26,6 +26,7 @@
             <ion-select-option value="all">All</ion-select-option>
             <ion-select-option value="m">Male</ion-select-option>
             <ion-select-option value="f">Female</ion-select-option>
+            <ion-select-option value="age">Age</ion-select-option>
           </ion-select>
         </ion-item>
 
@@ -50,6 +51,9 @@
                   <ion-card-header>
                     <ion-card-title>{{ child.fname }} {{ child.lname }}</ion-card-title>
                     <ion-card-subtitle>ID: {{ child.id }}</ion-card-subtitle>
+                    <div v-if="child.age">
+                      <ion-card-subtitle>Age: {{ child.age }}</ion-card-subtitle>
+                    </div>
                   </ion-card-header>
 
                   <div slot="end" style="z-index: 999">
@@ -149,7 +153,7 @@ export default defineComponent({
       isOpen: false,
       childList: { "image": "" },
       search: "",
-      limit: 20,
+      limit: 5,
       offset: 0,
       isNextEnabled: true,
       childFilter: ""
@@ -163,7 +167,7 @@ export default defineComponent({
           if (this.childFilter) {
             // search for male child
             if (this.childFilter == 'm') {
-              fetch('http://localhost:5000/child/search/male/' + search)
+              fetch(`http://localhost:5000/child/search/male/${search}/?limit=${this.limit}&offset=${this.offset}`)
                 .then((response) => response.json())
                 .then((json) => {
                   this.childList = { "image": "" },
@@ -172,7 +176,7 @@ export default defineComponent({
             }
             // search for female child
             else if (this.childFilter == 'f') {
-              fetch('http://localhost:5000/child/search/female/' + search)
+              fetch(`http://localhost:5000/child/search/female/${search}/?limit=${this.limit}&offset=${this.offset}`)
                 .then((response) => response.json())
                 .then((json) => {
                   this.childList = { "image": "" },
@@ -181,7 +185,16 @@ export default defineComponent({
             }
             // search for all child
             else if (this.childFilter == 'all') {
-              fetch('http://localhost:5000/child/search/' + search)
+              fetch(`http://localhost:5000/child/search/${search}/?limit=${this.limit}&offset=${this.offset}`)
+                .then((response) => response.json())
+                .then((json) => {
+                  this.childList = { "image": "" },
+                    this.childList = json
+                })
+            }
+            // search by age child
+            else if (this.childFilter == 'age') {
+              fetch(`http://localhost:5000/child/search/age/${search}/?limit=${this.limit}&offset=${this.offset}`)
                 .then((response) => response.json())
                 .then((json) => {
                   this.childList = { "image": "" },
@@ -190,7 +203,7 @@ export default defineComponent({
             }
           }
           else {
-            fetch('http://localhost:5000/child/search/' + search)
+            fetch(`http://localhost:5000/child/search/${search}/?limit=${this.limit}&offset=${this.offset}`)
               .then((response) => response.json())
               .then((json) => {
                 this.childList = { "image": "" },
@@ -212,6 +225,9 @@ export default defineComponent({
           else if (this.childFilter == 'all') {
             this.fetchData()
           }
+          else if (this.childFilter == 'age') {
+            this.fetchAge()
+          }
         }
         // if childfilter has no value
         else {
@@ -226,6 +242,7 @@ export default defineComponent({
       fetch(`http://localhost:5000/childs?limit=${this.limit}&offset=${this.offset}`)
         .then((response) => response.json())
         .then((json) => {
+          this.childList = { "image": "" },
           this.childList = json
 
           if (json.message) {
@@ -248,6 +265,7 @@ export default defineComponent({
       fetch(`http://localhost:5000/childs/male?limit=${this.limit}&offset=${this.offset}`)
         .then((response) => response.json())
         .then((json) => {
+          this.childList = { "image": "" },
           this.childList = json
 
           if (json.message) {
@@ -270,6 +288,30 @@ export default defineComponent({
       fetch(`http://localhost:5000/childs/female?limit=${this.limit}&offset=${this.offset}`)
         .then((response) => response.json())
         .then((json) => {
+          this.childList = { "image": "" },
+          this.childList = json
+
+          if (json.message) {
+            this.isNextEnabled = false
+            return
+          }
+          else {
+            this.isNextEnabled = true
+          }
+
+          if (this.childList.image) {
+            this.childList.image = `data:image/jpeg;base64,${json.image}`
+          }
+          else {
+            this.childList.image = require("@/assets/images/noPic.png")
+          }
+        })
+    },
+    fetchAge() {
+      fetch(`http://localhost:5000/childs/age/?limit=${this.limit}&offset=${this.offset}`)
+        .then((response) => response.json())
+        .then((json) => {
+          this.childList = { "image": "" },
           this.childList = json
 
           if (json.message) {
@@ -299,12 +341,41 @@ export default defineComponent({
         this.offset = offset
       }
 
-      this.fetchData()
+      if(this.childFilter == 'm'){
+          this.fetchMale()
+        }
+        else if(this.childFilter == 'f'){
+          this.fetchFemale()
+        }
+        else if(this.childFilter == 'age'){
+          this.fetchAge()
+        }
+        else if(this.childFilter == 'all'){
+          this.fetchData()
+        }
+        else{
+          this.fetchData()
+        }
     },
     nextData() {
       if (this.isNextEnabled) {
         this.offset += this.limit
-        this.fetchData()
+        
+        if(this.childFilter == 'm'){
+          this.fetchMale()
+        }
+        else if(this.childFilter == 'f'){
+          this.fetchFemale()
+        }
+        else if(this.childFilter == 'age'){
+          this.fetchAge()
+        }
+        else if(this.childFilter == 'all'){
+          this.fetchData()
+        }
+        else{
+          this.fetchData()
+        }
       }
     },
     async child_delete(id: string) {
@@ -358,6 +429,10 @@ export default defineComponent({
       else if (this.childFilter == 'f') {
         this.childList = { "image": "" },
           this.fetchFemale()
+      }
+      else if (this.childFilter == 'age') {
+        this.childList = { "image": "" },
+          this.fetchAge()
       }
     },
     handleRefresh(event: any) {
