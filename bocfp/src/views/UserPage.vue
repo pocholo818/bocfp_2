@@ -15,32 +15,34 @@
 
       <div style="max-width: 800px; margin: auto;">
 
-      <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
+        <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
 
 
-      <template v-if="userList.message">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-subtitle style="text-align: center;">{{ userList.message }}</ion-card-subtitle>
-          </ion-card-header>
-        </ion-card>
-      </template>
+        <template v-if="userList.message">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-subtitle style="text-align: center;">{{ userList.message }}</ion-card-subtitle>
+            </ion-card-header>
+          </ion-card>
+        </template>
 
-      <template v-else>
-        <ion-card v-for="user in userList" style="cursor: pointer" class="ion-margin-bottom" :key="user.user_id"
-          :router-link="('/user/profile/' + user.user_id)">
-          <ion-card-content class="ion-no-padding">
-            <ion-item lines="none">
+        <template v-else>
+          <TransitionGroup name="fade">
+            <ion-card v-for="user in userList" style="cursor: pointer" class="ion-margin-bottom" :key="user.user_id"
+              :router-link="('/user/profile/' + user.user_id)">
+              <ion-card-content class="ion-no-padding">
+                <ion-item lines="none">
 
-              <ion-card-header>
-                <ion-card-title>{{ user.fname }} {{ user.lname }}</ion-card-title>
-                <!-- <ion-card-subtitle>ID: {{ user.user_id }}</ion-card-subtitle> -->
-              </ion-card-header>
+                  <ion-card-header>
+                    <ion-card-title>{{ user.fname }} {{ user.lname }}</ion-card-title>
+                    <!-- <ion-card-subtitle>ID: {{ user.user_id }}</ion-card-subtitle> -->
+                  </ion-card-header>
 
-            </ion-item>
-          </ion-card-content>
-        </ion-card>
-      </template>
+                </ion-item>
+              </ion-card-content>
+            </ion-card>
+          </TransitionGroup>
+        </template>
 
       </div>
 
