@@ -162,53 +162,29 @@ export default defineComponent({
   methods: {
     searchData(search: string) {
       search = search.trim()
+
       if (search.length) {
         setTimeout(() => {
           if (this.childFilter) {
             // search for male child
             if (this.childFilter == 'm') {
-              fetch(`http://localhost:5000/child/search/male/${search}/?limit=${this.limit}&offset=${this.offset}`)
-                .then((response) => response.json())
-                .then((json) => {
-                  this.childList = { "image": "" },
-                    this.childList = json
-                })
+              this.searchMale(search)
             }
             // search for female child
             else if (this.childFilter == 'f') {
-              fetch(`http://localhost:5000/child/search/female/${search}/?limit=${this.limit}&offset=${this.offset}`)
-                .then((response) => response.json())
-                .then((json) => {
-                  this.childList = { "image": "" },
-                    this.childList = json
-                })
+              this.searchFemale(search)
             }
             // search for all child
             else if (this.childFilter == 'all') {
-              fetch(`http://localhost:5000/child/search/${search}/?limit=${this.limit}&offset=${this.offset}`)
-                .then((response) => response.json())
-                .then((json) => {
-                  this.childList = { "image": "" },
-                    this.childList = json
-                })
+              this.searchAll(search)
             }
             // search by age child
             else if (this.childFilter == 'age') {
-              fetch(`http://localhost:5000/child/search/age/${search}/?limit=${this.limit}&offset=${this.offset}`)
-                .then((response) => response.json())
-                .then((json) => {
-                  this.childList = { "image": "" },
-                    this.childList = json
-                })
+              this.searchAge(search)
             }
           }
           else {
-            fetch(`http://localhost:5000/child/search/${search}/?limit=${this.limit}&offset=${this.offset}`)
-              .then((response) => response.json())
-              .then((json) => {
-                this.childList = { "image": "" },
-                  this.childList = json
-              })
+            this.searchAll(search)
           }
         }, 1000)
       }
@@ -235,6 +211,106 @@ export default defineComponent({
         }
       }
     },
+    searchMale(search: string) {
+      search = search.trim()
+
+      fetch(`http://localhost:5000/child/search/male/${search}/?limit=${this.limit}&offset=${this.offset}`)
+        .then((response) => response.json())
+        .then((json) => {
+          this.childList = { "image": "" },
+            this.childList = json
+
+          if (json.message) {
+            this.isNextEnabled = false
+            return
+          }
+          else {
+            this.isNextEnabled = true
+          }
+
+          if (this.childList.image) {
+            this.childList.image = `data:image/jpeg;base64,${json.image}`
+          }
+          else {
+            this.childList.image = require("@/assets/images/noPic.png")
+          }
+        })
+    },
+    searchFemale(search: string) {
+      search = search.trim()
+
+      fetch(`http://localhost:5000/child/search/female/${search}/?limit=${this.limit}&offset=${this.offset}`)
+        .then((response) => response.json())
+        .then((json) => {
+          this.childList = { "image": "" },
+            this.childList = json
+
+          if (json.message) {
+            this.isNextEnabled = false
+            return
+          }
+          else {
+            this.isNextEnabled = true
+          }
+
+          if (this.childList.image) {
+            this.childList.image = `data:image/jpeg;base64,${json.image}`
+          }
+          else {
+            this.childList.image = require("@/assets/images/noPic.png")
+          }
+        })
+    },
+    searchAge(search: string) {
+      search = search.trim()
+
+      fetch(`http://localhost:5000/child/search/age/${search}/?limit=${this.limit}&offset=${this.offset}`)
+        .then((response) => response.json())
+        .then((json) => {
+          this.childList = { "image": "" },
+            this.childList = json
+
+          if (json.message) {
+            this.isNextEnabled = false
+            return
+          }
+          else {
+            this.isNextEnabled = true
+          }
+
+          if (this.childList.image) {
+            this.childList.image = `data:image/jpeg;base64,${json.image}`
+          }
+          else {
+            this.childList.image = require("@/assets/images/noPic.png")
+          }
+        })
+    },
+    searchAll(search: string) {
+      search = search.trim()
+
+      fetch(`http://localhost:5000/child/search/${search}/?limit=${this.limit}&offset=${this.offset}`)
+        .then((response) => response.json())
+        .then((json) => {
+          this.childList = { "image": "" },
+            this.childList = json
+
+          if (json.message) {
+            this.isNextEnabled = false
+            return
+          }
+          else {
+            this.isNextEnabled = true
+          }
+
+          if (this.childList.image) {
+            this.childList.image = `data:image/jpeg;base64,${json.image}`
+          }
+          else {
+            this.childList.image = require("@/assets/images/noPic.png")
+          }
+        })
+    },
     setOpen(isOpen: boolean) {
       this.isOpen = isOpen;
     },
@@ -243,7 +319,7 @@ export default defineComponent({
         .then((response) => response.json())
         .then((json) => {
           this.childList = { "image": "" },
-          this.childList = json
+            this.childList = json
 
           if (json.message) {
             this.isNextEnabled = false
@@ -266,7 +342,7 @@ export default defineComponent({
         .then((response) => response.json())
         .then((json) => {
           this.childList = { "image": "" },
-          this.childList = json
+            this.childList = json
 
           if (json.message) {
             this.isNextEnabled = false
@@ -289,7 +365,7 @@ export default defineComponent({
         .then((response) => response.json())
         .then((json) => {
           this.childList = { "image": "" },
-          this.childList = json
+            this.childList = json
 
           if (json.message) {
             this.isNextEnabled = false
@@ -312,7 +388,7 @@ export default defineComponent({
         .then((response) => response.json())
         .then((json) => {
           this.childList = { "image": "" },
-          this.childList = json
+            this.childList = json
 
           if (json.message) {
             this.isNextEnabled = false
@@ -341,40 +417,91 @@ export default defineComponent({
         this.offset = offset
       }
 
-      if(this.childFilter == 'm'){
+      if (this.childFilter == 'm') {
+        if (this.search) {
+          this.searchMale(this.search)
+        }
+        else {
           this.fetchMale()
         }
-        else if(this.childFilter == 'f'){
+      }
+      else if (this.childFilter == 'f') {
+        if (this.search) {
+          this.searchFemale(this.search)
+        }
+        else {
           this.fetchFemale()
         }
-        else if(this.childFilter == 'age'){
+      }
+      else if (this.childFilter == 'age') {
+        if (this.search) {
+          this.searchAge(this.search)
+        }
+        else {
           this.fetchAge()
         }
-        else if(this.childFilter == 'all'){
+      }
+      else if (this.childFilter == 'all') {
+        if (this.search) {
+          this.searchAll(this.search)
+        }
+        else {
           this.fetchData()
         }
-        else{
+      }
+      // 
+      else {
+        if (this.search) {
+          this.searchAll(this.search)
+        }
+        else {
           this.fetchData()
         }
+      }
     },
     nextData() {
       if (this.isNextEnabled) {
         this.offset += this.limit
-        
-        if(this.childFilter == 'm'){
-          this.fetchMale()
+
+        if (this.childFilter == 'm') {
+          if (this.search) {
+            this.searchMale(this.search)
+          }
+          else {
+            this.fetchMale()
+          }
         }
-        else if(this.childFilter == 'f'){
-          this.fetchFemale()
+        else if (this.childFilter == 'f') {
+          if (this.search) {
+            this.searchFemale(this.search)
+          }
+          else {
+            this.fetchFemale()
+          }
         }
-        else if(this.childFilter == 'age'){
-          this.fetchAge()
+        else if (this.childFilter == 'age') {
+          if (this.search) {
+            this.searchAge(this.search)
+          }
+          else {
+            this.fetchAge()
+          }
         }
-        else if(this.childFilter == 'all'){
-          this.fetchData()
+        else if (this.childFilter == 'all') {
+          if (this.search) {
+            this.searchAll(this.search)
+          }
+          else {
+            this.fetchData()
+          }
         }
-        else{
-          this.fetchData()
+        else {
+          if (this.search) {
+            this.searchAll(this.search)
+          }
+          else {
+            this.fetchData()
+          }
         }
       }
     },
