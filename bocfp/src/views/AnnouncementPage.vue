@@ -7,7 +7,7 @@
         <ion-refresher-content></ion-refresher-content>
       </ion-refresher>
 
-      <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
+      <ion-searchbar v-model="search"></ion-searchbar>
 
       <template>
         <ion-card>
@@ -113,7 +113,7 @@ export default defineComponent({
 
     return {
       search: "",
-      limit: 3,
+      limit: 5,
       offset: 0,
       isNextEnabled: true,
       annou: "",
@@ -123,6 +123,7 @@ export default defineComponent({
         user_id: user_id,
       },
       user_id: '',
+      searchTimeout: 0
     };
   },
   mounted() {
@@ -132,17 +133,21 @@ export default defineComponent({
     this.user_id = localStorage.getItem('user_id') || ''
   },
   methods: {
-    searchData(search: string) {
-      search = search.trim()
+    searchData() {
+      let search = this.search.trim()
+
+      this.limit = 5
+      this.offset = 0
+
       if (search.length) {
-        setTimeout(() => {
-          fetch('http://localhost:5000/announcement/search/' + search)
+        clearTimeout(this.searchTimeout)
+        this.searchTimeout = setTimeout(() => {
+          fetch(`http://localhost:5000/announcements?limit=${this.limit}&offset=${this.offset}&search=${this.search}`)
             .then((response) => response.json())
             .then((json) => {
-              this.annou = ""
               this.annou = json
             })
-        }, 1000)
+        }, 500)
       }
       else {
         this.fetchData()
@@ -161,7 +166,7 @@ export default defineComponent({
       }
     },
     fetchData() {
-      fetch(`http://localhost:5000/announcements?limit=${this.limit}&offset=${this.offset}`)
+      fetch(`http://localhost:5000/announcements?limit=${this.limit}&offset=${this.offset}&search=${this.search}`)
         .then((response) => response.json())
         .then((json) => {
           this.annou = json
@@ -206,6 +211,14 @@ export default defineComponent({
 
         event.target.complete();
       }, 1000);
+    }
+  },
+  watch: {
+    $route() {
+      this.$nextTick(this.fetchData);
+    },
+    search() {
+      this.searchData()
     }
   }
 })

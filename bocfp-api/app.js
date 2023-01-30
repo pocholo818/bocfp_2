@@ -46,9 +46,47 @@ function nameFormat(string) {
 // GET
 // get all child
 app.get('/childs', (req, res) => {
-  const { limit, offset } = req.query
+  const { limit, offset, filter, search } = req.query
 
-  connection.query(`SELECT * FROM child WHERE soft_delete = 0 ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
+  let query = `SELECT * FROM child WHERE soft_delete = 0 ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`
+
+  if(filter === 'male') {
+    query = `SELECT * FROM child WHERE soft_delete = 0 AND sex = 'M' ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`
+  }
+  else if(filter === 'female') {
+    query = `SELECT * FROM child WHERE soft_delete = 0 AND sex = 'F' ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`
+  }
+  else if(filter === 'age') {
+    query = `SELECT *, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), bdate)), '%Y') + 0 AS age 
+    FROM child WHERE soft_delete = 0 ORDER BY age ASC LIMIT ${limit} OFFSET ${offset}`
+  }
+
+  if(search) {
+    query = `SELECT * FROM child WHERE 
+      soft_delete = 0 AND id LIKE "${search}"
+      OR soft_delete = 0 AND fname LIKE "%${search}%"
+      OR soft_delete = 0 AND lname LIKE"%${search}%" LIMIT ${limit} OFFSET ${offset}`
+    
+    if(filter === 'male') {
+      query = `SELECT * FROM child WHERE 
+        soft_delete = 0 AND sex = 'M' AND id LIKE "${search}"
+        OR soft_delete = 0 AND sex = 'M' AND fname LIKE "%${search}%"
+        OR soft_delete = 0 AND sex = 'M' AND lname LIKE"%${search}%" LIMIT ${limit} OFFSET ${offset}`
+    }
+    else if(filter === 'female') {
+      query = `SELECT * FROM child WHERE 
+        soft_delete = 0 AND sex = 'F' AND id LIKE "${search}"
+        OR soft_delete = 0 AND sex = 'F' AND fname LIKE "%${search}%"
+        OR soft_delete = 0 AND sex = 'F' AND lname LIKE"%${search}%" LIMIT ${limit} OFFSET ${offset}`
+    }
+    else if(filter === 'age') {
+      query = `SELECT * FROM
+        (SELECT *, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), bdate)), '%Y') + 0 AS age 
+        FROM child WHERE soft_delete = 0) AS result WHERE age = "${search}" ORDER BY age LIMIT ${limit} OFFSET ${offset}`
+    }
+  }
+
+  connection.query(query, (err, rows, fields) => {
     if (rows.length) {
       res.json(rows)
     }
@@ -56,49 +94,6 @@ app.get('/childs', (req, res) => {
       res.json({ "message": "No Child(s) Found", "id": "" })
     }
   })
-});
-// get all male child
-app.get('/childs/male', (req, res) => {
-  const { limit, offset } = req.query
-
-  connection.query(`SELECT * FROM child WHERE soft_delete = 0 AND sex = 'M' ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
-    if (rows.length) {
-      res.json(rows)
-    }
-    else {
-      res.json({ "message": "No Child(s) Found", "id": "" })
-    }
-  })
-
-});
-// get all female child
-app.get('/childs/female', (req, res) => {
-  const { limit, offset } = req.query
-
-  connection.query(`SELECT * FROM child WHERE soft_delete = 0 AND sex = 'F' ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
-    if (rows.length) {
-      res.json(rows)
-    }
-    else {
-      res.json({ "message": "No Child(s) Found", "id": "" })
-    }
-  })
-
-});
-// get all by age child
-app.get('/childs/age', (req, res) => {
-  const { limit, offset } = req.query
-
-  connection.query(`SELECT *, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), bdate)), '%Y') + 0 AS age 
-      FROM child WHERE soft_delete = 0 ORDER BY age ASC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
-    if (rows.length) {
-      res.json(rows)
-    }
-    else {
-      res.json({ "message": "No Child(s) Found", "id": "" })
-    }
-  })
-
 });
 // get specific child
 app.get('/child/profile/:id', (req, res) => {
@@ -106,69 +101,6 @@ app.get('/child/profile/:id', (req, res) => {
       FROM child WHERE id=${req.params.id}`, (err, rows, fields) => {
     if (err) throw err
     res.json(rows[0])
-  })
-});
-// search child
-app.get('/child/search/:search/', (req, res) => {
-  const { limit, offset } = req.query
-
-  connection.query(`SELECT * FROM child WHERE 
-    soft_delete = 0 AND id LIKE "${req.params.search}"
-    OR soft_delete = 0 AND fname LIKE "%${req.params.search}%"
-    OR soft_delete = 0 AND lname LIKE"%${req.params.search}%" LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
-    if (rows.length) {
-      res.json(rows)
-    }
-    else {
-      res.json({ "message": "No Child(s) Found" })
-    }
-  })
-});
-// search male child
-app.get('/child/search/male/:search/', (req, res) => {
-  const { limit, offset } = req.query
-
-  connection.query(`SELECT * FROM child WHERE 
-    soft_delete = 0 AND sex = 'M' AND id LIKE "${req.params.search}"
-    OR soft_delete = 0 AND sex = 'M' AND fname LIKE "%${req.params.search}%"
-    OR soft_delete = 0 AND sex = 'M' AND lname LIKE"%${req.params.search}%" LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
-    if (rows.length) {
-      res.json(rows)
-    }
-    else {
-      res.json({ "message": "No Child(s) Found" })
-    }
-  })
-});
-// search female child
-app.get('/child/search/female/:search/', (req, res) => {
-  const { limit, offset } = req.query
-
-  connection.query(`SELECT * FROM child WHERE 
-    soft_delete = 0 AND sex = 'F' AND id LIKE "${req.params.search}"
-    OR soft_delete = 0 AND sex = 'F' AND fname LIKE "%${req.params.search}%"
-    OR soft_delete = 0 AND sex = 'F' AND lname LIKE"%${req.params.search}%" LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
-    if (rows.length) {
-      res.json(rows)
-    }
-    else {
-      res.json({ "message": "No Child(s) Found" })
-    }
-  })
-});
-// search age child
-app.get('/child/search/age/:search/', (req, res) => {
-  const { limit, offset } = req.query
-
-  connection.query(`SELECT * FROM
-    (SELECT *, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), bdate)), '%Y') + 0 AS age 
-    FROM child WHERE soft_delete = 0) AS result WHERE age = "${req.params.search}" ORDER BY age LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
-    if (rows.length) {
-      res.json(rows)
-    }
-    else {
-      res.json({ "message": "No Child(s) Found" })
-    }
   })
 });
 // search child fname and lname
@@ -190,7 +122,6 @@ app.get('/records/:id', (req, res) => {
   const { limit, offset } = req.query
 
   connection.query(`SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
-    // connection.query(`SELECT * FROM child WHERE soft_delete = 0 ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
     if (rows.length) {
       res.json(rows)
     }
@@ -208,9 +139,19 @@ app.get('/record/:id', (req, res) => {
 });
 // get all guardian
 app.get('/guardians', (req, res) => {
-  const { limit, offset } = req.query
+  const { limit, offset, search } = req.query
 
-  connection.query(`SELECT * FROM guardian WHERE soft_delete = 0 ORDER BY guardian_id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
+  let query = `SELECT * FROM guardian WHERE soft_delete = 0 ORDER BY guardian_id LIMIT ${limit} OFFSET ${offset}`
+
+  if(search) {
+    query = `SELECT * FROM guardian WHERE 
+      soft_delete = 0 AND guardian_id LIKE "${search}"
+      OR soft_delete = 0 AND fname LIKE "%${search}%"
+      OR soft_delete = 0 AND lname LIKE "%${search}%" 
+      OR soft_delete = 0 AND household_id LIKE "%${search}%" LIMIT ${limit} OFFSET ${offset}`
+  }
+
+  connection.query(query, (err, rows, fields) => {
     if (rows.length) {
       res.json(rows)
     }
@@ -224,22 +165,6 @@ app.get('/guardian/profile/:id', (req, res) => {
   connection.query(`SELECT * FROM guardian WHERE guardian_id=${req.params.id}`, (err, rows, fields) => {
     if (err) throw err
     res.json(rows[0])
-  })
-});
-// search guardian
-app.get('/guardian/search/:search', (req, res) => {
-  connection.query(`SELECT * FROM guardian WHERE 
-    soft_delete = 0 AND guardian_id LIKE "${req.params.search}"
-    OR soft_delete = 0 AND fname LIKE "%${req.params.search}%"
-    OR soft_delete = 0 AND lname LIKE"%${req.params.search}%" 
-    OR soft_delete = 0 AND household_id LIKE"%${req.params.search}%" 
-    LIMIT 5`, (err, rows, fields) => {
-    if (rows.length) {
-      res.json(rows)
-    }
-    else {
-      res.json({ "message": "No Guardian(s) Found" })
-    }
   })
 });
 // search guardian fname, lname and household_id
@@ -283,9 +208,17 @@ app.get('/child/link/:id', (req, res) => {
 });
 // get users
 app.get('/users', (req, res) => {
-  const { limit, offset } = req.query
+  const { limit, offset, search } = req.query
 
-  connection.query(`SELECT * FROM user WHERE soft_delete = 0 LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
+  let query = `SELECT * FROM user WHERE soft_delete = 0 LIMIT ${limit} OFFSET ${offset}`
+
+  if(search) {
+    query = `SELECT * FROM user WHERE 
+      soft_delete = 0 AND user_id LIKE "${search}"
+      OR soft_delete = 0 AND fname LIKE "%${search}%"
+      OR soft_delete = 0 AND lname LIKE"%${search}%" LIMIT ${limit} OFFSET ${offset}`
+  }
+  connection.query(query, (err, rows, fields) => {
     if (rows.length) {
       res.json(rows)
     }
@@ -321,7 +254,7 @@ app.get('/user/username/duplicate/', (req, res) => {
     }
   })
 });
-// search user fname, lname and household_id #HERE
+// search user fname, lname
 app.get('/user/duplicate/name/username/', (req, res) => {
   const { fname, lname, username } = req.query
 
@@ -333,45 +266,26 @@ app.get('/user/duplicate/name/username/', (req, res) => {
     }
   })
 });
-// search user
-app.get('/user/search/:search', (req, res) => {
-  connection.query(`SELECT * FROM user WHERE 
-    soft_delete = 0 AND user_id LIKE "${req.params.search}"
-    OR soft_delete = 0 AND fname LIKE "%${req.params.search}%"
-    OR soft_delete = 0 AND lname LIKE"%${req.params.search}%" LIMIT 5`, (err, rows, fields) => {
-    if (rows.length) {
-      res.json(rows)
-    }
-    else {
-      res.json({ "message": "No User(s) Found" })
-    }
-  })
-});
 // get all announcement
 app.get('/announcements', (req, res) => {
-  const { limit, offset } = req.query
+  const { limit, offset, search } = req.query
 
-  connection.query(`SELECT * FROM announcement WHERE soft_delete = 0 ORDER BY annou_id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
+  let query = `SELECT * FROM announcement WHERE soft_delete = 0 ORDER BY annou_id DESC LIMIT ${limit} OFFSET ${offset}`
+
+  if(search) {
+    query = `SELECT * FROM announcement WHERE 
+      soft_delete = 0 AND title LIKE "%${search}%" LIMIT ${limit} OFFSET ${offset}`
+  }
+
+  connection.query(query, (err, rows, fields) => {
     if (rows.length) {
       res.json(rows)
     }
     else {
-      res.json({ "message": "No Announcement(s) Found", "user_id": "" })
+      res.json({ "message": "No Announcement(s) Found"})
     }
   })
 
-});
-// search announcement
-app.get('/announcement/search/:search', (req, res) => {
-  connection.query(`SELECT * FROM announcement WHERE 
-    soft_delete = 0 AND title LIKE "%${req.params.search}%" LIMIT 3`, (err, rows, fields) => {
-    if (rows.length) {
-      res.json(rows)
-    }
-    else {
-      res.json({ "message": "No Announcement(s) Found" })
-    }
-  })
 });
 
 
@@ -406,6 +320,16 @@ app.post('/record/:id', (req, res) => {
 app.post('/guardian/new', (req, res) => {
   let { fname, lname } = req.body
   const { contact, address, household_id } = req.body;
+
+  // search pre-existing household id
+  // connection.query(`INSERT INTO guardian (fname, lname, contact, address, household_id) 
+  //     VALUES ('${fname}', '${lname}', '${contact}', '${address}', '${household_id}')`, (err, rows, fields) => {
+  //   if (err) throw err
+  // })
+
+  // if(rows.[household_id] === household_id) {
+  //   res.json({ "message": "may kaparehas" })
+  // }
 
   fname = nameFormat(fname)
   lname = nameFormat(lname)

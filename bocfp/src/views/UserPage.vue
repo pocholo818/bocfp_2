@@ -15,8 +15,7 @@
 
       <div style="max-width: 800px; margin: auto;">
 
-        <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
-
+        <ion-searchbar v-model="search"></ion-searchbar>
 
         <template v-if="userList.message">
           <ion-card>
@@ -118,27 +117,27 @@ export default defineComponent({
     };
   },
   methods: {
-    searchData(search: string) {
-      search = search.trim()
+    searchData() {
+      const search = this.search.trim()
+
       if (search.length) {
         setTimeout(() => {
-          fetch('http://localhost:5000/user/search/' + search)
+          fetch(`http://localhost:5000/users?limit=${this.limit}&offset=${this.offset}&search=${search}`)
             .then((response) => response.json())
             .then((json) => {
               this.userList = json
             })
-        }, 1000)
+        }, 500)
       }
       else {
         this.fetchData()
       }
-
     },
     setOpen(isOpen: boolean) {
       this.isOpen = isOpen;
     },
     fetchData() {
-      fetch(`http://localhost:5000/users?limit=${this.limit}&offset=${this.offset}`)
+      fetch(`http://localhost:5000/users?limit=${this.limit}&offset=${this.offset}&search=${this.search}`)
         .then((response) => response.json())
         .then((json) => {
           this.userList = json
@@ -177,6 +176,9 @@ export default defineComponent({
   watch: {
     $route() {
       this.$nextTick(this.fetchData);
+    },
+    search() {
+      this.searchData()
     }
   }
 });

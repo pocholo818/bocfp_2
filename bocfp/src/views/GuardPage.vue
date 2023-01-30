@@ -15,7 +15,7 @@
 
             <div style="max-width: 800px; margin: auto;">
 
-                <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
+                <ion-searchbar v-model="search"></ion-searchbar>
 
                 <template v-if="guardianList.message">
                     <ion-card>
@@ -121,31 +121,36 @@ export default defineComponent({
             search: "",
             limit: 20,
             offset: 0,
-            isNextEnabled: true
+            isNextEnabled: true,
+            searchTimeout: 0
         };
     },
     methods: {
         setOpen(isOpen: boolean) {
             this.isOpen = isOpen;
         },
-        searchData(search: string) {
-            search = search.trim()
+        searchData() {
+            const search = this.search.trim()
+
+            this.limit = 5
+            this.offset = 0
+
             if (search.length) {
-                setTimeout(() => {
-                    fetch('http://localhost:5000/guardian/search/' + search)
+                clearTimeout(this.searchTimeout)
+                this.searchTimeout = setTimeout(() => {
+                    fetch(`http://localhost:5000/guardians?limit=${this.limit}&offset=${this.offset}&search=${search}`)
                         .then((response) => response.json())
                         .then((json) => {
                             this.guardianList = json
                         })
-                }, 1000)
+                }, 500)
             }
             else {
                 this.fetchData()
             }
-
         },
         fetchData() {
-            fetch(`http://localhost:5000/guardians?limit=${this.limit}&offset=${this.offset}`)
+            fetch(`http://localhost:5000/guardians?limit=${this.limit}&offset=${this.offset}&search=${this.search}`)
                 .then((response) => response.json())
                 .then((json) => {
                     this.guardianList = json
@@ -184,6 +189,9 @@ export default defineComponent({
     watch: {
         $route() {
             this.$nextTick(this.fetchData);
+        },
+        search() {
+            this.searchData()
         }
     }
 });

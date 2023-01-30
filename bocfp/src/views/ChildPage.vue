@@ -18,14 +18,14 @@
 
       <div style="max-width: 800px; margin: auto;">
 
-        <ion-searchbar @input="searchData($event.target.value)" v-model="search"></ion-searchbar>
+        <ion-searchbar v-model="search"></ion-searchbar>
 
         <!-- search filter -->
         <ion-item>
-          <ion-select @ion-change="filterChild()" v-model="childFilter" placeholder="Select Filter">
+          <ion-select @ionChange="searchData" v-model="childFilter" placeholder="Select Filter">
             <ion-select-option value="all">All</ion-select-option>
-            <ion-select-option value="m">Male</ion-select-option>
-            <ion-select-option value="f">Female</ion-select-option>
+            <ion-select-option value="male">Male</ion-select-option>
+            <ion-select-option value="female">Female</ion-select-option>
             <ion-select-option value="age">Age</ion-select-option>
           </ion-select>
         </ion-item>
@@ -153,238 +153,56 @@ export default defineComponent({
       isOpen: false,
       childList: { "image": "" },
       search: "",
-      limit: 5,
+      limit: 10,
       offset: 0,
       isNextEnabled: true,
-      childFilter: ""
+      childFilter: "all",
+      searchTimeout: 0
     };
   },
   methods: {
-    searchData(search: string) {
-      search = search.trim()
+    searchData() {
+      let search = this.search.trim()
+
+      this.limit = 10
+      this.offset = 0
 
       if (search.length) {
-        setTimeout(() => {
-          if (this.childFilter) {
-            // search for male child
-            if (this.childFilter == 'm') {
-              this.searchMale(search)
-            }
-            // search for female child
-            else if (this.childFilter == 'f') {
-              this.searchFemale(search)
-            }
-            // search for all child
-            else if (this.childFilter == 'all') {
-              this.searchAll(search)
-            }
-            // search by age child
-            else if (this.childFilter == 'age') {
-              this.searchAge(search)
-            }
-          }
-          else {
-            this.searchAll(search)
-          }
-        }, 1000)
+        clearTimeout(this.searchTimeout)
+        this.searchTimeout = setTimeout(() => {
+          fetch(`http://localhost:5000/childs/?limit=${this.limit}&offset=${this.offset}&filter=${this.childFilter}&search=${search}`)
+            .then((response) => response.json())
+            .then((json) => {
+              this.childList = { "image": "" },
+                this.childList = json
+
+              if (json.message) {
+                this.isNextEnabled = false
+                return
+              }
+              else {
+                this.isNextEnabled = true
+              }
+
+              if (this.childList.image) {
+                this.childList.image = `data:image/jpeg;base64,${json.image}`
+              }
+              else {
+                this.childList.image = require("@/assets/images/noPic.png")
+              }
+            })
+        }, 500)
       }
       // if empty search
       else {
-        // if childfilter has value
-        if (this.childFilter) {
-          if (this.childFilter == 'm') {
-            this.fetchMale()
-          }
-          else if (this.childFilter == 'f') {
-            this.fetchFemale()
-          }
-          else if (this.childFilter == 'all') {
-            this.fetchData()
-          }
-          else if (this.childFilter == 'age') {
-            this.fetchAge()
-          }
-        }
-        // if childfilter has no value
-        else {
-          this.fetchData()
-        }
+        this.fetchData()
       }
-    },
-    searchMale(search: string) {
-      search = search.trim()
-
-      fetch(`http://localhost:5000/child/search/male/${search}/?limit=${this.limit}&offset=${this.offset}`)
-        .then((response) => response.json())
-        .then((json) => {
-          this.childList = { "image": "" },
-            this.childList = json
-
-          if (json.message) {
-            this.isNextEnabled = false
-            return
-          }
-          else {
-            this.isNextEnabled = true
-          }
-
-          if (this.childList.image) {
-            this.childList.image = `data:image/jpeg;base64,${json.image}`
-          }
-          else {
-            this.childList.image = require("@/assets/images/noPic.png")
-          }
-        })
-    },
-    searchFemale(search: string) {
-      search = search.trim()
-
-      fetch(`http://localhost:5000/child/search/female/${search}/?limit=${this.limit}&offset=${this.offset}`)
-        .then((response) => response.json())
-        .then((json) => {
-          this.childList = { "image": "" },
-            this.childList = json
-
-          if (json.message) {
-            this.isNextEnabled = false
-            return
-          }
-          else {
-            this.isNextEnabled = true
-          }
-
-          if (this.childList.image) {
-            this.childList.image = `data:image/jpeg;base64,${json.image}`
-          }
-          else {
-            this.childList.image = require("@/assets/images/noPic.png")
-          }
-        })
-    },
-    searchAge(search: string) {
-      search = search.trim()
-
-      fetch(`http://localhost:5000/child/search/age/${search}/?limit=${this.limit}&offset=${this.offset}`)
-        .then((response) => response.json())
-        .then((json) => {
-          this.childList = { "image": "" },
-            this.childList = json
-
-          if (json.message) {
-            this.isNextEnabled = false
-            return
-          }
-          else {
-            this.isNextEnabled = true
-          }
-
-          if (this.childList.image) {
-            this.childList.image = `data:image/jpeg;base64,${json.image}`
-          }
-          else {
-            this.childList.image = require("@/assets/images/noPic.png")
-          }
-        })
-    },
-    searchAll(search: string) {
-      search = search.trim()
-
-      fetch(`http://localhost:5000/child/search/${search}/?limit=${this.limit}&offset=${this.offset}`)
-        .then((response) => response.json())
-        .then((json) => {
-          this.childList = { "image": "" },
-            this.childList = json
-
-          if (json.message) {
-            this.isNextEnabled = false
-            return
-          }
-          else {
-            this.isNextEnabled = true
-          }
-
-          if (this.childList.image) {
-            this.childList.image = `data:image/jpeg;base64,${json.image}`
-          }
-          else {
-            this.childList.image = require("@/assets/images/noPic.png")
-          }
-        })
     },
     setOpen(isOpen: boolean) {
       this.isOpen = isOpen;
     },
     fetchData() {
-      fetch(`http://localhost:5000/childs?limit=${this.limit}&offset=${this.offset}`)
-        .then((response) => response.json())
-        .then((json) => {
-          this.childList = { "image": "" },
-            this.childList = json
-
-          if (json.message) {
-            this.isNextEnabled = false
-            return
-          }
-          else {
-            this.isNextEnabled = true
-          }
-
-          if (this.childList.image) {
-            this.childList.image = `data:image/jpeg;base64,${json.image}`
-          }
-          else {
-            this.childList.image = require("@/assets/images/noPic.png")
-          }
-        })
-    },
-    fetchMale() {
-      fetch(`http://localhost:5000/childs/male?limit=${this.limit}&offset=${this.offset}`)
-        .then((response) => response.json())
-        .then((json) => {
-          this.childList = { "image": "" },
-            this.childList = json
-
-          if (json.message) {
-            this.isNextEnabled = false
-            return
-          }
-          else {
-            this.isNextEnabled = true
-          }
-
-          if (this.childList.image) {
-            this.childList.image = `data:image/jpeg;base64,${json.image}`
-          }
-          else {
-            this.childList.image = require("@/assets/images/noPic.png")
-          }
-        })
-    },
-    fetchFemale() {
-      fetch(`http://localhost:5000/childs/female?limit=${this.limit}&offset=${this.offset}`)
-        .then((response) => response.json())
-        .then((json) => {
-          this.childList = { "image": "" },
-            this.childList = json
-
-          if (json.message) {
-            this.isNextEnabled = false
-            return
-          }
-          else {
-            this.isNextEnabled = true
-          }
-
-          if (this.childList.image) {
-            this.childList.image = `data:image/jpeg;base64,${json.image}`
-          }
-          else {
-            this.childList.image = require("@/assets/images/noPic.png")
-          }
-        })
-    },
-    fetchAge() {
-      fetch(`http://localhost:5000/childs/age/?limit=${this.limit}&offset=${this.offset}`)
+      fetch(`http://localhost:5000/childs?limit=${this.limit}&offset=${this.offset}&filter=${this.childFilter}&search=${this.search}`)
         .then((response) => response.json())
         .then((json) => {
           this.childList = { "image": "" },
@@ -408,8 +226,6 @@ export default defineComponent({
     },
     prevData() {
       const offset = this.offset -= this.limit
-
-      // disable negative offset
       if (offset <= 0) {
         this.offset = 0
       }
@@ -417,92 +233,13 @@ export default defineComponent({
         this.offset = offset
       }
 
-      if (this.childFilter == 'm') {
-        if (this.search) {
-          this.searchMale(this.search)
-        }
-        else {
-          this.fetchMale()
-        }
-      }
-      else if (this.childFilter == 'f') {
-        if (this.search) {
-          this.searchFemale(this.search)
-        }
-        else {
-          this.fetchFemale()
-        }
-      }
-      else if (this.childFilter == 'age') {
-        if (this.search) {
-          this.searchAge(this.search)
-        }
-        else {
-          this.fetchAge()
-        }
-      }
-      else if (this.childFilter == 'all') {
-        if (this.search) {
-          this.searchAll(this.search)
-        }
-        else {
-          this.fetchData()
-        }
-      }
-      // 
-      else {
-        if (this.search) {
-          this.searchAll(this.search)
-        }
-        else {
-          this.fetchData()
-        }
-      }
+      this.fetchData()
     },
     nextData() {
       if (this.isNextEnabled) {
         this.offset += this.limit
 
-        if (this.childFilter == 'm') {
-          if (this.search) {
-            this.searchMale(this.search)
-          }
-          else {
-            this.fetchMale()
-          }
-        }
-        else if (this.childFilter == 'f') {
-          if (this.search) {
-            this.searchFemale(this.search)
-          }
-          else {
-            this.fetchFemale()
-          }
-        }
-        else if (this.childFilter == 'age') {
-          if (this.search) {
-            this.searchAge(this.search)
-          }
-          else {
-            this.fetchAge()
-          }
-        }
-        else if (this.childFilter == 'all') {
-          if (this.search) {
-            this.searchAll(this.search)
-          }
-          else {
-            this.fetchData()
-          }
-        }
-        else {
-          if (this.search) {
-            this.searchAll(this.search)
-          }
-          else {
-            this.fetchData()
-          }
-        }
+        this.fetchData()
       }
     },
     async child_delete(id: string) {
@@ -544,24 +281,6 @@ export default defineComponent({
 
       await alert.present();
     },
-    filterChild() {
-      if (this.childFilter == 'all') {
-        this.childList = { "image": "" },
-          this.fetchData()
-      }
-      else if (this.childFilter == 'm') {
-        this.childList = { "image": "" },
-          this.fetchMale()
-      }
-      else if (this.childFilter == 'f') {
-        this.childList = { "image": "" },
-          this.fetchFemale()
-      }
-      else if (this.childFilter == 'age') {
-        this.childList = { "image": "" },
-          this.fetchAge()
-      }
-    },
     handleRefresh(event: any) {
       setTimeout(() => {
         // Any calls to load data go here
@@ -570,14 +289,6 @@ export default defineComponent({
         event.target.complete();
       }, 1000);
     },
-    // numOnly(evt: KeyboardEvent): void {
-    //   const keysAllowed: string[] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-    //   const keyPressed: string = evt.key;
-
-    //   if (!keysAllowed.includes(keyPressed)) {
-    //     evt.preventDefault()
-    //   }
-    // },
   },
   // get data
   mounted() {
@@ -586,6 +297,9 @@ export default defineComponent({
   watch: {
     $route() {
       this.$nextTick(this.fetchData);
+    },
+    search() {
+      this.searchData()
     }
   }
 });
