@@ -107,7 +107,6 @@ export default defineComponent({
         household_id: "",
         address: ""
       },
-      checker: { "nameResult": "", "idResult": "" },
     }
   },
   setup() {
@@ -132,49 +131,30 @@ export default defineComponent({
         && this.guardianDetails.address && this.guardianDetails.household_id) {
         // check if household id is less than 7
         if (this.guardianDetails.household_id.length == 7) {
-          fetch(`http://localhost:5000/guardian/duplicate/name/hid/?fname=${this.guardianDetails.fname}
-                  &lname=${this.guardianDetails.lname}&household_id=${this.guardianDetails.household_id}`)
-            .then((response) => response.json())
-            .then((json) => {
-              this.checker = json
+          const data = this.guardianDetails;
 
-              // not proceed if existed
-              if (this.checker.nameResult == "1" && this.checker.idResult == "1") {
-                toast.message = "Guardian and Household ID already been taken"
+          fetch('http://localhost:5000/guardian', {
+            method: 'POST', // or 'PUT'
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          })
+            .then((data) => {
+              toast.message = 'Success!'
+              this.guardianDetails = {
+                fname: "",
+                lname: "",
+                contact: "",
+                household_id: "",
+                address: ""
               }
-              else if (this.checker.nameResult == "1") {
-                toast.message = "Guardian already existed"
-              }
-              else if (this.checker.idResult == "1") {
-                toast.message = "Household ID already taken"
-              }
-              else {
-                const data = this.guardianDetails;
-
-                fetch('http://localhost:5000/guardian/new', {
-                  method: 'POST', // or 'PUT'
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify(data),
-                })
-                  .then((data) => {
-                    toast.message = 'Success!'
-                    this.guardianDetails = {
-                      fname: "",
-                      lname: "",
-                      contact: "",
-                      household_id: "",
-                      address: ""
-                    }
-                    this.router.push("/guardian");
-                  })
-                  .catch((error) => {
-                    toast.message = error
-                  });
-
-              }
+              this.router.push("/guardian");
             })
+            .catch((error) => {
+              toast.message = error
+            });
+
         }
         else {
           toast.message = "Household ID is incomplete"

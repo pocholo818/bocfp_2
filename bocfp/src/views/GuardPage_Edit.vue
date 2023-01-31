@@ -151,14 +151,20 @@ export default defineComponent({
         && this.guardProfile.address && this.guardProfile.household_id) {
         // check if household id is less than 7
         if (this.guardProfile.household_id.length == 7) {
-          fetch('http://localhost:5000/guardUpdate/:id', {
+          fetch(`http://localhost:5000/guardUpdate/${this.guardId}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
           })
-            .then((data) => {
+            .then((response) => response.json())
+            .then((json) => { 
+              if(json.message !== 'success') {
+                toast.message = json.message
+                return
+              }
+
               toast.message = 'Success!'
               this.guardProfile = {
                 fname: "",
@@ -197,9 +203,6 @@ export default defineComponent({
 
   }
 });
-
-
-
 </script>
   
 

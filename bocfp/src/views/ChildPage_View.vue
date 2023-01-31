@@ -135,7 +135,12 @@
                                     readonly></ion-input>
                             </ion-item>
                             <ion-button :router-link="('/record_view/' + childId)">View all
-                                Records</ion-button>
+                                Records</ion-button><br>
+
+                            <!-- line chart -->
+                            <div>
+                                <LineChart :data="data" :options="options" />
+                            </div>
                         </div>
 
                     </ion-list>
@@ -175,17 +180,13 @@ import {
 
 } from '@ionic/vue';
 import { useRoute } from 'vue-router';
-import { parseStringStyle } from '@vue/shared';
-// import HeaderBar from '@/components/HeaderBar.vue';
-// import {
-//   IonContent,
-//   IonPage,
-// } from '@ionic/vue';
+import LineChart from '@/components/LineChart.vue'
+import moment from 'moment'
 
 export default defineComponent({
     name: 'ChildPage',
     components: {
-        // HeaderBar,
+        LineChart,
         IonInput,
         IonList,
         IonCard,
@@ -211,6 +212,7 @@ export default defineComponent({
             })
         this.fetchGuardian()
         this.fetchLatestRecord()
+        this.fetchRecords()
     },
     data() {
         return {
@@ -220,7 +222,22 @@ export default defineComponent({
             childNewRecord: "",
             totalRemark: "",
             guardianDetails: "",
-            guardianName: ""
+            guardianName: "",
+            childAllRecords: "",
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Records',
+                        backgroundColor: '#f87979',
+                        data: []
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
         }
     },
     setup() {
@@ -258,6 +275,18 @@ export default defineComponent({
                         this.totalRemark = `${json.remark} (${json.output.toFixed(2)})`
                     }
                 });
+        },
+        fetchRecords() {
+            fetch(`http://localhost:5000/records/` + this.childId + `?limit=${10}&offset=${0}`)
+                .then((response) => response.json())
+                .then((json) => {
+                    this.childAllRecords = json
+
+                    if (!json.message) {
+                        this.data.labels = json.map((item: any) => moment(String(item.date)).format('MMM DD, YYYY hh:mm A'))
+                        this.data.datasets[0].data = json.map((item: any) => item.output)
+                    }
+                })
         },
         async record_delete(record_id: string) {
             const alert = await alertController.create({

@@ -1,17 +1,34 @@
 <template>
-  <Pie :data="data" :options="options" v-if="loaded" />
+  <Line :data="data" :options="options" v-if="loaded" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Pie } from 'vue-chartjs'
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+import { Line } from 'vue-chartjs'
+import { 
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js'
 
-ChartJS.register(ArcElement, Tooltip, Legend)
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+)
 
 export default defineComponent({
-  name: 'PieChart',
-  components: { Pie },
+  name: 'LineChart',
+  components: { Line },
   props: {
     data: {
       type: Object,

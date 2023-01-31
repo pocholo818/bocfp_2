@@ -5,7 +5,7 @@ const cors = require("cors")
 const port = 5000;
 app.use(cors())
 // app.use(express.urlencoded({limit: "10mb", extended: true}));
-app.use(express.json({limit: '50mb'}));
+app.use(express.json({ limit: '50mb' }));
 
 // 
 const mysql = require('mysql');
@@ -50,36 +50,36 @@ app.get('/childs', (req, res) => {
 
   let query = `SELECT * FROM child WHERE soft_delete = 0 ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`
 
-  if(filter === 'male') {
+  if (filter === 'male') {
     query = `SELECT * FROM child WHERE soft_delete = 0 AND sex = 'M' ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`
   }
-  else if(filter === 'female') {
+  else if (filter === 'female') {
     query = `SELECT * FROM child WHERE soft_delete = 0 AND sex = 'F' ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`
   }
-  else if(filter === 'age') {
+  else if (filter === 'age') {
     query = `SELECT *, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), bdate)), '%Y') + 0 AS age 
     FROM child WHERE soft_delete = 0 ORDER BY age ASC LIMIT ${limit} OFFSET ${offset}`
   }
 
-  if(search) {
+  if (search) {
     query = `SELECT * FROM child WHERE 
       soft_delete = 0 AND id LIKE "${search}"
       OR soft_delete = 0 AND fname LIKE "%${search}%"
       OR soft_delete = 0 AND lname LIKE"%${search}%" LIMIT ${limit} OFFSET ${offset}`
-    
-    if(filter === 'male') {
+
+    if (filter === 'male') {
       query = `SELECT * FROM child WHERE 
         soft_delete = 0 AND sex = 'M' AND id LIKE "${search}"
         OR soft_delete = 0 AND sex = 'M' AND fname LIKE "%${search}%"
         OR soft_delete = 0 AND sex = 'M' AND lname LIKE"%${search}%" LIMIT ${limit} OFFSET ${offset}`
     }
-    else if(filter === 'female') {
+    else if (filter === 'female') {
       query = `SELECT * FROM child WHERE 
         soft_delete = 0 AND sex = 'F' AND id LIKE "${search}"
         OR soft_delete = 0 AND sex = 'F' AND fname LIKE "%${search}%"
         OR soft_delete = 0 AND sex = 'F' AND lname LIKE"%${search}%" LIMIT ${limit} OFFSET ${offset}`
     }
-    else if(filter === 'age') {
+    else if (filter === 'age') {
       query = `SELECT * FROM
         (SELECT *, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), bdate)), '%Y') + 0 AS age 
         FROM child WHERE soft_delete = 0) AS result WHERE age = "${search}" ORDER BY age LIMIT ${limit} OFFSET ${offset}`
@@ -97,31 +97,37 @@ app.get('/childs', (req, res) => {
 });
 // get specific child
 app.get('/child/profile/:id', (req, res) => {
+  const { id } = req.params
+
   connection.query(`SELECT *, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), bdate)), '%Y') + 0 AS age
       FROM child WHERE id=${req.params.id}`, (err, rows, fields) => {
     if (err) throw err
+    else if (!rows[0]) {
+      res.send(`No child with id: ${id}`)
+    }
+
     res.json(rows[0])
   })
 });
 // search child fname and lname
-app.get('/child/duplicate/', (req, res) => {
-  const { fname, lname } = req.query
+// app.get('/child/duplicate/', (req, res) => {
+//   const { fname, lname } = req.query
 
-  connection.query(`SELECT * FROM child WHERE fname = "${fname}"
-    AND lname = "${lname}"`, (err, rows, fields) => {
-    if (rows.length) {
-      res.json(rows)
-    }
-    else {
-      res.json({"message": "1"})
-    }
-  })
-});
+//   connection.query(`SELECT * FROM child WHERE fname = "${fname}"
+//     AND lname = "${lname}"`, (err, rows, fields) => {
+//     if (rows.length) {
+//       res.json(rows)
+//     }
+//     else {
+//       res.json({ "message": "1" })
+//     }
+//   })
+// });
 // get record
 app.get('/records/:id', (req, res) => {
   const { limit, offset } = req.query
 
-  connection.query(`SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
+  connection.query(`SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id ASC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
     if (rows.length) {
       res.json(rows)
     }
@@ -134,6 +140,9 @@ app.get('/records/:id', (req, res) => {
 app.get('/record/:id', (req, res) => {
   connection.query(`SELECT * FROM record WHERE record_id=${req.params.id}`, (err, rows, fields) => {
     if (err) throw err
+    else if (!rows[0]) {
+      res.send(`No record with id: ${id}`)
+    }
     res.json(rows[0])
   })
 });
@@ -143,7 +152,7 @@ app.get('/guardians', (req, res) => {
 
   let query = `SELECT * FROM guardian WHERE soft_delete = 0 ORDER BY guardian_id LIMIT ${limit} OFFSET ${offset}`
 
-  if(search) {
+  if (search) {
     query = `SELECT * FROM guardian WHERE 
       soft_delete = 0 AND guardian_id LIKE "${search}"
       OR soft_delete = 0 AND fname LIKE "%${search}%"
@@ -164,21 +173,24 @@ app.get('/guardians', (req, res) => {
 app.get('/guardian/profile/:id', (req, res) => {
   connection.query(`SELECT * FROM guardian WHERE guardian_id=${req.params.id}`, (err, rows, fields) => {
     if (err) throw err
+    else if (!rows[0]) {
+      res.send(`No guardian with id: ${id}`)
+    }
     res.json(rows[0])
   })
 });
 // search guardian fname, lname and household_id
-app.get('/guardian/duplicate/name/hid/', (req, res) => {
-  const { fname, lname, household_id } = req.query
+// app.get('/guardian/duplicate/name/hid/', (req, res) => {
+//   const { fname, lname, household_id } = req.query
 
-  connection.query(`SELECT
-  (SELECT COUNT(*) FROM guardian WHERE fname = "${fname}" AND lname = "${lname}") AS nameResult,
-  (SELECT COUNT(*) FROM guardian WHERE household_id = "${household_id}") AS idResult`, (err, rows, fields) => {
-    if (rows.length) {
-      res.json(rows[0])
-    }
-  })
-});
+//   connection.query(`SELECT
+//   (SELECT COUNT(*) FROM guardian WHERE fname = "${fname}" AND lname = "${lname}") AS nameResult,
+//   (SELECT COUNT(*) FROM guardian WHERE household_id = "${household_id}") AS idResult`, (err, rows, fields) => {
+//     if (rows.length) {
+//       res.json(rows[0])
+//     }
+//   })
+// });
 // get linked guardian to child
 app.get('/guardian/link/:id', (req, res) => {
   connection.query(`SELECT *
@@ -212,7 +224,7 @@ app.get('/users', (req, res) => {
 
   let query = `SELECT * FROM user WHERE soft_delete = 0 LIMIT ${limit} OFFSET ${offset}`
 
-  if(search) {
+  if (search) {
     query = `SELECT * FROM user WHERE 
       soft_delete = 0 AND user_id LIKE "${search}"
       OR soft_delete = 0 AND fname LIKE "%${search}%"
@@ -237,7 +249,7 @@ app.get('/user/duplicate/', (req, res) => {
       res.json(rows)
     }
     else {
-      res.json({"message": "1"})
+      res.json({ "message": "1" })
     }
   })
 });
@@ -250,7 +262,7 @@ app.get('/user/username/duplicate/', (req, res) => {
       res.json(rows)
     }
     else {
-      res.json({"message": "1"})
+      res.json({ "message": "1" })
     }
   })
 });
@@ -272,7 +284,7 @@ app.get('/announcements', (req, res) => {
 
   let query = `SELECT * FROM announcement WHERE soft_delete = 0 ORDER BY annou_id DESC LIMIT ${limit} OFFSET ${offset}`
 
-  if(search) {
+  if (search) {
     query = `SELECT * FROM announcement WHERE 
       soft_delete = 0 AND title LIKE "%${search}%" LIMIT ${limit} OFFSET ${offset}`
   }
@@ -282,7 +294,7 @@ app.get('/announcements', (req, res) => {
       res.json(rows)
     }
     else {
-      res.json({ "message": "No Announcement(s) Found"})
+      res.json({ "message": "No Announcement(s) Found" })
     }
   })
 
@@ -317,28 +329,28 @@ app.post('/record/:id', (req, res) => {
   res.send("success")
 });
 // add new guardian
-app.post('/guardian/new', (req, res) => {
+app.post('/guardian', (req, res) => {
   let { fname, lname } = req.body
   const { contact, address, household_id } = req.body;
-
+  
   // search pre-existing household id
-  // connection.query(`INSERT INTO guardian (fname, lname, contact, address, household_id) 
-  //     VALUES ('${fname}', '${lname}', '${contact}', '${address}', '${household_id}')`, (err, rows, fields) => {
-  //   if (err) throw err
-  // })
-
-  // if(rows.[household_id] === household_id) {
-  //   res.json({ "message": "may kaparehas" })
-  // }
-
-  fname = nameFormat(fname)
-  lname = nameFormat(lname)
-
-  connection.query(`INSERT INTO guardian (fname, lname, contact, address, household_id) 
-        VALUES ('${fname}', '${lname}', '${contact}', '${address}', '${household_id}')`, (err, rows, fields) => {
+  connection.query(`SELECT
+    (SELECT COUNT(*) FROM guardian WHERE household_id = "${household_id}") AS idResult`), (err, rows, fields) => {
     if (err) throw err
-  })
-  res.send("success")
+    else if (rows[0].idResult) {
+      res.status(404).send("Household ID already been taken")
+    }
+    else {
+      fname = nameFormat(fname)
+      lname = nameFormat(lname)
+    
+      connection.query(`INSERT INTO guardian (fname, lname, contact, address, household_id) 
+            VALUES ('${fname}', '${lname}', '${contact}', '${address}', '${household_id}')`, (err, rows, fields) => {
+        if (err) throw err
+      })
+      res.status(200).send("success")
+    }
+  }
 });
 // add link to guardian & child
 app.post('/link/add/:guardian_id', (req, res) => {
@@ -376,8 +388,8 @@ app.get('/user/profile/:id', (req, res) => {
     if (row) {
       res.json(row[0])
     }
-    else{
-      res.json({"message": "User not found"})
+    else {
+      res.json({ "message": "User not found" })
     }
   })
 
@@ -438,17 +450,28 @@ app.put('/record/:id', (req, res) => {
 // update guardian
 app.put('/guardUpdate/:id', (req, res) => {
   let { fname, lname } = req.body
-  const { guardian_id, contact, address } = req.body;
+  const { contact, address, household_id } = req.body;
+  const { id } = req.params
 
   fname = nameFormat(fname)
   lname = nameFormat(lname)
 
-  connection.query(`UPDATE guardian SET fname = '${fname}', lname = '${lname}',
-      contact = '${contact}', address = '${address}'
-      WHERE guardian_id=${guardian_id}`, (err, rows, fields) => {
+  // (SELECT COUNT(*) FROM guardian WHERE fname = "${fname}" AND lname = "${lname}") AS nameResult,
+
+  connection.query(`SELECT guardian_id, household_id FROM guardian WHERE household_id = "${household_id}"`, (err, rows, fields) => {
     if (err) throw err
+    else if (rows[0].guardian_id != id && rows[0].household_id === household_id) {
+      res.status(409).json({ message: "Household ID already been taken" })
+    }
+    else {
+      connection.query(`UPDATE guardian SET fname = '${fname}', lname = '${lname}',
+        contact = '${contact}', address = '${address}', household_id = '${household_id}'
+        WHERE guardian_id=${id}`, (err, rows, fields) => {
+        if (err) throw err
+      })
+      res.status(200).json({ message: "success" })
+    }
   })
-  res.send("success")
 });
 // edit user
 app.put('/user/edit/:id', (req, res) => {

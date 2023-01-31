@@ -168,7 +168,7 @@ export default defineComponent({
       ionRouter
     }
   },
-  mounted() {
+  ionViewWillEnter() {
     this.guardId = this.router.params.id + "";
 
     this.fetchGuardProfile()
