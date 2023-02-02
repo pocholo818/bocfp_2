@@ -109,8 +109,22 @@
                                 <span><ion-button :router-link="('/record_add/' + childId)">+</ion-button></span>
                             </div>
                             <ion-card-title>Record</ion-card-title>
-                            <ion-card-subtitle>Displaying the latest record</ion-card-subtitle>
+                            <ion-card-subtitle>Displaying the progression and latest record</ion-card-subtitle>
                         </ion-card-header>
+
+                        <!-- line chart -->
+                        <div v-if="!childAllRecords.message">
+                            <LineChart :data="data" :options="options" />
+                        </div>
+
+                        <div>
+                            <PageButtons :prev="prevData" :next="nextData" />
+                            <br>
+                        </div>
+                        <!-- <div v-if="!childAllRecords.message">
+                            <PageButtons :prev="prevData" :next="nextData" />
+                            <br>
+                        </div> -->
 
                         <div v-if="childNewRecord.remark == ''">
                             <h2 style="text-align: center;">{{ childNewRecord.message }}</h2>
@@ -136,11 +150,6 @@
                             </ion-item>
                             <ion-button :router-link="('/record_view/' + childId)">View all
                                 Records</ion-button><br>
-
-                            <!-- line chart -->
-                            <div>
-                                <LineChart :data="data" :options="options" />
-                            </div>
                         </div>
 
                     </ion-list>
@@ -148,6 +157,7 @@
             </ion-card>
 
         </ion-content>
+
     </ion-page>
 
 </template>
@@ -182,11 +192,13 @@ import {
 import { useRoute } from 'vue-router';
 import LineChart from '@/components/LineChart.vue'
 import moment from 'moment'
+import PageButtons from '@/components/PageButtons.vue';
 
 export default defineComponent({
     name: 'ChildPage',
     components: {
         LineChart,
+        PageButtons,
         IonInput,
         IonList,
         IonCard,
@@ -224,11 +236,14 @@ export default defineComponent({
             guardianDetails: "",
             guardianName: "",
             childAllRecords: "",
+            limit: 5,
+            offset: 0,
+            isNextEnabled: true,
             data: {
                 labels: [],
                 datasets: [
                     {
-                        label: 'Records',
+                        label: 'Remarks',
                         backgroundColor: '#f87979',
                         data: []
                     }
@@ -277,14 +292,25 @@ export default defineComponent({
                 });
         },
         fetchRecords() {
-            fetch(`http://localhost:5000/records/` + this.childId + `?limit=${10}&offset=${0}`)
+            fetch(`http://localhost:5000/records/` + this.childId + `?limit=${this.limit}&offset=${this.offset}`)
                 .then((response) => response.json())
                 .then((json) => {
                     this.childAllRecords = json
+                    console.log()
+
+                    if (json.message) {
+                        this.isNextEnabled = false
+                        return
+                    }
+                    else {
+                        this.isNextEnabled = true
+                    }
 
                     if (!json.message) {
                         this.data.labels = json.map((item: any) => moment(String(item.date)).format('MMM DD, YYYY hh:mm A'))
-                        this.data.datasets[0].data = json.map((item: any) => item.output)
+                        // this.data.labels = json.map((item: any) => item.remark)
+                        this.data.datasets[0].data = json.map((item: any) => item.output.toFixed(2))
+                        // this.data.datasets[0].label = json.map((item: any) => item.remark)
                     }
                 })
         },
@@ -367,7 +393,25 @@ export default defineComponent({
             });
 
             await alert.present();
-        }
+        },
+        prevData() {
+            const offset = this.offset -= this.limit
+            if (offset <= 0) {
+                this.offset = 0
+            }
+            else {
+                this.offset = offset
+            }
+
+            this.fetchRecords()
+        },
+        nextData() {
+            if (this.isNextEnabled) {
+                this.offset += this.limit
+
+                this.fetchRecords()
+            }
+        },
     },
     watch: {
         $route() {

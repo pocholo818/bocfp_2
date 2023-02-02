@@ -23,14 +23,14 @@
 
           <ion-card-content>
             <ion-list>
-              <div v-if="childRecords.date == ''">
+              <div v-if="childRecords.message">
                 <h2 style="text-align: center;">{{ childRecords.message }}</h2>
               </div>
 
               <div v-else>
                 <ion-item v-for="record in childRecords" :key="record.recordId">
                   <ion-label>
-                    <h2>{{ record.date.split("T")[0] }}</h2>
+                    <h2>{{ formatDate(record.date.split("T")[0]) }}</h2>
                     <p>Record ID: {{ record.record_id }}</p>
                     <p>Height: {{ record.height }}cm</p>
                     <p>Weight: {{ record.weight }}kg</p>
@@ -54,6 +54,9 @@
       </ion-content>
 
     </ion-content>
+
+    <PageButtons :prev="prevData" :next="nextData" />
+
   </ion-page>
 
 </template>
@@ -82,6 +85,7 @@ import {
 
 import { useRoute } from 'vue-router';
 import PageButtons from '@/components/PageButtons.vue';
+import moment from 'moment'
 
 export default defineComponent({
   name: 'ChildPage2',
@@ -100,7 +104,8 @@ export default defineComponent({
       childId: "",
       childRecords: "",
       limit: 10,
-      offset: 0
+      offset: 0,
+      isNextEnabled: true,
     }
   },
   setup() {
@@ -127,6 +132,14 @@ export default defineComponent({
         .then((response) => response.json())
         .then((json) => {
           this.childRecords = json
+
+          if (json.message) {
+            this.isNextEnabled = false
+            return
+          }
+          else {
+            this.isNextEnabled = true
+          }
         })
     },
     async record_delete(record_id: string) {
@@ -182,10 +195,17 @@ export default defineComponent({
       this.fetchRecord()
     },
     nextData() {
-      this.offset += this.limit
+      if (this.isNextEnabled) {
+        this.offset += this.limit
 
-      this.fetchRecord()
+        this.fetchRecord()
+      }
     },
+    formatDate(value: string) {
+      if (value) {
+        return moment(String(value)).format('MMM DD, YYYY hh:mm A')
+      }
+    }
   },
   watch: {
     $route() {

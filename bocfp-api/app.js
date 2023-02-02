@@ -9,7 +9,7 @@ app.use(express.json({ limit: '50mb' }));
 
 // 
 const mysql = require('mysql');
-const { json } = require('express');
+const { json, query } = require('express');
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -127,12 +127,21 @@ app.get('/child/profile/:id', (req, res) => {
 app.get('/records/:id', (req, res) => {
   const { limit, offset } = req.query
 
-  connection.query(`SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id ASC LIMIT ${limit} OFFSET ${offset}`, (err, rows, fields) => {
+  let query 
+
+  if(limit == 5){
+    query = `SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
+  }
+  else if (limit == 10){
+    query = `SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id ASC LIMIT ${limit} OFFSET ${offset}`
+  }
+
+  connection.query(query, (err, rows, fields) => {
     if (rows.length) {
       res.json(rows)
     }
     else {
-      res.json({ "message": "No Record(s) Found", "date": "" })
+      res.json({ "message": "No Record(s) Found", "bttn": 1 })
     }
   })
 });
