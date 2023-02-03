@@ -129,7 +129,10 @@ export default defineComponent({
       },
       search: "",
       text: false,
-      check: { "relationship": "" }
+      check: { "relationship": "" },
+      limit: 5,
+      offset: 0,
+      searchTimeout: 0
     }
   },
   setup() {
@@ -214,14 +217,15 @@ export default defineComponent({
       this.linkDetails.id = ""
       search = search.trim()
       if (search.length) {
-        setTimeout(() => {
-          fetch('http://localhost:5000/child/search/' + search)
+        clearTimeout(this.searchTimeout)
+        this.searchTimeout = setTimeout(() => {
+          fetch(`http://localhost:5000/childs?search=${search}&limit=${this.limit}&offset=${this.offset}`)
             .then((response) => response.json())
             .then((json) => {
               this.text = true
               this.childList = json
             })
-        }, 1000)
+        }, 500)
       }
       else {
         // this.linkDetails = {"id": "", "guardian_id": "", "relationship": ""}

@@ -122,7 +122,6 @@ export default defineComponent({
         bdate: "",
         image: ""
       },
-      checker: {"message": ""}
     }
   },
   setup() {
@@ -154,41 +153,28 @@ export default defineComponent({
           toast.message = "Invalid Child Birthdate"
         }
         else {
-          // checker if child already existed
-          fetch(`http://localhost:5000/child/duplicate?fname=${this.childDetails.fname}&lname=${this.childDetails.lname}`)
-            .then((response) => response.json())
-            .then((json) => {
-              this.checker = json
-
-              // not proceed if existed
-              if (!this.checker.message) {
-                toast.message = "Child already existed"
+          toast.message = "Success!"
+          fetch('http://localhost:5000/child', {
+            method: 'POST', // or 'PUT'
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          })
+            .then((data) => {
+              toast.message = 'Success!'
+              this.childDetails = {
+                fname: "",
+                lname: "",
+                sex: "",
+                bdate: "",
+                image: "",
               }
-              else {
-                toast.message = "Success!"
-                fetch('http://localhost:5000/child', {
-                  method: 'POST', // or 'PUT'
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify(data),
-                })
-                  .then((data) => {
-                    toast.message = 'Success!'
-                    this.childDetails = {
-                      fname: "",
-                      lname: "",
-                      sex: "",
-                      bdate: "",
-                      image: "",
-                    }
-                    this.router.push("/child");
-                  })
-                  .catch((error) => {
-                    toast.message = error
-                  });
-              }
+              this.router.push("/child");
             })
+            .catch((error) => {
+              toast.message = error
+            });
 
         }
       } else {

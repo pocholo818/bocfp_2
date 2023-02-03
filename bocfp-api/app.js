@@ -50,6 +50,7 @@ app.get('/childs', (req, res) => {
 
   let query = `SELECT * FROM child WHERE soft_delete = 0 ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`
 
+  // get all filter
   if (filter === 'male') {
     query = `SELECT * FROM child WHERE soft_delete = 0 AND sex = 'M' ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`
   }
@@ -60,7 +61,11 @@ app.get('/childs', (req, res) => {
     query = `SELECT *, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), bdate)), '%Y') + 0 AS age 
     FROM child WHERE soft_delete = 0 ORDER BY age ASC LIMIT ${limit} OFFSET ${offset}`
   }
+  else if (filter === 'deleted') {
+    query = `SELECT * FROM child WHERE soft_delete = 1 ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`
+  }
 
+  // if search has value
   if (search) {
     query = `SELECT * FROM child WHERE 
       soft_delete = 0 AND id LIKE "${search}"
@@ -83,6 +88,12 @@ app.get('/childs', (req, res) => {
       query = `SELECT * FROM
         (SELECT *, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), bdate)), '%Y') + 0 AS age 
         FROM child WHERE soft_delete = 0) AS result WHERE age = "${search}" ORDER BY age LIMIT ${limit} OFFSET ${offset}`
+    }
+    else if (filter === 'deleted') {
+      query = `SELECT * FROM child WHERE 
+      soft_delete = 1 AND id LIKE "${search}"
+      OR soft_delete = 1 AND fname LIKE "%${search}%"
+      OR soft_delete = 1 AND lname LIKE"%${search}%" LIMIT ${limit} OFFSET ${offset}`
     }
   }
 
@@ -361,10 +372,12 @@ app.post('/guardian', (req, res) => {
     }
   }
 });
-// add link to guardian & child
+// add link to guardian & child #
 app.post('/link/add/:guardian_id', (req, res) => {
   const { relationship, id } = req.body;
   const { guardian_id } = req.params;
+
+
 
   connection.query(`INSERT INTO link (guardian_id, id, relationship) 
         VALUES ('${guardian_id}','${id}', '${relationship}')`, (err, rows, fields) => {
