@@ -606,7 +606,10 @@ app.get('/child/remarks', (req, res) => {
     "Obese": 0
   }
 
-  connection.query(`SELECT remark FROM record t INNER JOIN (SELECT MAX(date) as maxdate FROM record GROUP BY id) tm ON t.date = tm.maxdate WHERE soft_delete = 0`, (err, rows, fields) => {
+  connection.query(`SELECT remark FROM record 
+      INNER JOIN (SELECT MAX(date) as maxdate FROM record GROUP BY id) tm ON record.date = tm.maxdate 
+      JOIN child ON child.id = record.id 
+      WHERE child.soft_delete = 0 AND record.soft_delete = 0`, (err, rows, fields) => {
     if (rows) {
       rows.forEach(item => results[item.remark] += 1)
       res.json(results)
