@@ -211,6 +211,41 @@ app.get('/guardian/profile/:id', (req, res) => {
 //     }
 //   })
 // });
+// link get
+app.get('/link/:id', (req, res) => {
+  const { id } = req.params
+  const { type } = req.query
+
+  let query
+
+  // get linked child to guardian
+  if(type === 'child'){
+    query = `SELECT guardian.fname, guardian.lname, guardian.address, 
+      guardian.contact, link.relationship, guardian.guardian_id
+      FROM link JOIN guardian ON link.guardian_id = guardian.guardian_id
+      WHERE link.id = ${id} AND link.soft_delete = 0;`
+  }
+  // get linked guardian to child
+  else if(type === 'guardian'){
+    query = `SELECT *
+      FROM link JOIN child ON link.id = child.id
+      WHERE link.guardian_id = ${id} AND link.soft_delete = 0`
+  }
+
+  connection.query(query, (err, rows, fields) => {
+    if (rows.length) {
+      res.json(rows[0])
+    }
+    else {
+      if(type === 'child'){
+        res.json({ "message": "No Linked Guardian Yet" })
+      }
+      else if(type === 'guardian'){
+        res.json({ "message": "No Linked Child Yet" })
+      }
+    }
+  })
+});
 // get linked guardian to child
 app.get('/guardian/link/:id', (req, res) => {
   connection.query(`SELECT *
