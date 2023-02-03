@@ -153,28 +153,36 @@ export default defineComponent({
           toast.message = "Invalid Child Birthdate"
         }
         else {
-          toast.message = "Success!"
-          fetch('http://localhost:5000/child', {
-            method: 'POST', // or 'PUT'
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-          })
-            .then((data) => {
-              toast.message = 'Success!'
-              this.childDetails = {
-                fname: "",
-                lname: "",
-                sex: "",
-                bdate: "",
-                image: "",
-              }
-              this.router.push("/child");
+          // rejects if greater than 12 yrs old
+          if (dateDifference > 12) {
+            toast.message = 'Child is too old!'
+            await toast.present();
+            return
+          }
+          else {
+            toast.message = "Success!"
+            fetch('http://localhost:5000/child', {
+              method: 'POST', // or 'PUT'
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(data),
             })
-            .catch((error) => {
-              toast.message = error
-            });
+              .then((data) => {
+                toast.message = 'Success!'
+                this.childDetails = {
+                  fname: "",
+                  lname: "",
+                  sex: "",
+                  bdate: "",
+                  image: "",
+                }
+                this.router.push("/child");
+              })
+              .catch((error) => {
+                toast.message = error
+              });
+          }
 
         }
       } else {
