@@ -736,7 +736,7 @@ app.get('/child/remarks', (req, res) => {
   connection.query(`SELECT remark FROM record 
       INNER JOIN (SELECT MAX(date) as maxdate FROM record GROUP BY id) tm ON record.date = tm.maxdate 
       JOIN child ON child.id = record.id 
-      WHERE child.soft_delete = 0 AND record.soft_delete = 0`, (err, rows, fields) => {
+      WHERE child.soft_delete = 0 AND record.soft_delete = 0 GROUP BY record.id`, (err, rows, fields) => {
     if (rows) {
       rows.forEach(item => results[item.remark] += 1)
       res.json(results)
