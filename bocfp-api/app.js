@@ -256,7 +256,12 @@ app.get('/link/:id', (req, res) => {
 
   connection.query(query, (err, rows, fields) => {
     if (rows.length) {
-      res.json(rows[0])
+      if(rows.length > 1){
+        res.json(rows[0])
+      }
+      else{
+        res.json(rows)
+      }
     }
     else {
       if(type === 'child'){
