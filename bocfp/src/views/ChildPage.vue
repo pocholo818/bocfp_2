@@ -61,9 +61,12 @@
                     <ion-button color="warning" @click.prevent="() => $router.push('/child_edit/' + child.id)">
                       <ion-icon :icon="createOutline"></ion-icon><span class="hide-on-mobile">&nbsp; Edit</span>
                     </ion-button>
-                    <ion-button color="danger" @click.prevent="child_delete(child.id)">
+                    <ion-button v-if="child.soft_delete === 0" color="danger" @click.prevent="child_delete(child.id)">
                       <ion-icon :icon="trashOutline"></ion-icon><span class="hide-on-mobile">&nbsp;Delete</span>
                     </ion-button>
+                    <ion-button v-else color="success" @click.prevent="child_undo(child.id)"><ion-icon :icon="arrowUndoOutline">
+                      </ion-icon>&nbsp;
+                      Retrieve</ion-button>
                   </div>
 
                 </ion-item>
@@ -114,7 +117,10 @@ import {
 } from '@ionic/vue';
 // icons
 import {
-  addOutline, createOutline, trashOutline
+  addOutline, 
+  createOutline, 
+  trashOutline, 
+  arrowUndoOutline
 } from 'ionicons/icons';
 import PageButtons from '@/components/PageButtons.vue';
 
@@ -146,7 +152,8 @@ export default defineComponent({
       ionRouter,
       createOutline,
       trashOutline,
-      addOutline
+      addOutline,
+      arrowUndoOutline
     }
   },
   data() {
@@ -268,6 +275,44 @@ export default defineComponent({
                 .then((data) => {
                   toast.message = 'Success!'
                   this.$emit('deleted')
+                })
+                .catch((error) => {
+                  toast.message = error
+                });
+
+              await toast.present();
+              this.fetchData()
+            },
+          },
+        ],
+      });
+
+      await alert.present();
+    },
+    async child_undo(id: string) {
+      const alert = await alertController.create({
+        header: 'Are you sure you want to retrieve?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel'
+          },
+          {
+            text: 'RETRIEVE',
+            role: 'confirm',
+            handler: async () => {
+              const toast = await toastController.create({
+                duration: 1500,
+                position: 'top'
+              })
+
+              const childId = id
+
+              fetch('http://localhost:5000/child/ret/' + childId, {
+                method: 'PUT'
+              })
+                .then((data) => {
+                  toast.message = 'Success!'
                 })
                 .catch((error) => {
                   toast.message = error
