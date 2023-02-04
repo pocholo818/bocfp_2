@@ -10,7 +10,7 @@
       <ion-searchbar v-model="search"></ion-searchbar>
 
       <!-- search filter -->
-      <ion-item>
+      <ion-item v-if="admin_power === '1'">
         <ion-select @ionChange="searchData" v-model="annouFilter" placeholder="Select Filter">
           <ion-select-option value="all">All</ion-select-option>
           <ion-select-option value="deleted">Deleted</ion-select-option>
@@ -134,7 +134,8 @@ export default defineComponent({
       },
       user_id: '',
       searchTimeout: 0,
-      annouFilter: "all"
+      annouFilter: "all",
+      admin_power: ""
     };
   },
   mounted() {
@@ -142,6 +143,7 @@ export default defineComponent({
   },
   ionViewWillEnter() {
     this.user_id = localStorage.getItem('user_id') || ''
+    this.admin_power = localStorage.getItem('admin_power') || ''
   },
   methods: {
     searchData() {
