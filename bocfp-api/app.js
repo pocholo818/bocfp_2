@@ -626,6 +626,15 @@ app.put('/guardian/ret/:id', (req, res) => {
   })
   res.send("success")
 })
+// undo user
+app.put('/user/ret/:id', (req, res) => {
+  const { id } = req.params;
+
+  connection.query(`UPDATE user SET soft_delete='0' WHERE user_id=${id}`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+})
 
 // SOFT DELETE
 // soft delete child

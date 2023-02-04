@@ -54,9 +54,13 @@
                                     :icon="createOutline"></ion-icon>&nbsp; Edit</ion-button>
                             <ion-button color="warning" :router-link="('/user/edit/password/' + userId)"><ion-icon
                                     :icon="createOutline"></ion-icon>&nbsp; Password</ion-button>
-                            <ion-button color="danger" @click="user_delete(userId)"><ion-icon :icon="trashOutline">
+                            <ion-button v-if="userDetails.soft_delete === 0" color="danger"
+                                @click="user_delete(userId)"><ion-icon :icon="trashOutline">
                                 </ion-icon>&nbsp;
                                 Del<span>ete</span></ion-button>
+                            <ion-button v-else color="success" @click="user_undo()"><ion-icon :icon="arrowUndoOutline">
+                                </ion-icon>&nbsp;
+                                Retrieve</ion-button>
                         </ion-card-content>
 
                     </ion-list>
@@ -75,7 +79,8 @@ import {
     eyeOutline,
     createOutline,
     trashOutline,
-    arrowBack
+    arrowBack,
+    arrowUndoOutline
 } from 'ionicons/icons';
 // ionic stuff
 import {
@@ -125,6 +130,7 @@ export default defineComponent({
             eyeOutline,
             createOutline,
             trashOutline,
+            arrowUndoOutline,
             arrowBack,
             ionRouter
         }
@@ -172,6 +178,44 @@ export default defineComponent({
                                 });
 
                             await toast.present();
+                        },
+                    },
+                ],
+            });
+
+            await alert.present();
+        },
+        async user_undo() {
+            const alert = await alertController.create({
+                header: 'Are you sure you want to retrieve?',
+                buttons: [
+                    {
+                        text: 'Cancel',
+                        role: 'cancel'
+                    },
+                    {
+                        text: 'RETRIEVE',
+                        role: 'confirm',
+                        handler: async () => {
+                            const toast = await toastController.create({
+                                duration: 1500,
+                                position: 'top'
+                            })
+
+                            const user_id = this.userId
+
+                            fetch('http://localhost:5000/user/ret/' + user_id, {
+                                method: 'PUT'
+                            })
+                                .then((data) => {
+                                    toast.message = 'Success!'
+                                })
+                                .catch((error) => {
+                                    toast.message = error
+                                });
+
+                            await toast.present();
+                            this.ionRouter.back()
                         },
                     },
                 ],
