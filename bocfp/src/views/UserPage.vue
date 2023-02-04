@@ -17,6 +17,14 @@
 
         <ion-searchbar v-model="search"></ion-searchbar>
 
+        <!-- search filter -->
+        <ion-item>
+          <ion-select @ionChange="searchData" v-model="userFilter" placeholder="Select Filter">
+            <ion-select-option value="all">All</ion-select-option>
+            <ion-select-option value="deleted">Deleted</ion-select-option>
+          </ion-select>
+        </ion-item>
+
         <template v-if="userList.message">
           <ion-card>
             <ion-card-header>
@@ -75,7 +83,8 @@ import {
   IonToolbar,
   IonHeader, IonMenuButton,
   IonButtons,
-  IonTitle
+  IonTitle,
+  IonSelect, IonSelectOption,
 } from '@ionic/vue';
 // icons
 import {
@@ -99,7 +108,8 @@ export default defineComponent({
     IonToolbar,
     IonHeader, IonMenuButton,
     IonButtons,
-    IonTitle
+    IonTitle,
+    IonSelect, IonSelectOption,
   },
   setup() {
     return {
@@ -111,6 +121,7 @@ export default defineComponent({
       isOpen: false,
       userList: "",
       search: "",
+      userFilter: "all",
       limit: 20,
       offset: 0,
       isNextEnabled: true
@@ -122,7 +133,7 @@ export default defineComponent({
 
       if (search.length) {
         setTimeout(() => {
-          fetch(`http://localhost:5000/users?limit=${this.limit}&offset=${this.offset}&search=${search}`)
+          fetch(`http://localhost:5000/users?limit=${this.limit}&offset=${this.offset}&search=${search}&filter=${this.userFilter}`)
             .then((response) => response.json())
             .then((json) => {
               this.userList = json
@@ -137,7 +148,7 @@ export default defineComponent({
       this.isOpen = isOpen;
     },
     fetchData() {
-      fetch(`http://localhost:5000/users?limit=${this.limit}&offset=${this.offset}&search=${this.search}`)
+      fetch(`http://localhost:5000/users?limit=${this.limit}&offset=${this.offset}&search=${this.search}&filter=${this.userFilter}`)
         .then((response) => response.json())
         .then((json) => {
           this.userList = json
