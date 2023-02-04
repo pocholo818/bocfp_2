@@ -335,8 +335,6 @@ export default defineComponent({
                             })
                             const recordId = record_id
 
-                            console.log(recordId);
-
                             fetch('http://localhost:5000/record/del/' + recordId, {
                                 method: 'put'
                             })
