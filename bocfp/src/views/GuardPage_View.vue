@@ -73,7 +73,7 @@
 
           <ion-card-content>
             <ion-list>
-              <div v-if="child.relationship == ''">
+              <div v-if="child.message">
                 <h2 style="text-align: center;">{{ child.message }}</h2>
               </div>
 
@@ -191,7 +191,7 @@ export default defineComponent({
         })
     },
     fetchChilds() {
-      fetch('http://localhost:5000/guardian/link/' + this.guardId)
+      fetch('http://localhost:5000/link/' + this.guardId + '?type=guardian')
         .then((response) => response.json())
         .then((json) => {
           this.child = json

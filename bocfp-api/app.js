@@ -239,7 +239,7 @@ app.get('/link/:id', (req, res) => {
     query = `SELECT guardian.fname, guardian.lname, guardian.address, 
       guardian.contact, link.relationship, guardian.guardian_id
       FROM link JOIN guardian ON link.guardian_id = guardian.guardian_id
-      WHERE link.id = ${id} AND link.soft_delete = 0 AND guardian.soft_delete = 0`
+      WHERE link.id = ${id} AND guardian.soft_delete = 0`
   }
   // get linked guardian to child
   else if(type === 'guardian'){
@@ -263,33 +263,6 @@ app.get('/link/:id', (req, res) => {
       else if(type === 'guardian'){
         res.json({ "message": "No Linked Child Yet" })
       }
-    }
-  })
-});
-// get linked guardian to child
-app.get('/guardian/link/:id', (req, res) => {
-  connection.query(`SELECT *
-      FROM link JOIN child ON link.id = child.id
-      WHERE link.guardian_id = ${req.params.id} AND link.soft_delete = 0`, (err, rows, fields) => {
-    if (rows.length) {
-      res.json(rows[0])
-    }
-    else {
-      res.json({ "message": "No Linked Child Yet", "relationship": "" })
-    }
-  })
-});
-// get linked child to guardian
-app.get('/child/link/:id', (req, res) => {
-  connection.query(`SELECT guardian.fname, guardian.lname, guardian.address, 
-      guardian.contact, link.relationship, guardian.guardian_id
-      FROM link JOIN guardian ON link.guardian_id = guardian.guardian_id
-      WHERE link.id = ${req.params.id} AND link.soft_delete = 0;`, (err, rows, fields) => {
-    if (rows.length) {
-      res.json(rows[0])
-    }
-    else {
-      res.json({ "message": "No Linked Guardian Yet", "relationship": "" })
     }
   })
 });

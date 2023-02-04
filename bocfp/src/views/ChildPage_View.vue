@@ -71,12 +71,12 @@
                         <!-- child's guardian -->
                         <ion-card-header>
                             <ion-card-title>Guardian</ion-card-title>
-                            <ion-card-subtitle v-if="guardianDetails.relationship != ''">GRDNID: {{
+                            <ion-card-subtitle v-if="guardianDetails">GRDNID: {{
                                 guardianDetails.guardian_id
                             }}</ion-card-subtitle>
                         </ion-card-header>
 
-                        <div v-if="guardianDetails.relationship == ''">
+                        <div v-if="guardianDetails.message">
                             <h2 style="text-align: center;">{{ guardianDetails.message }}</h2>
                             <br>
                         </div>
@@ -276,7 +276,7 @@ export default defineComponent({
     },
     methods: {
         fetchGuardian() {
-            fetch('http://localhost:5000/child/link/' + this.childId)
+            fetch('http://localhost:5000/link/' + this.childId + '?type=child')
                 .then((response) => response.json())
                 .then((json) => {
                     this.guardianDetails = json
