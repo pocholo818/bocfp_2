@@ -8,9 +8,12 @@
         <ion-button color="warning" @click="openEditAnnouncementModal()">
           <ion-icon :icon="createOutline"></ion-icon>
         </ion-button>
-        <ion-button color="danger" @click="deleteAnnouncement()">
+        <ion-button v-if="soft_delete === 0" color="danger" @click="deleteAnnouncement()">
           <ion-icon :icon="trashOutline"></ion-icon>
         </ion-button>
+        <ion-button v-else color="success" @click="annouUndo()"><ion-icon :icon="arrowUndoOutline">
+          </ion-icon>&nbsp;
+          Retrieve</ion-button>
       </div>
     </ion-card-header>
 
@@ -36,7 +39,9 @@ import {
 } from '@ionic/vue';
 import PostEditAnnouncementModal from '@/components/announcement/PostEditAnnouncementModal.vue'
 import {
-  createOutline, trashOutline
+  createOutline, 
+  trashOutline,
+  arrowUndoOutline
 } from 'ionicons/icons';
 
 export default defineComponent({
@@ -52,6 +57,7 @@ export default defineComponent({
     return {
       createOutline,
       trashOutline,
+      arrowUndoOutline,
     }
   },
   props: {
@@ -70,6 +76,10 @@ export default defineComponent({
     },
     user_id: {
       type: String,
+      required: true
+    },
+    soft_delete: {
+      type: Number,
       required: true
     }
   },
@@ -94,13 +104,13 @@ export default defineComponent({
               fetch('http://localhost:5000/announcement/del/' + this.annou_id, {
                 method: 'PUT'
               })
-              .then((data) => {
-                toast.message = 'Success!'
-                this.$emit('updateAnnouncementList')
-              })
-              .catch((error) => {
-                toast.message = error
-              });
+                .then((data) => {
+                  toast.message = 'Success!'
+                  this.$emit('updateAnnouncementList')
+                })
+                .catch((error) => {
+                  toast.message = error
+                });
 
               await toast.present();
             },
@@ -109,6 +119,42 @@ export default defineComponent({
       });
 
       await alert.present()
+    },
+    async annouUndo() {
+      const alert = await alertController.create({
+        header: 'Are you sure you want to retrieve?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel'
+          },
+          {
+            text: 'RETRIEVE',
+            role: 'confirm',
+            handler: async () => {
+              const toast = await toastController.create({
+                duration: 1500,
+                position: 'top'
+              })
+
+              fetch('http://localhost:5000/announcement/ret/' + this.annou_id, {
+                method: 'PUT'
+              })
+                .then((data) => {
+                  toast.message = 'Success!'
+                  this.$emit('updateAnnouncementList')
+                })
+                .catch((error) => {
+                  toast.message = error
+                });
+
+                await toast.present();
+            },
+          },
+        ],
+      });
+
+      await alert.present();
     },
     async openEditAnnouncementModal() {
       const modal = await modalController.create({

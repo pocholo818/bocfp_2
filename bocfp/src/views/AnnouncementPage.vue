@@ -9,6 +9,14 @@
 
       <ion-searchbar v-model="search"></ion-searchbar>
 
+      <!-- search filter -->
+      <ion-item>
+        <ion-select @ionChange="searchData" v-model="annouFilter" placeholder="Select Filter">
+          <ion-select-option value="all">All</ion-select-option>
+          <ion-select-option value="deleted">Deleted</ion-select-option>
+        </ion-select>
+      </ion-item>
+
       <template>
         <ion-card>
           <ion-card-header>
@@ -31,6 +39,7 @@
           <TransitionGroup name="fade">
             <AnnouncementCard v-for="annous in annou" :title="annous.title" :content="annous.content"
               :date="format_date(annous.date)" :user_id="user_id" :annou_id="annous.annou_id" :key="annous.annou_id"
+              :soft_delete="annous.soft_delete"
               @update-announcement-list="fetchData()" />
           </TransitionGroup>
         </template>
@@ -68,10 +77,10 @@ import {
   IonCardSubtitle,
   IonCardHeader,
   IonList,
-  // IonListHeader,
   IonLabel,
   modalController,
-  useIonRouter
+  useIonRouter,
+  IonSelect, IonSelectOption,
 } from '@ionic/vue';
 import HeaderBar from '@/components/HeaderBar.vue';
 import AnnouncementCard from '@/components/announcement/AnnouncementCard.vue'
@@ -97,6 +106,7 @@ export default defineComponent({
     IonCardSubtitle,
     IonCardHeader,
     IonList,
+    IonSelect, IonSelectOption,
   },
   setup() {
     const ionRouter = useIonRouter()
@@ -123,7 +133,8 @@ export default defineComponent({
         user_id: user_id,
       },
       user_id: '',
-      searchTimeout: 0
+      searchTimeout: 0,
+      annouFilter: "all"
     };
   },
   mounted() {
@@ -142,7 +153,7 @@ export default defineComponent({
       if (search.length) {
         clearTimeout(this.searchTimeout)
         this.searchTimeout = setTimeout(() => {
-          fetch(`http://localhost:5000/announcements?limit=${this.limit}&offset=${this.offset}&search=${this.search}`)
+          fetch(`http://localhost:5000/announcements?limit=${this.limit}&offset=${this.offset}&search=${this.search}&filter=${this.annouFilter}`)
             .then((response) => response.json())
             .then((json) => {
               this.annou = json
@@ -166,7 +177,7 @@ export default defineComponent({
       }
     },
     fetchData() {
-      fetch(`http://localhost:5000/announcements?limit=${this.limit}&offset=${this.offset}&search=${this.search}`)
+      fetch(`http://localhost:5000/announcements?limit=${this.limit}&offset=${this.offset}&search=${this.search}&filter=${this.annouFilter}`)
         .then((response) => response.json())
         .then((json) => {
           this.annou = json

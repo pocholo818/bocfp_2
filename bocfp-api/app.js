@@ -364,13 +364,22 @@ app.get('/user/duplicate/name/username/', (req, res) => {
 });
 // get all announcement
 app.get('/announcements', (req, res) => {
-  const { limit, offset, search } = req.query
+  const { limit, offset, search, filter } = req.query
 
   let query = `SELECT * FROM announcement WHERE soft_delete = 0 ORDER BY annou_id DESC LIMIT ${limit} OFFSET ${offset}`
+
+  if(filter === 'deleted'){
+    query = `SELECT * FROM announcement WHERE soft_delete = 1 ORDER BY annou_id DESC LIMIT ${limit} OFFSET ${offset}`
+  }
 
   if (search) {
     query = `SELECT * FROM announcement WHERE 
       soft_delete = 0 AND title LIKE "%${search}%" LIMIT ${limit} OFFSET ${offset}`
+
+      if(filter === 'deleted'){
+        query = `SELECT * FROM announcement WHERE 
+          soft_delete = 1 AND title LIKE "%${search}%" LIMIT ${limit} OFFSET ${offset}`
+      }
   }
 
   connection.query(query, (err, rows, fields) => {
@@ -631,6 +640,15 @@ app.put('/user/ret/:id', (req, res) => {
   const { id } = req.params;
 
   connection.query(`UPDATE user SET soft_delete='0' WHERE user_id=${id}`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+})
+// undo announcement
+app.put('/announcement/ret/:id', (req, res) => {
+  const { id } = req.params;
+
+  connection.query(`UPDATE announcement SET soft_delete='0' WHERE annou_id=${id}`, (err, rows, fields) => {
     if (err) throw err
   })
   res.send("success")
