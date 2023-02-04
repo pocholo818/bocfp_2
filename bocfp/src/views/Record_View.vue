@@ -14,11 +14,15 @@
       <ion-content class="ion-padding">
         <ion-card>
           <ion-card-header>
-            <!-- <div style="position: absolute; right: 0; z-index: 1;padding-right: 1.5vw">
-              <span><ion-button class="theme" :router-link="('/record_add/' + childId)">+</ion-button></span>
-            </div> -->
             <ion-card-title>Record</ion-card-title>
             <ion-card-subtitle>Data Gathered</ion-card-subtitle>
+            <!-- search filter -->
+            <ion-item>
+              <ion-select @ionChange="fetchRecord" v-model="recordFilter" placeholder="Select Filter">
+                <ion-select-option value="all">All</ion-select-option>
+                <ion-select-option value="deleted">Deleted</ion-select-option>
+              </ion-select>
+            </ion-item>
           </ion-card-header>
 
           <ion-card-content>
@@ -41,8 +45,12 @@
                       <div>
                         <ion-button color="warning" :router-link="('/record_edit/' + record.record_id)"><ion-icon
                             :icon="createOutline"></ion-icon>Edit</ion-button>
-                        <ion-button color="danger" @click="record_delete(record.record_id)"><ion-icon
+                        <ion-button v-if="record.soft_delete === 0" color="danger"
+                          @click="record_delete(record.record_id)"><ion-icon
                             :icon="trashOutline"></ion-icon>Del<span>ete</span></ion-button>
+                        <ion-button v-else color="success" @click="record_undo(record.record_id)"><ion-icon :icon="arrowUndoOutline">
+                          </ion-icon>&nbsp;
+                          Retrieve</ion-button>
                       </div>
                     </ion-label>
                   </ion-label>
@@ -68,7 +76,8 @@ import {
   eyeOutline,
   createOutline,
   trashOutline,
-  arrowBack
+  arrowBack,
+  arrowUndoOutline
 } from 'ionicons/icons';
 // ionic stuff
 import {
@@ -80,7 +89,8 @@ import {
   useIonRouter,
   IonCardHeader, IonCardTitle, IonCardSubtitle,
   IonBackButton,
-  alertController
+  alertController,
+  IonSelect, IonSelectOption,
 } from '@ionic/vue';
 
 import { useRoute } from 'vue-router';
@@ -97,7 +107,8 @@ export default defineComponent({
     IonButtons, IonHeader, IonToolbar,
     IonItem,
     IonCardHeader, IonCardTitle, IonCardSubtitle,
-    IonBackButton
+    IonBackButton,
+    IonSelect, IonSelectOption,
   },
   data() {
     return {
@@ -106,6 +117,7 @@ export default defineComponent({
       limit: 10,
       offset: 0,
       isNextEnabled: true,
+      recordFilter: "all"
     }
   },
   setup() {
@@ -117,6 +129,7 @@ export default defineComponent({
       createOutline,
       trashOutline,
       arrowBack,
+      arrowUndoOutline,
       router,
       ionRouter
     }
@@ -128,7 +141,7 @@ export default defineComponent({
   },
   methods: {
     fetchRecord() {
-      fetch(`http://localhost:5000/records/` + this.childId + `?limit=${this.limit}&offset=${this.offset}`)
+      fetch(`http://localhost:5000/records/` + this.childId + `?limit=${this.limit}&offset=${this.offset}&filter=${this.recordFilter}`)
         .then((response) => response.json())
         .then((json) => {
           this.childRecords = json
@@ -160,15 +173,13 @@ export default defineComponent({
               })
               const recordId = record_id
 
-              console.log(recordId);
 
               fetch('http://localhost:5000/record/del/' + recordId, {
                 method: 'put'
               })
                 .then((data) => {
                   toast.message = 'Success!'
-                  // this.$emit('deleted')
-                  this.fetchRecord()
+                  this.fetchRecord();
                 })
                 .catch((error) => {
                   toast.message = error
@@ -181,7 +192,44 @@ export default defineComponent({
       });
 
       await alert.present();
-      this.fetchRecord();
+    },
+    async record_undo(record_id: string) {
+      const alert = await alertController.create({
+        header: 'Are you sure you want to retrieve?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel'
+          },
+          {
+            text: 'RETRIEVE',
+            role: 'confirm',
+            handler: async () => {
+              const toast = await toastController.create({
+                duration: 1500,
+                position: 'top'
+              })
+
+              const recordId = record_id
+
+              fetch('http://localhost:5000/record/ret/' + recordId, {
+                method: 'PUT'
+              })
+                .then((data) => {
+                  toast.message = 'Success!'
+                  this.fetchRecord();
+                })
+                .catch((error) => {
+                  toast.message = error
+                });
+
+              await toast.present();
+            },
+          },
+        ],
+      });
+
+      await alert.present();
     },
     prevData() {
       const offset = this.offset -= this.limit

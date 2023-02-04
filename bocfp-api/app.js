@@ -136,7 +136,7 @@ app.get('/child/profile/:id', (req, res) => {
 // });
 // get record
 app.get('/records/:id', (req, res) => {
-  const { limit, offset } = req.query
+  const { limit, offset, filter } = req.query
 
   let query 
 
@@ -144,7 +144,11 @@ app.get('/records/:id', (req, res) => {
     query = `SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id ASC LIMIT ${limit} OFFSET ${offset}`
   }
   else if (limit == 10){
-    query = `SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id ASC LIMIT ${limit} OFFSET ${offset}`
+    query = `SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
+
+    if(filter === 'deleted'){
+      query = `SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 1 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
+    }
   }
 
   connection.query(query, (err, rows, fields) => {
@@ -622,6 +626,15 @@ app.put('/child/ret/:id', (req, res) => {
   const { id } = req.params;
 
   connection.query(`UPDATE child SET soft_delete='0' WHERE id=${id}`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+})
+// undo record
+app.put('/record/ret/:id', (req, res) => {
+  const { id } = req.params;
+
+  connection.query(`UPDATE record SET soft_delete='0' WHERE record_id=${id}`, (err, rows, fields) => {
     if (err) throw err
   })
   res.send("success")
