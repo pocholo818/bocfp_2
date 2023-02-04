@@ -256,11 +256,11 @@ app.get('/link/:id', (req, res) => {
 
   connection.query(query, (err, rows, fields) => {
     if (rows.length) {
-      if(rows.length > 1){
-        res.json(rows[0])
+      if(type === 'guardian'){
+        res.json(rows)
       }
       else{
-        res.json(rows)
+        res.json(rows[0])
       }
     }
     else {
