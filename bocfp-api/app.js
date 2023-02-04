@@ -465,7 +465,7 @@ app.post('/user/login', (req, res) => {
 });
 // get specific user
 app.get('/user/profile/:id', (req, res) => {
-  connection.query(`SELECT user_id, fname, lname, username, contact,admin_power,
+  connection.query(`SELECT user_id, fname, lname, username, soft_delete, contact, admin_power,
     CASE 
       WHEN admin_power = 1 THEN 'YES'
       ELSE "NO"
