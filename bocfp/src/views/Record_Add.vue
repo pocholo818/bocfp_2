@@ -20,12 +20,14 @@
             <ion-list>
               <ion-item>
                 <ion-label position="floating">Height (cm):</ion-label>
-                <ion-input @keypress="numOnly($event)" maxlength="3" placeholder="Enter Height" v-model="recordDetails.height"></ion-input>
+                <ion-input @keypress="numOnly($event)" maxlength="3" placeholder="Enter Height"
+                  v-model="recordDetails.height"></ion-input>
               </ion-item>
 
               <ion-item>
                 <ion-label position="floating">Weight (kg):</ion-label>
-                <ion-input @keypress="numOnly($event)" maxlength="3" placeholder="Enter Weight" v-model="recordDetails.weight"></ion-input>
+                <ion-input @keypress="numOnly($event)" maxlength="3" placeholder="Enter Weight"
+                  v-model="recordDetails.weight"></ion-input>
               </ion-item>
             </ion-list>
           </ion-card-content>
@@ -86,8 +88,9 @@ export default defineComponent({
       childId: "",
       recordDetails: {
         height: "",
-        weight: ""
-      }
+        weight: "",
+        user_id: ""
+      },
     }
   },
   setup() {
@@ -104,6 +107,9 @@ export default defineComponent({
   },
   mounted() {
     this.childId = this.router.params.id + "";
+  },
+  ionViewWillEnter() {
+    this.recordDetails.user_id = localStorage.getItem('user_id') || ''
   },
   methods: {
     async record_add() {
@@ -126,7 +132,8 @@ export default defineComponent({
             toast.message = 'Success!'
             this.recordDetails = {
               height: "",
-              weight: ""
+              weight: "",
+              user_id: localStorage.getItem('user_id') || ''
             }
             this.ionRouter.push("/child_view/" + this.childId);
           })

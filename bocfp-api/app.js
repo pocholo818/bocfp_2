@@ -141,10 +141,12 @@ app.get('/records/:id', (req, res) => {
   let query 
 
   if(limit == 5){
-    query = `SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id ASC LIMIT ${limit} OFFSET ${offset}`
+    query = `SELECT * FROM record WHERE id=${req.params.id} AND record.soft_delete = 0 ORDER BY record_id ASC LIMIT ${limit} OFFSET ${offset}`
   }
   else if (limit == 10){
-    query = `SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
+    query = `SELECT * FROM record 
+      JOIN user ON user.user_id = record.user_id
+      WHERE id=${req.params.id} AND record.soft_delete = 0 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
 
     if(filter === 'deleted'){
       query = `SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 1 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
@@ -388,12 +390,12 @@ app.post('/child', (req, res) => {
 });
 // add new record
 app.post('/record/:id', (req, res) => {
-  const { height, weight } = req.body;
+  const { height, weight, user_id } = req.body;
   const { id } = req.params;
   let remark = bmi(height, weight)
 
-  connection.query(`INSERT INTO record (id, height, weight, remark, output) 
-        VALUES ('${id}','${height}', '${weight}', '${remark[0]}', '${remark[1]}')`, (err, rows, fields) => {
+  connection.query(`INSERT INTO record (id, height, weight, remark, output, user_id) 
+        VALUES ('${id}','${height}', '${weight}', '${remark[0]}', '${remark[1]}', '${user_id}')`, (err, rows, fields) => {
     if (err) throw err
   })
   res.send("success")

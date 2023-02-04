@@ -131,7 +131,7 @@ export default defineComponent({
       check: { "message": "" },
       limit: 5,
       offset: 0,
-      searchTimeout: 0
+      searchTimeout: 0,
     }
   },
   setup() {

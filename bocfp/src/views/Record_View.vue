@@ -40,6 +40,7 @@
                     <p>Weight: {{ record.weight }}kg</p>
                     <p>Remark: {{ record.remark }}</p>
                     <p>BMI: {{ record.output.toFixed(2) }}</p>
+                    <p>Recorded by: {{ record.fname }} {{ record.lname }}</p>
 
                     <ion-label>
                       <div>
