@@ -279,8 +279,8 @@ export default defineComponent({
             fetch('http://localhost:5000/link/' + this.childId + '?type=child')
                 .then((response) => response.json())
                 .then((json) => {
-                    this.guardianDetails = json[0]
-                    this.guardianName = `${json[0].fname} ${json[0].lname}`
+                    this.guardianDetails = json
+                    this.guardianName = `${json.fname} ${json.lname}`
                 })
         },
         fetchLatestRecord() {
