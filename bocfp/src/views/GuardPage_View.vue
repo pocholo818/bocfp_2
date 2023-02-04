@@ -73,12 +73,12 @@
 
           <ion-card-content>
             <ion-list>
-              <div v-if="child.message">
-                <h2 style="text-align: center;">{{ child.message }}</h2>
+              <div v-if="childData.message">
+                <h2 style="text-align: center;">{{ childData.message }}</h2>
               </div>
 
               <div v-else>
-                <ion-item class="hide-on-mobile">
+                <ion-item class="hide-on-mobile" v-for="child in childData" :key="child.id">
                   <ion-label>
                     <h2>{{ child.fname }} {{ child.lname }}</h2>
                     <p>Guardian Relationship: {{ child.relationship }}</p>
@@ -159,7 +159,7 @@ export default defineComponent({
     return {
       guardId: "",
       guardProfile: "",
-      child: ""
+      childData: ""
     }
   },
   setup() {
@@ -194,7 +194,7 @@ export default defineComponent({
       fetch('http://localhost:5000/link/' + this.guardId + '?type=guardian')
         .then((response) => response.json())
         .then((json) => {
-          this.child = json
+          this.childData = json
         })
     },
     async guardian_delete(guardian_id: string) {
