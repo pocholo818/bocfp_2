@@ -293,10 +293,10 @@ app.get('/child/link/:id', (req, res) => {
 app.get('/users', (req, res) => {
   const { limit, offset, search, filter } = req.query
 
-  let query = `SELECT * FROM user WHERE soft_delete = 0 LIMIT ${limit} OFFSET ${offset}`
+  let query = `SELECT * FROM user WHERE soft_delete = 0 GROUP BY user_id DESC LIMIT ${limit} OFFSET ${offset}`
 
   if(filter === 'deleted') {
-    query = `SELECT * FROM user WHERE soft_delete = 1 LIMIT ${limit} OFFSET ${offset}`
+    query = `SELECT * FROM user WHERE soft_delete = 1 GROUP BY user_id DESC LIMIT ${limit} OFFSET ${offset}`
   }
 
   if (search) {
@@ -304,14 +304,14 @@ app.get('/users', (req, res) => {
       soft_delete = 0 AND user_id LIKE "${search}"
       OR soft_delete = 0 AND username LIKE "${search}"
       OR soft_delete = 0 AND fname LIKE "%${search}%"
-      OR soft_delete = 0 AND lname LIKE"%${search}%" LIMIT ${limit} OFFSET ${offset}`
+      OR soft_delete = 0 AND lname LIKE"%${search}%" GROUP BY user_id DESC LIMIT ${limit} OFFSET ${offset}`
 
       if(filter === 'deleted'){
         query = `SELECT * FROM user WHERE 
           soft_delete = 1 AND user_id LIKE "${search}"
           OR soft_delete = 1 AND username LIKE "${search}"
           OR soft_delete = 1 AND fname LIKE "%${search}%"
-          OR soft_delete = 1 AND lname LIKE"%${search}%" LIMIT ${limit} OFFSET ${offset}`
+          OR soft_delete = 1 AND lname LIKE"%${search}%" GROUP BY user_id DESC LIMIT ${limit} OFFSET ${offset}`
       }
   }
   connection.query(query, (err, rows, fields) => {
