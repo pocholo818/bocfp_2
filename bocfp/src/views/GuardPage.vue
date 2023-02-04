@@ -17,6 +17,14 @@
 
                 <ion-searchbar v-model="search"></ion-searchbar>
 
+                <!-- search filter -->
+                <ion-item>
+                    <ion-select @ionChange="searchData" v-model="guardFilter" placeholder="Select Filter">
+                        <ion-select-option value="all">All</ion-select-option>
+                        <ion-select-option value="deleted">Deleted</ion-select-option>
+                    </ion-select>
+                </ion-item>
+
                 <template v-if="guardianList.message">
                     <ion-card>
                         <ion-card-header>
@@ -76,7 +84,8 @@ import {
     IonToolbar,
     IonHeader, IonMenuButton,
     IonButtons,
-    IonTitle
+    IonTitle,
+    IonSelect, IonSelectOption,
 } from '@ionic/vue';
 // icons
 import {
@@ -103,7 +112,8 @@ export default defineComponent({
         IonToolbar,
         IonHeader, IonMenuButton,
         IonButtons,
-        IonTitle
+        IonTitle,
+        IonSelect, IonSelectOption,
     },
     setup() {
         return {
@@ -121,6 +131,7 @@ export default defineComponent({
             search: "",
             limit: 20,
             offset: 0,
+            guardFilter: "all",
             isNextEnabled: true,
             searchTimeout: 0
         };
@@ -138,7 +149,7 @@ export default defineComponent({
             if (search.length) {
                 clearTimeout(this.searchTimeout)
                 this.searchTimeout = setTimeout(() => {
-                    fetch(`http://localhost:5000/guardians?limit=${this.limit}&offset=${this.offset}&search=${search}`)
+                    fetch(`http://localhost:5000/guardians?limit=${this.limit}&offset=${this.offset}&search=${search}&filter=${this.guardFilter}`)
                         .then((response) => response.json())
                         .then((json) => {
                             this.guardianList = json
@@ -150,7 +161,7 @@ export default defineComponent({
             }
         },
         fetchData() {
-            fetch(`http://localhost:5000/guardians?limit=${this.limit}&offset=${this.offset}&search=${this.search}`)
+            fetch(`http://localhost:5000/guardians?limit=${this.limit}&offset=${this.offset}&search=${this.search}&filter=${this.guardFilter}`)
                 .then((response) => response.json())
                 .then((json) => {
                     this.guardianList = json

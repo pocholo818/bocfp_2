@@ -59,9 +59,13 @@
                         <ion-card-content style="display: flex; justify-content: end;">
                             <ion-button color="warning" :router-link="('/child_edit/' + childId)"><ion-icon
                                     :icon="createOutline"></ion-icon>&nbsp; Edit</ion-button>
-                            <ion-button color="danger" @click="child_delete(childId)"><ion-icon :icon="trashOutline">
+                            <ion-button v-if="childDetails.soft_delete === 0" color="danger"
+                                @click="child_delete(childId)"><ion-icon :icon="trashOutline">
                                 </ion-icon>&nbsp;
                                 Del<span>ete</span></ion-button>
+                            <ion-button v-else color="success" @click="child_undo()"><ion-icon :icon="arrowUndoOutline">
+                                </ion-icon>&nbsp;
+                                Retrieve</ion-button>
                         </ion-card-content>
 
                         <!-- child's guardian -->
@@ -169,7 +173,8 @@ import {
     eyeOutline,
     createOutline,
     trashOutline,
-    arrowBack
+    arrowBack,
+    arrowUndoOutline
 } from 'ionicons/icons';
 // ionic stuff
 import {
@@ -264,6 +269,7 @@ export default defineComponent({
             eyeOutline,
             createOutline,
             trashOutline,
+            arrowUndoOutline,
             arrowBack,
             ionRouter
         }
@@ -296,7 +302,6 @@ export default defineComponent({
                 .then((response) => response.json())
                 .then((json) => {
                     this.childAllRecords = json
-                    console.log()
 
                     if (json.message) {
                         this.isNextEnabled = false
@@ -304,10 +309,8 @@ export default defineComponent({
                     }
                     else {
                         this.isNextEnabled = true
-                    }
 
-                    if (!json.message) {
-                        this.data.labels = json.map((item: any) => moment(String(item.date)).format('MMM DD, YYYY hh:mm A'))
+                        this.data.labels = json.map((item: any) => moment(String(item.date)).format('MM/DD/YYYY'))
                         // this.data.labels = json.map((item: any) => item.remark)
                         this.data.datasets[0].data = json.map((item: any) => item.output.toFixed(2))
                         // this.data.datasets[0].label = json.map((item: any) => item.remark)
@@ -380,6 +383,44 @@ export default defineComponent({
                                 .then((data) => {
                                     toast.message = 'Success!'
                                     this.$emit('deleted')
+                                })
+                                .catch((error) => {
+                                    toast.message = error
+                                });
+
+                            await toast.present();
+                            this.ionRouter.back()
+                        },
+                    },
+                ],
+            });
+
+            await alert.present();
+        },
+        async child_undo() {
+            const alert = await alertController.create({
+                header: 'Are you sure you want to retrieve?',
+                buttons: [
+                    {
+                        text: 'Cancel',
+                        role: 'cancel'
+                    },
+                    {
+                        text: 'RETRIEVE',
+                        role: 'confirm',
+                        handler: async () => {
+                            const toast = await toastController.create({
+                                duration: 1500,
+                                position: 'top'
+                            })
+
+                            const childId = this.childId
+
+                            fetch('http://localhost:5000/child/ret/' + childId, {
+                                method: 'PUT'
+                            })
+                                .then((data) => {
+                                    toast.message = 'Success!'
                                 })
                                 .catch((error) => {
                                     toast.message = error

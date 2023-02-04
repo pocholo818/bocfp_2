@@ -141,7 +141,7 @@ app.get('/records/:id', (req, res) => {
   let query 
 
   if(limit == 5){
-    query = `SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
+    query = `SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id ASC LIMIT ${limit} OFFSET ${offset}`
   }
   else if (limit == 10){
     query = `SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 0 ORDER BY record_id ASC LIMIT ${limit} OFFSET ${offset}`
@@ -168,9 +168,13 @@ app.get('/record/:id', (req, res) => {
 });
 // get all guardian
 app.get('/guardians', (req, res) => {
-  const { limit, offset, search } = req.query
+  const { limit, offset, search, filter } = req.query
 
-  let query = `SELECT * FROM guardian WHERE soft_delete = 0 ORDER BY guardian_id LIMIT ${limit} OFFSET ${offset}`
+  let query = `SELECT * FROM guardian WHERE soft_delete = 0 ORDER BY guardian_id DESC LIMIT ${limit} OFFSET ${offset}`
+
+  if(filter === 'deleted') {
+    query = `SELECT * FROM guardian WHERE soft_delete = 1 ORDER BY guardian_id DESC LIMIT ${limit} OFFSET ${offset}`
+  }
 
   if (search) {
     query = `SELECT * FROM guardian WHERE 
@@ -178,6 +182,14 @@ app.get('/guardians', (req, res) => {
       OR soft_delete = 0 AND fname LIKE "%${search}%"
       OR soft_delete = 0 AND lname LIKE "%${search}%" 
       OR soft_delete = 0 AND household_id LIKE "%${search}%" LIMIT ${limit} OFFSET ${offset}`
+
+    if(filter === 'deleted'){
+      query = `SELECT * FROM guardian WHERE 
+        soft_delete = 1 AND guardian_id LIKE "${search}"
+        OR soft_delete = 1 AND fname LIKE "%${search}%"
+        OR soft_delete = 1 AND lname LIKE "%${search}%" 
+        OR soft_delete = 1 AND household_id LIKE "%${search}%" LIMIT ${limit} OFFSET ${offset}`
+    }
   }
 
   connection.query(query, (err, rows, fields) => {
@@ -223,13 +235,17 @@ app.get('/link/:id', (req, res) => {
     query = `SELECT guardian.fname, guardian.lname, guardian.address, 
       guardian.contact, link.relationship, guardian.guardian_id
       FROM link JOIN guardian ON link.guardian_id = guardian.guardian_id
-      WHERE link.id = ${id} AND link.soft_delete = 0;`
+      WHERE link.id = ${id} AND link.soft_delete = 0 AND guardian.soft_delete = 0`
   }
   // get linked guardian to child
   else if(type === 'guardian'){
     query = `SELECT *
       FROM link JOIN child ON link.id = child.id
-      WHERE link.guardian_id = ${id} AND link.soft_delete = 0`
+      WHERE link.guardian_id = ${id} AND child.soft_delete = 0`
+  }
+  // get link details
+  else if(type === 'link'){
+    query = `SELECT * FROM link WHERE link_id = ${id}`
   }
 
   connection.query(query, (err, rows, fields) => {
@@ -566,7 +582,37 @@ app.put('/announcement/edit/:annou_id', (req, res) => {
   })
   res.send("success")
 });
+// edit link
+app.put('/link/:id', (req, res) => {
+  const { id } = req.params
+  const { relationship } = req.body;
 
+  connection.query(`UPDATE link SET relationship = '${relationship}' WHERE link_id=${id}`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+});
+
+
+// UNDO
+// undo child
+app.put('/child/ret/:id', (req, res) => {
+  const { id } = req.params;
+
+  connection.query(`UPDATE child SET soft_delete='0' WHERE id=${id}`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+})
+// undo guardian
+app.put('/guardian/ret/:id', (req, res) => {
+  const { id } = req.params;
+
+  connection.query(`UPDATE guardian SET soft_delete='0' WHERE guardian_id=${id}`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+})
 
 // SOFT DELETE
 // soft delete child
@@ -669,6 +715,15 @@ app.get('/child/remarks', (req, res) => {
 });
 
 // HARD DELETE
+// delete child
+app.delete('/link/:id', (req, res) => {
+  const { id } = req.params;
+
+  connection.query(`DELETE FROM link WHERE link_id=${id}`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+});
 // delete child
 // app.delete('/child/:id', (req, res) => {
 //   const { id } = req.params;

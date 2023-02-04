@@ -3,19 +3,20 @@ ion-header ion-toolbar {
     --color: white;
 }
 
-@media only screen and (min-width: 768px){
+@media only screen and (min-width: 768px) {
+
     /* phone */
-    .theme ion-button{
+    .theme ion-button {
         width: 100%;
     }
 }
 
-.funcBttn{
+.funcBttn {
     --background: #168554;
     color: white;
 }
 
-.dateStyle{
+.dateStyle {
     /* background-color: #168554; */
 }
 
@@ -23,22 +24,24 @@ ion-modal.datetime-modal * {
     color: #000;
 }
 
-.hide-on-mobile {
-    display: none;
+@media only screen and (max-width: 768px) {
+    .hide-on-mobile span {
+        display: none;
+    }
 }
 
 .fade-move,
 .fade-enter-active,
 .fade-leave-active {
-  transition: all 300ms ease;
+    transition: all 300ms ease;
 }
 
 .fade-enter-from,
 .fade-leave-to {
-  opacity: 0;
+    opacity: 0;
 }
 
 .fade-leave-active {
-  position: absolute;
-  width: 100%;
+    position: absolute;
+    width: 100%;
 }

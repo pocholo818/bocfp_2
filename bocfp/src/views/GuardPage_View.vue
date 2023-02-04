@@ -37,8 +37,8 @@
 
               <ion-item>
                 <ion-label position="floating">Household ID:</ion-label>
-                <ion-input type="text" placeholder="Enter Household ID" maxlength="7" v-model="guardProfile.household_id"
-                  readonly></ion-input>
+                <ion-input type="text" placeholder="Enter Household ID" maxlength="7"
+                  v-model="guardProfile.household_id" readonly></ion-input>
               </ion-item>
 
               <ion-item>
@@ -50,9 +50,12 @@
               <ion-card-content style="display: flex; justify-content: end;">
                 <ion-button color="warning" :router-link="('/guardian_edit/' + guardId)"><ion-icon
                     :icon="createOutline"></ion-icon>&nbsp; Edit</ion-button>
-                <ion-button color="danger" @click="guardian_delete(guardId)"><ion-icon
-                    :icon="trashOutline"></ion-icon>&nbsp;
+                <ion-button v-if="guardProfile.soft_delete === 0" color="danger"
+                  @click="guardian_delete(guardId)"><ion-icon :icon="trashOutline"></ion-icon>&nbsp;
                   Del<span>ete</span></ion-button>
+                <ion-button v-else color="success" @click="guardian_undo()"><ion-icon :icon="arrowUndoOutline">
+                  </ion-icon>&nbsp;
+                  Retrieve</ion-button>
               </ion-card-content>
             </ion-list>
           </ion-card-content>
@@ -75,13 +78,16 @@
               </div>
 
               <div v-else>
-                <ion-item>
+                <ion-item class="hide-on-mobile">
                   <ion-label>
                     <h2>{{ child.fname }} {{ child.lname }}</h2>
                     <p>Guardian Relationship: {{ child.relationship }}</p>
-                    <ion-button color="success" :router-link="'/child_view/' + child.id">View</ion-button>
-                    <ion-button color="warning">Edit</ion-button>
-                    <ion-button color="danger" @click="link_delete(guardId)">Remove Link</ion-button>
+                    <ion-button color="success" :router-link="'/child_view/' + child.id"><ion-icon
+                        :icon="eyeOutline"></ion-icon>View</ion-button>
+                    <ion-button color="warning" :router-link="'/link_edit/' + child.link_id"><ion-icon
+                        :icon="createOutline"></ion-icon>Edit</ion-button>
+                    <ion-button color="danger" @click="link_delete(child.link_id)"><ion-icon
+                        :icon="trashOutline"></ion-icon>Del<span>ete</span>&nbsp;Link</ion-button>
                   </ion-label>
                 </ion-item>
               </div>
@@ -105,7 +111,8 @@ import {
   eyeOutline,
   createOutline,
   trashOutline,
-  arrowBack
+  arrowBack,
+  arrowUndoOutline
 } from 'ionicons/icons';
 // ionic stuff
 import {
@@ -164,6 +171,7 @@ export default defineComponent({
       createOutline,
       trashOutline,
       arrowBack,
+      arrowUndoOutline,
       router,
       ionRouter
     }
@@ -228,7 +236,45 @@ export default defineComponent({
 
       await alert.present();
     },
-    async link_delete(guardian_id: string) {
+    async guardian_undo() {
+      const alert = await alertController.create({
+        header: 'Are you sure you want to retrieve?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel'
+          },
+          {
+            text: 'RETRIEVE',
+            role: 'confirm',
+            handler: async () => {
+              const toast = await toastController.create({
+                duration: 1500,
+                position: 'top'
+              })
+
+              const guardian_id = this.guardId
+
+              fetch('http://localhost:5000/guardian/ret/' + guardian_id, {
+                method: 'PUT'
+              })
+                .then((data) => {
+                  toast.message = 'Success!'
+                })
+                .catch((error) => {
+                  toast.message = error
+                });
+
+              await toast.present();
+              this.ionRouter.back()
+            },
+          },
+        ],
+      });
+
+      await alert.present();
+    },
+    async link_delete(link: string) {
       const alert = await alertController.create({
         header: 'Are you sure you want to delete?',
         buttons: [
@@ -244,10 +290,11 @@ export default defineComponent({
                 duration: 1500,
                 position: 'top'
               })
-              const guardId = guardian_id
 
-              fetch('http://localhost:5000/link/del/' + this.guardId, {
-                method: 'put'
+              const linkId = link
+
+              fetch('http://localhost:5000/link/' + linkId, {
+                method: 'DELETE'
               })
                 .then((data) => {
                   toast.message = 'Success!'

@@ -30,7 +30,7 @@
               <div v-else>
                 <ion-item v-for="record in childRecords" :key="record.recordId">
                   <ion-label>
-                    <h2>{{ formatDate(record.date.split("T")[0]) }}</h2>
+                    <h2>{{ formatDate(record.date) }}</h2>
                     <p>Record ID: {{ record.record_id }}</p>
                     <p>Height: {{ record.height }}cm</p>
                     <p>Weight: {{ record.weight }}kg</p>

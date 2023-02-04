@@ -18,26 +18,32 @@
                 </ion-card-content>
             </ion-card>
 
-            <ion-card class="ion-margin-bottom">
-                <ion-card-header>
-                    <ion-card-title>{{ childCount }}</ion-card-title>
-                    <ion-card-subtitle>Total Child</ion-card-subtitle>
-                </ion-card-header>
-            </ion-card>
+            <ion-grid>
+                <ion-row>
+                    <ion-col>
+                        <ion-card>
+                            <ion-card-header>
+                                <ion-card-title>Total Child</ion-card-title>
+                                <ion-card-subtitle>{{ childCount }} children</ion-card-subtitle>
+                            </ion-card-header>
+                        </ion-card>
+                    </ion-col>
+                    <ion-col>
+                        <ion-card>
+                            <ion-card-header>
+                                <ion-card-title>Remarks</ion-card-title>
+                                <!-- <ion-card-subtitle v-for="remarks in childRemarks" :key="remarks.recordId">{{ remarks.remark }}: {{ remarks.total }} ({{ (remarks.total/countTotalRemarks*100).toFixed(2) }}%)</ion-card-subtitle> -->
+                                <ion-card-subtitle>Underweight: {{ childRemarks.Underweight }}</ion-card-subtitle>
+                                <ion-card-subtitle>Normal: {{ childRemarks.Normal }}</ion-card-subtitle>
+                                <ion-card-subtitle>Overweight: {{ childRemarks.Overweight }}</ion-card-subtitle>
+                                <ion-card-subtitle>Obese: {{ childRemarks.Obese }}</ion-card-subtitle>
+                            </ion-card-header>
+                        </ion-card>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
 
             <ion-card class="ion-margin-bottom">
-                <ion-card-header>
-                    <ion-card-title>Remarks</ion-card-title>
-                    <!-- <ion-card-subtitle v-for="remarks in childRemarks" :key="remarks.recordId">{{ remarks.remark }}: {{ remarks.total }} ({{ (remarks.total/countTotalRemarks*100).toFixed(2) }}%)</ion-card-subtitle> -->
-                    <ion-card-subtitle>Underweight: {{ childRemarks.Underweight }}</ion-card-subtitle>
-                    <ion-card-subtitle>Normal: {{ childRemarks.Normal }}</ion-card-subtitle>
-                    <ion-card-subtitle>Overweight: {{ childRemarks.Overweight }}</ion-card-subtitle>
-                    <ion-card-subtitle>Obese: {{ childRemarks.Obese }}</ion-card-subtitle>
-                </ion-card-header>
-            </ion-card>
-
-            <ion-card class="ion-margin-bottom">
-                <!-- <Pie :data="data" :options="options" /> -->
                 <PieChart :data="data" :options="options" />
             </ion-card>
 
@@ -111,7 +117,7 @@ export default defineComponent({
                 labels: ['Underweight', 'Normal', 'Overweight', 'Obese'],
                 datasets: [
                     {
-                        backgroundColor: ['#ADD8E6', '#41B883', '#FFFF00', '#DD1B16'],
+                        backgroundColor: ['#FFFF00', '#41B883', '#FFA500', '#FF0000'],
                         data: [0]
                     }
                 ]
@@ -172,5 +178,18 @@ export default defineComponent({
     --color: white;
     text-align: center;
     box-shadow: none;
+}
+
+ion-col {
+    display: flex;
+}
+
+ion-col > ion-card {
+    flex: 1;
+    margin: 0 !important;
+}
+
+ion-col > ion-card:nth-child(odd) {
+    margin-right: 4px !important;
 }
 </style>

@@ -68,7 +68,6 @@
         </ion-card>
 
         <!-- Save -->
-        <!-- <ion-button expand="block" class="theme" @click="link_add">Link Child</ion-button><br><br><br> -->
         <ion-button expand="block" @click="link_add">Link Child</ion-button><br><br><br>
       </ion-content>
 
@@ -129,7 +128,7 @@ export default defineComponent({
       },
       search: "",
       text: false,
-      check: { "relationship": "" },
+      check: { "message": "" },
       limit: 5,
       offset: 0,
       searchTimeout: 0
@@ -160,49 +159,39 @@ export default defineComponent({
       // checks if empty
       if (this.linkDetails.id && this.linkDetails.relationship) {
         // !empty
-        fetch('http://localhost:5000/child/link/' + this.linkDetails.id)
+        fetch('http://localhost:5000/link/' + this.linkDetails.id + '?type=child')
           .then((response) => response.json())
           .then((json) => {
             this.check = json
 
             // check if child has link
-            if (this.check.relationship) {
-              toast.message = "Child is already linked"
+            if (this.check.message) {
+              const data = this.linkDetails;
+
+              fetch('http://localhost:5000/link/add/' + this.guardId, {
+                method: 'POST', // or 'PUT'
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+              })
+               .then((data) => {
+                  toast.message = 'Success!'
+                  this.linkDetails = {
+                    "id": "",
+                    "guardian_id": "",
+                    "relationship": ""
+                  }
+                  this.ionRouter.push("/guardian_profile/" + this.guardId);
+                })
+                .catch((error) => {
+                  toast.message = error
+                });
+
+                toast.message = "Success!"
             }
             else {
-              fetch('http://localhost:5000/guardian/link/' + this.guardId)
-                .then((response) => response.json())
-                .then((json) => {
-                  this.check = json
-
-                  // check if guardian has link // to be removed
-                  if (this.check.relationship) {
-                    toast.message = "Guardian is already linked"
-                  }
-                  else {
-                    const data = this.linkDetails;
-                    fetch('http://localhost:5000/link/add/' + this.guardId, {
-                      method: 'POST', // or 'PUT'
-                      headers: {
-                        'Content-Type': 'application/json',
-                      },
-                      body: JSON.stringify(data),
-                    })
-                      .then((data) => {
-                        toast.message = 'Success!'
-                        this.linkDetails = {
-                          "id": "",
-                          "guardian_id": "",
-                          "relationship": ""
-                        }
-                        this.ionRouter.push("/guardian_profile/" + this.guardId);
-                      })
-                      .catch((error) => {
-                        toast.message = error
-                      });
-                    toast.message = "Success!"
-                  }
-                })
+              toast.message = "Child already been linked"
             }
           })
       }
