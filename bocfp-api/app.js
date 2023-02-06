@@ -746,7 +746,7 @@ app.get('/child/remarks', (req, res) => {
     link.relationship
     FROM child 
     LEFT OUTER JOIN record ON record.id = child.id
-    INNER JOIN (SELECT MAX(date) AS maxdate, id FROM record GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
+    LEFT OUTER JOIN (SELECT MAX(date) AS maxdate, id FROM record GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
     LEFT OUTER JOIN link ON link.id = child.id 
     LEFT OUTER JOIN guardian ON guardian.guardian_id = link.guardian_id
     WHERE child.soft_delete = 0 GROUP BY child.id`, (err, rows, fields) => {

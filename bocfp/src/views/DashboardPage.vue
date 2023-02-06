@@ -48,6 +48,7 @@
             </ion-card>
 
             <ion-button @click="fetchChildRemarks(),fetchChildCount()">Refresh Data</ion-button>
+            <ion-button>Generate Report</ion-button>
         </ion-content>
 
     </ion-page>
