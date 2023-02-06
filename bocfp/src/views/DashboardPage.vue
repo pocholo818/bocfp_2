@@ -47,6 +47,7 @@
                 <PieChart :data="data" :options="options" />
             </ion-card>
 
+            <ion-button @click="fetchChildRemarks(),fetchChildCount()">Refresh Data</ion-button>
         </ion-content>
 
     </ion-page>
@@ -56,18 +57,14 @@
 import { defineComponent } from 'vue';
 // ionic stuff
 import {
-    // IonFab,
-    // IonFabButton,
-    // IonIcon,
     IonCard,
     IonCardTitle,
     IonCardSubtitle,
     IonCardHeader,
     IonCardContent,
-    // IonCardContent,
-    // IonSearchbar,
-    // toastController,
-    // alertController
+    IonSearchbar,
+    toastController,
+    alertController
 } from '@ionic/vue';
 // icons
 import {
@@ -87,16 +84,11 @@ export default defineComponent({
     components: {
         PieChart,
         HeaderBar,
-        // IonFab,
-        // IonFabButton,
-        // IonIcon,
         IonCard,
         IonCardTitle,
         IonCardSubtitle,
         IonCardHeader,
         IonCardContent,
-        // IonSearchbar
-        //   ChildCard
     },
     setup() {
         return {
@@ -157,10 +149,14 @@ export default defineComponent({
 
                 event.target.complete();
             }, 1000);
-        }
+        },
     },
     // get data
-    mounted() {
+    // mounted() {
+    //     this.fetchChildRemarks()
+    //     this.fetchChildCount()
+    // },
+    ionViewDidEnter(){
         this.fetchChildRemarks()
         this.fetchChildCount()
     },
@@ -184,12 +180,12 @@ ion-col {
     display: flex;
 }
 
-ion-col > ion-card {
+ion-col>ion-card {
     flex: 1;
     margin: 0 !important;
 }
 
-ion-col > ion-card:nth-child(odd) {
+ion-col>ion-card:nth-child(odd) {
     margin-right: 4px !important;
 }
 </style>

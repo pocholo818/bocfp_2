@@ -141,16 +141,21 @@ app.get('/records/:id', (req, res) => {
   let query 
 
   if(limit == 5){
-    query = `SELECT * FROM record WHERE id=${req.params.id} AND record.soft_delete = 0 ORDER BY record_id ASC LIMIT ${limit} OFFSET ${offset}`
+    // query = `SELECT * FROM record WHERE id=${req.params.id} AND record.soft_delete = 0 ORDER BY record_id ASC LIMIT ${limit} OFFSET ${offset}`
+    query = `SELECT * FROM record WHERE id=${req.params.id} ORDER BY record_id ASC LIMIT ${limit} OFFSET ${offset}`
   }
   else if (limit == 10){
-    query = `SELECT * FROM record 
-      JOIN user ON user.user_id = record.user_id
-      WHERE id=${req.params.id} AND record.soft_delete = 0 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
+    // query = `SELECT * FROM record 
+    //   JOIN user ON user.user_id = record.user_id
+    //   WHERE id=${req.params.id} AND record.soft_delete = 0 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
 
-    if(filter === 'deleted'){
-      query = `SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 1 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
-    }
+    query = `SELECT * FROM record 
+    JOIN user ON user.user_id = record.user_id
+    WHERE id=${req.params.id} ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
+
+    // if(filter === 'deleted'){
+    //   query = `SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 1 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
+    // }
   }
 
   connection.query(query, (err, rows, fields) => {
@@ -611,14 +616,14 @@ app.put('/child/ret/:id', (req, res) => {
   res.send("success")
 })
 // undo record
-app.put('/record/ret/:id', (req, res) => {
-  const { id } = req.params;
+// app.put('/record/ret/:id', (req, res) => {
+//   const { id } = req.params;
 
-  connection.query(`UPDATE record SET soft_delete='0' WHERE record_id=${id}`, (err, rows, fields) => {
-    if (err) throw err
-  })
-  res.send("success")
-})
+//   connection.query(`UPDATE record SET soft_delete='0' WHERE record_id=${id}`, (err, rows, fields) => {
+//     if (err) throw err
+//   })
+//   res.send("success")
+// })
 // undo guardian
 app.put('/guardian/ret/:id', (req, res) => {
   const { id } = req.params;
@@ -715,7 +720,8 @@ app.get('/child/count/', (req, res) => {
 app.get('/child/newRecord/:id', (req, res) => {
   const { id } = req.params;
 
-  connection.query(`SELECT height, weight, remark, output FROM record WHERE id = ${id} AND soft_delete = 0  ORDER BY record_id DESC LIMIT 1`, (err, row, fields) => {
+  // connection.query(`SELECT height, weight, remark, output FROM record WHERE id = ${id} AND soft_delete = 0  ORDER BY record_id DESC LIMIT 1`, (err, row, fields) => {
+  connection.query(`SELECT height, weight, remark, output FROM record WHERE id = ${id} ORDER BY record_id DESC LIMIT 1`, (err, row, fields) => {
     if (row.length) {
       res.json(row[0])
     }
@@ -733,10 +739,17 @@ app.get('/child/remarks', (req, res) => {
     "Obese": 0
   }
 
-  connection.query(`SELECT remark FROM record 
-      INNER JOIN (SELECT MAX(date) as maxdate FROM record GROUP BY id) tm ON record.date = tm.maxdate 
-      JOIN child ON child.id = record.id 
-      WHERE child.soft_delete = 0 AND record.soft_delete = 0 GROUP BY record.id`, (err, rows, fields) => {
+  connection.query(`SELECT
+    child.fname, child.lname, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), child.bdate)), '%Y') + 0 AS age,
+    record.height, record.weight, record.output, record.remark, record.date, record.record_id,
+    guardian.fname, guardian.lname, guardian.household_id,
+    link.relationship
+    FROM child 
+    LEFT OUTER JOIN record ON record.id = child.id
+    INNER JOIN (SELECT MAX(date) AS maxdate, id FROM record GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
+    LEFT OUTER JOIN link ON link.id = child.id 
+    LEFT OUTER JOIN guardian ON guardian.guardian_id = link.guardian_id
+    WHERE child.soft_delete = 0 GROUP BY child.id`, (err, rows, fields) => {
     if (rows) {
       rows.forEach(item => results[item.remark] += 1)
       res.json(results)
@@ -766,15 +779,15 @@ app.delete('/link/:id', (req, res) => {
 //   })
 //   res.send("success")
 // });
-// // delete record
-// app.delete('/record/:id', (req, res) => {
-//   const { id } = req.params;
+// delete record
+app.delete('/record/del/:id', (req, res) => {
+  const { id } = req.params;
 
-//   connection.query(`DELETE FROM record WHERE record_id='${id}'`, (err, rows, fields) => {
-//     if (err) throw err
-//   })
-//   res.send("success")
-// });
+  connection.query(`DELETE FROM record WHERE record_id='${id}'`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+});
 
 // 
 const start = async () => {

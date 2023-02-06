@@ -135,7 +135,7 @@ export default defineComponent({
               weight: "",
               user_id: localStorage.getItem('user_id') || ''
             }
-            this.ionRouter.push("/child_view/" + this.childId);
+            this.ionRouter.back();
           })
           .catch((error) => {
             toast.message = error

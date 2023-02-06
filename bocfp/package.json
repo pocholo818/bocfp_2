@@ -21,6 +21,7 @@
     "chart.js": "^4.1.2",
     "core-js": "^3.6.5",
     "crypto-js": "^4.1.1",
+    "html2pdf.js": "^0.10.1",
     "ionicons": "^6.0.3",
     "moment": "^2.29.4",
     "vue": "^3.2.21",
