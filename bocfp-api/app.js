@@ -764,7 +764,7 @@ app.get('/child/data', async (req, res) => {
   ]
   const CHILD_LATEST_RECORDS_COLUMNS = [
     { width: 10 }, { width: 10 }, {}, {}, {}, { width: 10 }, {},
-    { width: 20 }, // date
+    { width: 20 }, { width: 10}, { width: 10} // date
   ]
 
   connection.query(`SELECT
@@ -806,10 +806,12 @@ app.get('/child/data', async (req, res) => {
 
   connection.query(`SELECT
     child.fname, child.lname, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), child.bdate)), '%Y') + 0 AS age,
-    record.height, record.weight, record.output, record.remark, record.date, record.record_id
+    record.height, record.weight, record.output, record.remark, record.date, record.record_id,
+    user.fname AS user_fname, user.lname AS user_lname
     FROM child 
     LEFT OUTER JOIN record ON record.id = child.id
     INNER JOIN (SELECT MAX(date) AS maxdate, id FROM record GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
+    INNER JOIN user ON user.user_id = record.user_id
     WHERE child.soft_delete = 0 GROUP BY child.id`, async (err, rows, fields) => {
     if (rows) {
       const HEADER_ROW = [
@@ -820,7 +822,9 @@ app.get('/child/data', async (req, res) => {
         { value: 'Weight', fontWeight: 'bold' },
         { value: 'Remark', fontWeight: 'bold' },
         { value: 'Output', fontWeight: 'bold' },
-        { value: 'Date', fontWeight: 'bold' }
+        { value: 'Date', fontWeight: 'bold' },
+        { value: 'User First Name', fontWeight: 'bold' },
+        { value: 'User Last Name', fontWeight: 'bold' },
       ]
  
       let DATA_ROWS = []
@@ -835,6 +839,8 @@ app.get('/child/data', async (req, res) => {
           { type: String, value: row.remark },
           { type: Number, value: row.output },
           { type: Date, value: row.date, format: 'MMM DD, YYYY hh:mm AM/PM' },
+          { type: String, value: row.user_fname },
+          { type: String, value: row.user_lname },
         ])
       })
       
