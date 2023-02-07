@@ -741,14 +741,10 @@ app.get('/child/remarks', (req, res) => {
 
   connection.query(`SELECT
     child.fname, child.lname, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), child.bdate)), '%Y') + 0 AS age,
-    record.height, record.weight, record.output, record.remark, record.date, record.record_id,
-    guardian.fname, guardian.lname, guardian.household_id,
-    link.relationship
+    record.height, record.weight, record.output, record.remark, record.date, record.record_id
     FROM child 
     LEFT OUTER JOIN record ON record.id = child.id
-    LEFT OUTER JOIN (SELECT MAX(date) AS maxdate, id FROM record GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
-    LEFT OUTER JOIN link ON link.id = child.id 
-    LEFT OUTER JOIN guardian ON guardian.guardian_id = link.guardian_id
+    INNER JOIN (SELECT MAX(date) AS maxdate, id FROM record GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
     WHERE child.soft_delete = 0 GROUP BY child.id`, (err, rows, fields) => {
     if (rows) {
       rows.forEach(item => results[item.remark] += 1)
@@ -758,6 +754,109 @@ app.get('/child/remarks', (req, res) => {
       res.json({ "message": "No result(s)" })
     }
   })
+});
+app.get('/child/data', async (req, res) => {
+  const writeXlsxFile = require('write-excel-file/node')
+
+  let CHILD_LIST, CHILD_LATEST_RECORDS
+  const CHILD_LIST_COLUMNS = [
+    {}, {}, {}, {}, {}, {}, {},
+  ]
+  const CHILD_LATEST_RECORDS_COLUMNS = [
+    { width: 10 }, { width: 10 }, {}, {}, {}, { width: 10 }, {},
+    { width: 20 }, // date
+  ]
+
+  connection.query(`SELECT
+    child.fname, child.lname, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), child.bdate)), '%Y') + 0 AS age,
+    guardian.fname AS guard_fname, guardian.lname AS guard_lname, guardian.household_id,
+    link.relationship
+    FROM child 
+    LEFT OUTER JOIN link ON link.id = child.id 
+    LEFT OUTER JOIN guardian ON guardian.guardian_id = link.guardian_id
+    WHERE child.soft_delete = 0 ORDER BY child.id`, (err, rows, fields) => {
+    if (rows) {
+      const HEADER_ROW = [
+        { value: 'First Name', fontWeight: 'bold' },
+        { value: 'Last Name', fontWeight: 'bold' },
+        { value: 'Age', fontWeight: 'bold' },
+        { value: 'Guardian First Name', fontWeight: 'bold' },
+        { value: 'Guardian Last Name', fontWeight: 'bold' },
+        { value: 'Guardian Household ID', fontWeight: 'bold' },
+        { value: 'Relationship', fontWeight: 'bold' }
+      ]
+ 
+      let DATA_ROWS = []
+      
+      rows.forEach(row => {
+        DATA_ROWS.push([
+          { type: String, value: row.fname },
+          { type: String, value: row.lname },
+          { type: Number, value: row.age },
+          { type: String, value: row.guard_fname },
+          { type: String, value: row.guard_lname },
+          { type: String, value: row.household_id },
+          { type: String, value: row.relationship }
+        ])
+      })
+      
+      CHILD_LIST = [HEADER_ROW, ...DATA_ROWS]
+    }
+  })
+
+  connection.query(`SELECT
+    child.fname, child.lname, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), child.bdate)), '%Y') + 0 AS age,
+    record.height, record.weight, record.output, record.remark, record.date, record.record_id
+    FROM child 
+    LEFT OUTER JOIN record ON record.id = child.id
+    INNER JOIN (SELECT MAX(date) AS maxdate, id FROM record GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
+    WHERE child.soft_delete = 0 GROUP BY child.id`, async (err, rows, fields) => {
+    if (rows) {
+      const HEADER_ROW = [
+        { value: 'First Name', fontWeight: 'bold' },
+        { value: 'Last Name', fontWeight: 'bold' },
+        { value: 'Age', fontWeight: 'bold' },
+        { value: 'Height', fontWeight: 'bold' },
+        { value: 'Weight', fontWeight: 'bold' },
+        { value: 'Remark', fontWeight: 'bold' },
+        { value: 'Output', fontWeight: 'bold' },
+        { value: 'Date', fontWeight: 'bold' }
+      ]
+ 
+      let DATA_ROWS = []
+      
+      rows.forEach(row => {
+        DATA_ROWS.push([
+          { type: String, value: row.fname },
+          { type: String, value: row.lname },
+          { type: Number, value: row.age },
+          { type: Number, value: row.height },
+          { type: Number, value: row.weight },
+          { type: String, value: row.remark },
+          { type: Number, value: row.output },
+          { type: Date, value: row.date, format: 'MMM DD, YYYY hh:mm AM/PM' },
+        ])
+      })
+      
+      CHILD_LATEST_RECORDS = [HEADER_ROW, ...DATA_ROWS]
+    }
+  })
+
+  // await writeXlsxFile([CHILD_LIST, CHILD_LATEST_RECORDS], {
+  //   // columns: [CHILD_LIST_COLUMNS, CHILD_LATEST_RECORDS_COLUMNS],
+  //   filePath: 'bocfp.xlsx',
+  //   sheets: ['Child Lists', 'Child Latest Records'],
+  // })
+
+  setTimeout(async () => {
+    await writeXlsxFile([CHILD_LIST, CHILD_LATEST_RECORDS], {
+      columns: [CHILD_LIST_COLUMNS, CHILD_LATEST_RECORDS_COLUMNS],
+      filePath: 'report/bocfp.xlsx',
+      sheets: ['Child Lists', 'Child Latest Records'],
+    })
+
+    res.download('report/bocfp.xlsx')
+  }, 1000)
 });
 
 // HARD DELETE

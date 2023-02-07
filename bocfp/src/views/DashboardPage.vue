@@ -47,8 +47,8 @@
                 <PieChart :data="data" :options="options" />
             </ion-card>
 
-            <ion-button @click="fetchChildRemarks(),fetchChildCount()">Refresh Data</ion-button>
-            <ion-button>Generate Report</ion-button>
+            <ion-button @click="fetchChildRemarks(), fetchChildCount()">Refresh Data</ion-button>
+            <ion-button href="http://localhost:5000/child/data">Generate Report</ion-button>
         </ion-content>
 
     </ion-page>
@@ -79,6 +79,8 @@ import HeaderBar from '@/components/HeaderBar.vue';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 ChartJS.register(ArcElement, Tooltip, Legend)
 import PieChart from '@/components/PieChart.vue'
+
+import writeXlsxFile from 'write-excel-file'
 
 export default defineComponent({
     name: 'ChildPage',
@@ -118,9 +120,45 @@ export default defineComponent({
             options: {
                 responsive: true,
                 maintainAspectRatio: false
-            }
-
-        };
+            },
+            header_row: [
+                {
+                    value: 'Name',
+                    fontWeight: 'bold'
+                },
+                {
+                    value: 'Date of Birth',
+                    fontWeight: 'bold'
+                },
+                {
+                    value: 'Cost',
+                    fontWeight: 'bold'
+                },
+                {
+                    value: 'Paid',
+                    fontWeight: 'bold'
+                }
+            ],
+            data_row: [
+                {
+                    type: String,
+                    value: 'John Smith'
+                },
+                {
+                    type: Date,
+                    value: new Date(),
+                    format: 'mm/dd/yyyy'
+                },
+                {
+                    type: Number,
+                    value: 1800
+                },
+                {
+                    type: Boolean,
+                    value: true
+                }
+            ]
+        }
     },
     methods: {
         setOpen(isOpen: boolean) {
@@ -142,6 +180,9 @@ export default defineComponent({
                     this.childCount = json
                 })
         },
+        fetchChildData() {
+            fetch('http://localhost:5000/child/data')
+        },
         handleRefresh(event: any) {
             setTimeout(() => {
                 // Any calls to load data go here
@@ -151,13 +192,16 @@ export default defineComponent({
                 event.target.complete();
             }, 1000);
         },
+        async generateReport() {
+            this.fetchChildData()
+        }
     },
     // get data
     // mounted() {
     //     this.fetchChildRemarks()
     //     this.fetchChildCount()
     // },
-    ionViewDidEnter(){
+    ionViewDidEnter() {
         this.fetchChildRemarks()
         this.fetchChildCount()
     },
