@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 04, 2023 at 07:57 PM
+-- Generation Time: Feb 07, 2023 at 04:20 PM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -95,8 +95,7 @@ CREATE TABLE `record` (
   `remark` varchar(15) NOT NULL,
   `output` double NOT NULL,
   `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `user_id` int(11) NOT NULL,
-  `soft_delete` tinyint(4) NOT NULL
+  `user_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -121,7 +120,7 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`user_id`, `fname`, `lname`, `username`, `password`, `contact`, `admin_power`, `soft_delete`) VALUES
-(1, 'John', 'Price', 'admin', '0d3c456672f7646f6403659b91c8987e95ecc7012fd7f77cfa400ce6dd33c789', '09999999999', 1, 0);
+(1, 'Admin', 'Bocfp', 'admin', '0d3c456672f7646f6403659b91c8987e95ecc7012fd7f77cfa400ce6dd33c789', '09999999999', 1, 0);
 
 --
 -- Indexes for dumped tables
