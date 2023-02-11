@@ -42,12 +42,14 @@
 
                         <ion-item>
                             <ion-label>Birth Date:</ion-label>
-                            <ion-datetime-button datetime="dateOfBirth"></ion-datetime-button>
+                            <!-- <ion-datetime-button datetime="dateOfBirth"></ion-datetime-button> -->
 
-                            <ion-modal :keep-contents-mounted="true" class="datetime-modal">
+                            <input type="date" v-model="childDetails.bdate" style="color: white;" max="2099-12-31" readonly />
+
+                            <!-- <ion-modal :keep-contents-mounted="true" class="datetime-modal">
                                 <ion-datetime id="dateOfBirth" displayFormat="YYYY.MM.DD" presentation="date"
                                     v-model="childDetails.bdate" class="dateStyle" readonly></ion-datetime>
-                            </ion-modal>
+                            </ion-modal> -->
                         </ion-item>
 
                         <ion-item>
@@ -188,7 +190,7 @@ import {
     IonButtons,
     IonHeader,
     IonToolbar,
-    IonDatetime, IonDatetimeButton, IonModal,
+    // IonDatetime, IonDatetimeButton, IonModal,
     alertController, toastController,
     IonBackButton,
     useIonRouter,
@@ -212,7 +214,7 @@ export default defineComponent({
         IonCardHeader,
         IonCardContent,
         IonButtons, IonHeader, IonToolbar,
-        IonDatetime, IonDatetimeButton, IonModal,
+        // IonDatetime, IonDatetimeButton, IonModal,
         IonBackButton,
     },
     ionViewWillEnter() {

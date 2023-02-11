@@ -48,21 +48,53 @@ function nameFormat(string) {
 app.get('/childs', (req, res) => {
   const { limit, offset, filter, search } = req.query
 
-  let query = `SELECT * FROM child WHERE soft_delete = 0 ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`
+  let query = `SELECT * FROM child WHERE soft_delete = 0 ORDER BY lname ASC LIMIT ${limit} OFFSET ${offset}`
 
   // get all filter
   if (filter === 'male') {
-    query = `SELECT * FROM child WHERE soft_delete = 0 AND sex = 'M' ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`
+    query = `SELECT * FROM child WHERE soft_delete = 0 AND sex = 'M' ORDER BY lname ASC LIMIT ${limit} OFFSET ${offset}`
   }
   else if (filter === 'female') {
-    query = `SELECT * FROM child WHERE soft_delete = 0 AND sex = 'F' ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`
+    query = `SELECT * FROM child WHERE soft_delete = 0 AND sex = 'F' ORDER BY lname ASC LIMIT ${limit} OFFSET ${offset}`
   }
   else if (filter === 'age') {
     query = `SELECT *, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), bdate)), '%Y') + 0 AS age 
     FROM child WHERE soft_delete = 0 ORDER BY age ASC LIMIT ${limit} OFFSET ${offset}`
   }
   else if (filter === 'deleted') {
-    query = `SELECT * FROM child WHERE soft_delete = 1 ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`
+    query = `SELECT * FROM child WHERE soft_delete = 1 ORDER BY lname ASC LIMIT ${limit} OFFSET ${offset}`
+  }
+  else if (filter === 'underweight') {
+    query = `SELECT
+      child.fname, child.lname, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), child.bdate)), '%Y') + 0 AS age, child.image, child.id
+      FROM child 
+      LEFT OUTER JOIN record ON record.id = child.id
+      INNER JOIN (SELECT MAX(date) AS maxdate, id FROM record GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
+      WHERE child.soft_delete = 0 AND remark = 'Underweight' GROUP BY child.id ORDER BY child.lname LIMIT ${limit} OFFSET ${offset}`
+  }
+  else if (filter === 'normal') {
+    query = `SELECT
+      child.fname, child.lname, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), child.bdate)), '%Y') + 0 AS age, child.image, child.id
+      FROM child 
+      LEFT OUTER JOIN record ON record.id = child.id
+      INNER JOIN (SELECT MAX(date) AS maxdate, id FROM record GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
+      WHERE child.soft_delete = 0 AND remark = 'Normal' GROUP BY child.id ORDER BY child.lname LIMIT ${limit} OFFSET ${offset}`
+  }
+  else if (filter === 'overweight') {
+    query = `SELECT
+      child.fname, child.lname, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), child.bdate)), '%Y') + 0 AS age, child.image, child.id
+      FROM child 
+      LEFT OUTER JOIN record ON record.id = child.id
+      INNER JOIN (SELECT MAX(date) AS maxdate, id FROM record GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
+      WHERE child.soft_delete = 0 AND remark = 'Overweight' GROUP BY child.id ORDER BY child.lname LIMIT ${limit} OFFSET ${offset}`
+  }
+  else if (filter === 'obese') {
+    query = `SELECT
+      child.fname, child.lname, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), child.bdate)), '%Y') + 0 AS age, child.image, child.id
+      FROM child 
+      LEFT OUTER JOIN record ON record.id = child.id
+      INNER JOIN (SELECT MAX(date) AS maxdate, id FROM record GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
+      WHERE child.soft_delete = 0 AND remark = 'Obese' GROUP BY child.id ORDER BY child.lname LIMIT ${limit} OFFSET ${offset}`
   }
 
   // if search has value
@@ -94,6 +126,50 @@ app.get('/childs', (req, res) => {
       soft_delete = 1 AND id LIKE "${search}"
       OR soft_delete = 1 AND fname LIKE "%${search}%"
       OR soft_delete = 1 AND lname LIKE"%${search}%" LIMIT ${limit} OFFSET ${offset}`
+    }
+    else if (filter === 'underweight') {
+      query = `SELECT
+      child.fname, child.lname, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), child.bdate)), '%Y') + 0 AS age, child.image, child.id
+      FROM child 
+      LEFT OUTER JOIN record ON record.id = child.id
+      INNER JOIN (SELECT MAX(date) AS maxdate, id FROM record GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
+      WHERE child.soft_delete = 0 AND remark = 'Underweight' AND child.id LIKE "%${search}%"
+      OR child.soft_delete = 0 AND remark = 'Underweight' AND child.fname LIKE "%${search}%"
+      OR child.soft_delete = 0 AND remark = 'Underweight' AND child.lname LIKE "%${search}%"
+      GROUP BY child.id ORDER BY child.lname LIMIT ${limit} OFFSET ${offset}`
+    }
+    else if (filter === 'normal') {
+      query = `SELECT
+      child.fname, child.lname, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), child.bdate)), '%Y') + 0 AS age, child.image, child.id
+      FROM child 
+      LEFT OUTER JOIN record ON record.id = child.id
+      INNER JOIN (SELECT MAX(date) AS maxdate, id FROM record GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
+      WHERE child.soft_delete = 0 AND remark = 'Normal' AND child.id LIKE "%${search}%"
+      OR child.soft_delete = 0 AND remark = 'Normal' AND child.fname LIKE "%${search}%"
+      OR child.soft_delete = 0 AND remark = 'Normal' AND child.lname LIKE "%${search}%"
+      GROUP BY child.id ORDER BY child.lname LIMIT ${limit} OFFSET ${offset}`
+    }
+    else if (filter === 'overweight') {
+      query = `SELECT
+      child.fname, child.lname, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), child.bdate)), '%Y') + 0 AS age, child.image, child.id
+      FROM child 
+      LEFT OUTER JOIN record ON record.id = child.id
+      INNER JOIN (SELECT MAX(date) AS maxdate, id FROM record GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
+      WHERE child.soft_delete = 0 AND remark = 'Overweight' AND child.id LIKE "%${search}%"
+      OR child.soft_delete = 0 AND remark = 'Overweight' AND child.fname LIKE "%${search}%"
+      OR child.soft_delete = 0 AND remark = 'Overweight' AND child.lname LIKE "%${search}%"
+      GROUP BY child.id ORDER BY child.lname LIMIT ${limit} OFFSET ${offset}`
+    }
+    else if (filter === 'obese') {
+      query = `SELECT
+      child.fname, child.lname, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), child.bdate)), '%Y') + 0 AS age, child.image, child.id
+      FROM child 
+      LEFT OUTER JOIN record ON record.id = child.id
+      INNER JOIN (SELECT MAX(date) AS maxdate, id FROM record GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
+      WHERE child.soft_delete = 0 AND remark = 'Obese' AND child.id LIKE "%${search}%"
+      OR child.soft_delete = 0 AND remark = 'Obese' AND child.fname LIKE "%${search}%"
+      OR child.soft_delete = 0 AND remark = 'Obese' AND child.lname LIKE "%${search}%"
+      GROUP BY child.id ORDER BY child.lname LIMIT ${limit} OFFSET ${offset}`
     }
   }
 
@@ -181,10 +257,10 @@ app.get('/record/:id', (req, res) => {
 app.get('/guardians', (req, res) => {
   const { limit, offset, search, filter } = req.query
 
-  let query = `SELECT * FROM guardian WHERE soft_delete = 0 ORDER BY guardian_id DESC LIMIT ${limit} OFFSET ${offset}`
+  let query = `SELECT * FROM guardian WHERE soft_delete = 0 ORDER BY lname ASC LIMIT ${limit} OFFSET ${offset}`
 
   if(filter === 'deleted') {
-    query = `SELECT * FROM guardian WHERE soft_delete = 1 ORDER BY guardian_id DESC LIMIT ${limit} OFFSET ${offset}`
+    query = `SELECT * FROM guardian WHERE soft_delete = 1 ORDER BY lname ASC LIMIT ${limit} OFFSET ${offset}`
   }
 
   if (search) {
@@ -282,10 +358,10 @@ app.get('/link/:id', (req, res) => {
 app.get('/users', (req, res) => {
   const { limit, offset, search, filter } = req.query
 
-  let query = `SELECT * FROM user WHERE soft_delete = 0 GROUP BY user_id DESC LIMIT ${limit} OFFSET ${offset}`
+  let query = `SELECT * FROM user WHERE soft_delete = 0 ORDER BY lname ASC LIMIT ${limit} OFFSET ${offset}`
 
   if(filter === 'deleted') {
-    query = `SELECT * FROM user WHERE soft_delete = 1 GROUP BY user_id DESC LIMIT ${limit} OFFSET ${offset}`
+    query = `SELECT * FROM user WHERE soft_delete = 1 ORDER BY lname ASC LIMIT ${limit} OFFSET ${offset}`
   }
 
   if (search) {
@@ -745,7 +821,7 @@ app.get('/child/remarks', (req, res) => {
     FROM child 
     LEFT OUTER JOIN record ON record.id = child.id
     INNER JOIN (SELECT MAX(date) AS maxdate, id FROM record GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
-    WHERE child.soft_delete = 0 GROUP BY child.id`, (err, rows, fields) => {
+    WHERE child.soft_delete = 0 GROUP BY child.id ORDER BY child.lname`, (err, rows, fields) => {
     if (rows) {
       rows.forEach(item => results[item.remark] += 1)
       res.json(results)

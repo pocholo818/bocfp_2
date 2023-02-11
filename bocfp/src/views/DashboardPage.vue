@@ -80,8 +80,6 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 ChartJS.register(ArcElement, Tooltip, Legend)
 import PieChart from '@/components/PieChart.vue'
 
-import writeXlsxFile from 'write-excel-file'
-
 export default defineComponent({
     name: 'ChildPage',
     components: {
