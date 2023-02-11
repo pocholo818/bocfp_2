@@ -821,7 +821,7 @@ app.get('/child/remarks', (req, res) => {
     FROM child 
     LEFT OUTER JOIN record ON record.id = child.id
     INNER JOIN (SELECT MAX(date) AS maxdate, id FROM record GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
-    WHERE child.soft_delete = 0 GROUP BY child.id ORDER BY child.lname`, (err, rows, fields) => {
+    WHERE child.soft_delete = 0 GROUP BY child.id`, (err, rows, fields) => {
     if (rows) {
       rows.forEach(item => results[item.remark] += 1)
       res.json(results)
@@ -850,7 +850,7 @@ app.get('/child/data', async (req, res) => {
     FROM child 
     LEFT OUTER JOIN link ON link.id = child.id 
     LEFT OUTER JOIN guardian ON guardian.guardian_id = link.guardian_id
-    WHERE child.soft_delete = 0 ORDER BY child.id`, (err, rows, fields) => {
+    WHERE child.soft_delete = 0 ORDER BY child.lname`, (err, rows, fields) => {
     if (rows) {
       const HEADER_ROW = [
         { value: 'First Name', fontWeight: 'bold' },
@@ -888,7 +888,7 @@ app.get('/child/data', async (req, res) => {
     LEFT OUTER JOIN record ON record.id = child.id
     INNER JOIN (SELECT MAX(date) AS maxdate, id FROM record GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
     INNER JOIN user ON user.user_id = record.user_id
-    WHERE child.soft_delete = 0 GROUP BY child.id`, async (err, rows, fields) => {
+    WHERE child.soft_delete = 0 GROUP BY child.id ORDER BY child.lname`, async (err, rows, fields) => {
     if (rows) {
       const HEADER_ROW = [
         { value: 'First Name', fontWeight: 'bold' },
