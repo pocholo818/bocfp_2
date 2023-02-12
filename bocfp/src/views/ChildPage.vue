@@ -27,11 +27,11 @@
             <ion-select-option value="male">Male</ion-select-option>
             <ion-select-option value="female">Female</ion-select-option>
             <ion-select-option value="age">Age</ion-select-option>
-            <ion-select-option value="deleted">Deleted</ion-select-option>
             <ion-select-option value="underweight">Underweight</ion-select-option>
             <ion-select-option value="normal">Normal</ion-select-option>
             <ion-select-option value="overweight">Overweight</ion-select-option>
             <ion-select-option value="obese">Obese</ion-select-option>
+            <ion-select-option value="deleted">Deleted</ion-select-option>
           </ion-select>
         </ion-item>
 
