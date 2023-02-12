@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
-const cors = require("cors")
+const cors = require("cors");
+var moment = require('moment'); // require
 
 const port = 5000;
 app.use(cors())
@@ -906,6 +907,8 @@ app.get('/child/data', async (req, res) => {
       let DATA_ROWS = []
       
       rows.forEach(row => {
+        // console.log(row.date.toUTCString())
+
         DATA_ROWS.push([
           { type: String, value: row.fname },
           { type: String, value: row.lname },
@@ -914,7 +917,7 @@ app.get('/child/data', async (req, res) => {
           { type: Number, value: row.weight },
           { type: String, value: row.remark },
           { type: Number, value: row.output },
-          { type: Date, value: row.date, format: 'MMM DD, YYYY hh:mm AM/PM' },
+          { type: String, value: moment(row.date).format('MMM DD, YYYY hh:mm A')},
           { type: String, value: row.user_fname },
           { type: String, value: row.user_lname },
         ])
