@@ -217,21 +217,21 @@ app.get('/records/:id', (req, res) => {
   let query 
 
   if(limit == 5){
-    // query = `SELECT * FROM record WHERE id=${req.params.id} AND record.soft_delete = 0 ORDER BY record_id ASC LIMIT ${limit} OFFSET ${offset}`
-    query = `SELECT * FROM record WHERE id=${req.params.id} ORDER BY record_id ASC LIMIT ${limit} OFFSET ${offset}`
+    query = `SELECT * FROM record WHERE id=${req.params.id} AND record.soft_delete = 0 ORDER BY record_id ASC LIMIT ${limit} OFFSET ${offset}`
+    // query = `SELECT * FROM record WHERE id=${req.params.id} ORDER BY record_id ASC LIMIT ${limit} OFFSET ${offset}`
   }
   else if (limit == 10){
-    // query = `SELECT * FROM record 
-    //   JOIN user ON user.user_id = record.user_id
-    //   WHERE id=${req.params.id} AND record.soft_delete = 0 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
-
     query = `SELECT * FROM record 
-    JOIN user ON user.user_id = record.user_id
-    WHERE id=${req.params.id} ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
+      JOIN user ON user.user_id = record.user_id
+      WHERE id=${req.params.id} AND record.soft_delete = 0 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
 
-    // if(filter === 'deleted'){
-    //   query = `SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 1 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
-    // }
+    // query = `SELECT * FROM record 
+    // JOIN user ON user.user_id = record.user_id
+    // WHERE id=${req.params.id} ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
+
+    if(filter === 'deleted'){
+      query = `SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 1 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
+    }
   }
 
   connection.query(query, (err, rows, fields) => {
@@ -692,14 +692,14 @@ app.put('/child/ret/:id', (req, res) => {
   res.send("success")
 })
 // undo record
-// app.put('/record/ret/:id', (req, res) => {
-//   const { id } = req.params;
+app.put('/record/ret/:id', (req, res) => {
+  const { id } = req.params;
 
-//   connection.query(`UPDATE record SET soft_delete='0' WHERE record_id=${id}`, (err, rows, fields) => {
-//     if (err) throw err
-//   })
-//   res.send("success")
-// })
+  connection.query(`UPDATE record SET soft_delete='0' WHERE record_id=${id}`, (err, rows, fields) => {
+    if (err) throw err
+  })
+  res.send("success")
+})
 // undo guardian
 app.put('/guardian/ret/:id', (req, res) => {
   const { id } = req.params;
@@ -797,7 +797,7 @@ app.get('/child/newRecord/:id', (req, res) => {
   const { id } = req.params;
 
   // connection.query(`SELECT height, weight, remark, output FROM record WHERE id = ${id} AND soft_delete = 0  ORDER BY record_id DESC LIMIT 1`, (err, row, fields) => {
-  connection.query(`SELECT height, weight, remark, output FROM record WHERE id = ${id} ORDER BY record_id DESC LIMIT 1`, (err, row, fields) => {
+  connection.query(`SELECT height, weight, remark, output FROM record WHERE id = ${id} AND soft_delete = 0 ORDER BY record_id DESC LIMIT 1`, (err, row, fields) => {
     if (row.length) {
       res.json(row[0])
     }
@@ -820,7 +820,7 @@ app.get('/child/remarks', (req, res) => {
     record.height, record.weight, record.output, record.remark, record.date, record.record_id
     FROM child 
     LEFT OUTER JOIN record ON record.id = child.id
-    INNER JOIN (SELECT MAX(date) AS maxdate, id FROM record GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
+    INNER JOIN (SELECT MAX(date) AS maxdate, id FROM record WHERE soft_delete = 0 GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
     WHERE child.soft_delete = 0 GROUP BY child.id`, (err, rows, fields) => {
     if (rows) {
       rows.forEach(item => results[item.remark] += 1)
@@ -886,7 +886,7 @@ app.get('/child/data', async (req, res) => {
     user.fname AS user_fname, user.lname AS user_lname
     FROM child 
     LEFT OUTER JOIN record ON record.id = child.id
-    INNER JOIN (SELECT MAX(date) AS maxdate, id FROM record GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
+    INNER JOIN (SELECT MAX(date) AS maxdate, id FROM record WHERE soft_delete = 0 GROUP BY id) r1 ON record.id = r1.id AND record.date = r1.maxdate
     INNER JOIN user ON user.user_id = record.user_id
     WHERE child.soft_delete = 0 GROUP BY child.id ORDER BY child.lname`, async (err, rows, fields) => {
     if (rows) {
@@ -942,7 +942,7 @@ app.get('/child/data', async (req, res) => {
 });
 
 // HARD DELETE
-// delete child
+// delete link
 app.delete('/link/:id', (req, res) => {
   const { id } = req.params;
 
@@ -961,14 +961,14 @@ app.delete('/link/:id', (req, res) => {
 //   res.send("success")
 // });
 // delete record
-app.delete('/record/del/:id', (req, res) => {
-  const { id } = req.params;
+// app.delete('/record/del/:id', (req, res) => {
+//   const { id } = req.params;
 
-  connection.query(`DELETE FROM record WHERE record_id='${id}'`, (err, rows, fields) => {
-    if (err) throw err
-  })
-  res.send("success")
-});
+//   connection.query(`DELETE FROM record WHERE record_id='${id}'`, (err, rows, fields) => {
+//     if (err) throw err
+//   })
+//   res.send("success")
+// });
 
 // 
 const start = async () => {

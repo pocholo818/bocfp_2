@@ -21,12 +21,12 @@
             <ion-card-subtitle>Data Gathered</ion-card-subtitle>
 
             <!-- search filter -->
-            <!-- <ion-item>
+            <ion-item>
               <ion-select @ionChange="fetchRecord" v-model="recordFilter" placeholder="Select Filter">
                 <ion-select-option value="all">All</ion-select-option>
                 <ion-select-option value="deleted">Deleted</ion-select-option>
               </ion-select>
-            </ion-item> -->
+            </ion-item>
           </ion-card-header>
 
           <ion-card-content>
@@ -96,7 +96,7 @@ import {
   IonCardHeader, IonCardTitle, IonCardSubtitle,
   IonBackButton,
   alertController,
-  // IonSelect, IonSelectOption,
+  IonSelect, IonSelectOption,
 } from '@ionic/vue';
 
 import { useRoute } from 'vue-router';
@@ -114,7 +114,7 @@ export default defineComponent({
     IonItem,
     IonCardHeader, IonCardTitle, IonCardSubtitle,
     IonBackButton,
-    // IonSelect, IonSelectOption,
+    IonSelect, IonSelectOption,
   },
   data() {
     return {
@@ -123,7 +123,7 @@ export default defineComponent({
       limit: 10,
       offset: 0,
       isNextEnabled: true,
-      // recordFilter: "all"
+      recordFilter: "all"
     }
   },
   setup() {
@@ -147,7 +147,7 @@ export default defineComponent({
   },
   methods: {
     fetchRecord() {
-      fetch(`http://localhost:5000/records/` + this.childId + `?limit=${this.limit}&offset=${this.offset}`)
+      fetch(`http://localhost:5000/records/` + this.childId + `?limit=${this.limit}&offset=${this.offset}&filter=${this.recordFilter}`)
         .then((response) => response.json())
         .then((json) => {
           this.childRecords = json
@@ -161,44 +161,7 @@ export default defineComponent({
           }
         })
     },
-    async record_delete(record_id: string) {
-      const alert = await alertController.create({
-        header: 'Are you sure you want to delete?',
-        buttons: [
-          {
-            text: 'Cancel',
-            role: 'cancel'
-          },
-          {
-            text: 'DELETE',
-            role: 'confirm',
-            handler: async () => {
-              const toast = await toastController.create({
-                duration: 1500,
-                position: 'top'
-              })
-              const recordId = record_id
-
-
-              fetch('http://localhost:5000/record/del/' + recordId, {
-                method: 'DELETE'
-              })
-                .then((data) => {
-                  toast.message = 'Success!'
-                  this.fetchRecord();
-                })
-                .catch((error) => {
-                  toast.message = error
-                });
-
-              await toast.present();
-            },
-          },
-        ],
-      });
-
-      await alert.present();
-    },
+    // hard delete
     // async record_delete(record_id: string) {
     //   const alert = await alertController.create({
     //     header: 'Are you sure you want to delete?',
@@ -219,7 +182,7 @@ export default defineComponent({
 
 
     //           fetch('http://localhost:5000/record/del/' + recordId, {
-    //             method: 'put'
+    //             method: 'DELETE'
     //           })
     //             .then((data) => {
     //               toast.message = 'Success!'
@@ -237,44 +200,82 @@ export default defineComponent({
 
     //   await alert.present();
     // },
-    // async record_undo(record_id: string) {
-    //   const alert = await alertController.create({
-    //     header: 'Are you sure you want to retrieve?',
-    //     buttons: [
-    //       {
-    //         text: 'Cancel',
-    //         role: 'cancel'
-    //       },
-    //       {
-    //         text: 'RETRIEVE',
-    //         role: 'confirm',
-    //         handler: async () => {
-    //           const toast = await toastController.create({
-    //             duration: 1500,
-    //             position: 'top'
-    //           })
+    async record_delete(record_id: string) {
+      const alert = await alertController.create({
+        header: 'Are you sure you want to delete?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel'
+          },
+          {
+            text: 'DELETE',
+            role: 'confirm',
+            handler: async () => {
+              const toast = await toastController.create({
+                duration: 1500,
+                position: 'top'
+              })
+              const recordId = record_id
 
-    //           const recordId = record_id
 
-    //           fetch('http://localhost:5000/record/ret/' + recordId, {
-    //             method: 'PUT'
-    //           })
-    //             .then((data) => {
-    //               toast.message = 'Success!'
-    //               this.fetchRecord();
-    //             })
-    //             .catch((error) => {
-    //               toast.message = error
-    //             });
+              fetch('http://localhost:5000/record/del/' + recordId, {
+                method: 'put'
+              })
+                .then((data) => {
+                  toast.message = 'Success!'
+                  this.fetchRecord();
+                })
+                .catch((error) => {
+                  toast.message = error
+                });
 
-    //           await toast.present();
-    //         },
-    //       },
-    //     ],
-    //   });
+              await toast.present();
+            },
+          },
+        ],
+      });
 
-    //   await alert.present();
-    // },
+      await alert.present();
+    },
+    async record_undo(record_id: string) {
+      const alert = await alertController.create({
+        header: 'Are you sure you want to retrieve?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel'
+          },
+          {
+            text: 'RETRIEVE',
+            role: 'confirm',
+            handler: async () => {
+              const toast = await toastController.create({
+                duration: 1500,
+                position: 'top'
+              })
+
+              const recordId = record_id
+
+              fetch('http://localhost:5000/record/ret/' + recordId, {
+                method: 'PUT'
+              })
+                .then((data) => {
+                  toast.message = 'Success!'
+                  this.fetchRecord();
+                })
+                .catch((error) => {
+                  toast.message = error
+                });
+
+              await toast.present();
+            },
+          },
+        ],
+      });
+
+      await alert.present();
+    },
     prevData() {
       const offset = this.offset -= this.limit
       if (offset <= 0) {
