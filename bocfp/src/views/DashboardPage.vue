@@ -24,19 +24,40 @@
                         <ion-card>
                             <ion-card-header>
                                 <ion-card-title>Total Child</ion-card-title>
-                                <ion-card-subtitle>{{ childCount }} children</ion-card-subtitle>
+                                <ion-card-subtitle style="font-size: 20px;">{{ childCount }}
+                                    children</ion-card-subtitle>
                             </ion-card-header>
                         </ion-card>
                     </ion-col>
                     <ion-col>
                         <ion-card>
                             <ion-card-header>
-                                <ion-card-title>Remarks</ion-card-title>
-                                <!-- <ion-card-subtitle v-for="remarks in childRemarks" :key="remarks.recordId">{{ remarks.remark }}: {{ remarks.total }} ({{ (remarks.total/countTotalRemarks*100).toFixed(2) }}%)</ion-card-subtitle> -->
-                                <ion-card-subtitle>Underweight: {{ childRemarks.Underweight }}</ion-card-subtitle>
-                                <ion-card-subtitle>Normal: {{ childRemarks.Normal }}</ion-card-subtitle>
-                                <ion-card-subtitle>Overweight: {{ childRemarks.Overweight }}</ion-card-subtitle>
-                                <ion-card-subtitle>Obese: {{ childRemarks.Obese }}</ion-card-subtitle>
+                                <ion-card-title style="text-align: center;">Remarks</ion-card-title>
+                                <ion-grid>
+                                    <!-- content -->
+                                    <ion-row class="remark">
+                                        <ion-col>
+                                            <ion-card-subtitle
+                                                style="background-color: #FFFF00; color: black;">Underweight: {{
+                                                    childRemarks.Underweight
+                                                }}</ion-card-subtitle>
+                                        </ion-col>
+                                        <ion-col>
+                                            <ion-card-subtitle style="background-color: #41B883; color: white;">Normal:
+                                                {{ childRemarks.Normal }}</ion-card-subtitle>
+                                        </ion-col>
+                                        <ion-col>
+                                            <ion-card-subtitle
+                                                style="background-color: #FFA500; color: white;">Overweight: {{
+                                                    childRemarks.Overweight
+                                                }}</ion-card-subtitle>
+                                        </ion-col>
+                                        <ion-col>
+                                            <ion-card-subtitle style="background-color: #FF0000; color: white;">Obese:
+                                                {{ childRemarks.Obese }}</ion-card-subtitle>
+                                        </ion-col>
+                                    </ion-row>
+                                </ion-grid>
                             </ion-card-header>
                         </ion-card>
                     </ion-col>
@@ -116,104 +137,107 @@ export default defineComponent({
                 ]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false
+                plugins: {
+                    legend: {display: false}
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false
+                },
+                header_row: [
+                    {
+                        value: 'Name',
+                        fontWeight: 'bold'
+                    },
+                    {
+                        value: 'Date of Birth',
+                        fontWeight: 'bold'
+                    },
+                    {
+                        value: 'Cost',
+                        fontWeight: 'bold'
+                    },
+                    {
+                        value: 'Paid',
+                        fontWeight: 'bold'
+                    }
+                ],
+                data_row: [
+                    {
+                        type: String,
+                        value: 'John Smith'
+                    },
+                    {
+                        type: Date,
+                        value: new Date(),
+                        format: 'mm/dd/yyyy'
+                    },
+                    {
+                        type: Number,
+                        value: 1800
+                    },
+                    {
+                        type: Boolean,
+                        value: true
+                    }
+                ]
+            }
+        },
+            methods: {
+            setOpen(isOpen: boolean) {
+                this.isOpen = isOpen;
             },
-            header_row: [
-                {
-                    value: 'Name',
-                    fontWeight: 'bold'
-                },
-                {
-                    value: 'Date of Birth',
-                    fontWeight: 'bold'
-                },
-                {
-                    value: 'Cost',
-                    fontWeight: 'bold'
-                },
-                {
-                    value: 'Paid',
-                    fontWeight: 'bold'
-                }
-            ],
-            data_row: [
-                {
-                    type: String,
-                    value: 'John Smith'
-                },
-                {
-                    type: Date,
-                    value: new Date(),
-                    format: 'mm/dd/yyyy'
-                },
-                {
-                    type: Number,
-                    value: 1800
-                },
-                {
-                    type: Boolean,
-                    value: true
-                }
-            ]
-        }
-    },
-    methods: {
-        setOpen(isOpen: boolean) {
-            this.isOpen = isOpen;
-        },
-        fetchChildRemarks() {
-            fetch('http://localhost:5000/child/remarks/')
-                .then((response) => response.json())
-                .then((json) => {
-                    this.childRemarks = json
-                    this.data.datasets[0].data = [json.Underweight, json.Normal, json.Overweight, json.Obese]
-                    // console.log(this.data)
-                })
-        },
-        fetchChildCount() {
-            fetch('http://localhost:5000/child/count')
-                .then((response) => response.json())
-                .then((json) => {
-                    this.childCount = json
-                })
-        },
-        fetchChildData() {
-            fetch('http://localhost:5000/child/data')
-        },
-        handleRefresh(event: any) {
-            setTimeout(() => {
-                // Any calls to load data go here
-                this.fetchChildRemarks()
-                this.fetchChildCount()
+            fetchChildRemarks() {
+                fetch('http://localhost:5000/child/remarks/')
+                    .then((response) => response.json())
+                    .then((json) => {
+                        this.childRemarks = json
+                        this.data.datasets[0].data = [json.Underweight, json.Normal, json.Overweight, json.Obese]
+                        // console.log(this.data)
+                    })
+            },
+            fetchChildCount() {
+                fetch('http://localhost:5000/child/count')
+                    .then((response) => response.json())
+                    .then((json) => {
+                        this.childCount = json
+                    })
+            },
+            fetchChildData() {
+                fetch('http://localhost:5000/child/data')
+            },
+            handleRefresh(event: any) {
+                setTimeout(() => {
+                    // Any calls to load data go here
+                    this.fetchChildRemarks()
+                    this.fetchChildCount()
 
-                event.target.complete();
-            }, 1000);
-        },
+                    event.target.complete();
+                }, 1000);
+            },
         async generateReport() {
-            this.fetchChildData()
+                this.fetchChildData()
+            }
+        },
+        // get data
+        // mounted() {
+        //     this.fetchChildRemarks()
+        //     this.fetchChildCount()
+        // },
+        ionViewDidEnter() {
+            this.fetchChildRemarks()
+            this.fetchChildCount()
+        },
+        watch: {
+            $route() {
+                this.$nextTick(this.fetchChildCount);
+            }
         }
-    },
-    // get data
-    // mounted() {
-    //     this.fetchChildRemarks()
-    //     this.fetchChildCount()
-    // },
-    ionViewDidEnter() {
-        this.fetchChildRemarks()
-        this.fetchChildCount()
-    },
-    watch: {
-        $route() {
-            this.$nextTick(this.fetchChildCount);
-        }
-    }
-});
+    });
 </script>
 
 <style scoped>
 #app-info {
-    --background: rgba(0, 0, 0, 0.24);
+    --background: #36af7a;
     --color: white;
     text-align: center;
     box-shadow: none;
@@ -221,6 +245,7 @@ export default defineComponent({
 
 ion-col {
     display: flex;
+    text-align: center;
 }
 
 ion-col>ion-card {
@@ -230,5 +255,19 @@ ion-col>ion-card {
 
 ion-col>ion-card:nth-child(odd) {
     margin-right: 4px !important;
+}
+
+.remark {
+    font-size: 15px;
+}
+
+.remark ion-col{
+    /* padding: 5px; */
+}
+
+.remark ion-card-subtitle {
+    padding: 7px;
+    border-radius: 5px;
+    font-size: 18px;
 }
 </style>

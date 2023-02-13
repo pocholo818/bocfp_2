@@ -111,7 +111,7 @@ export default defineComponent({
       this.appPages = [
         ...appPages, // copy object content
         {
-          title: 'Accounts',
+          title: 'Barangay Staff',
           url: '/user',
           icon: person
         }

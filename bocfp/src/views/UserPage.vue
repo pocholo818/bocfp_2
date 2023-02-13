@@ -6,7 +6,7 @@
         <ion-buttons slot="start">
           <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title>Accounts</ion-title>
+        <ion-title>Barangay Staff</ion-title>
       </ion-toolbar>
     </ion-header>
 
