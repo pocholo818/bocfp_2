@@ -262,7 +262,9 @@ ion-col>ion-card:nth-child(odd) {
 }
 
 .remark ion-col{
-    /* padding: 5px; */
+/* padding: 5px; */
+    margin: 0;
+    display: block;
 }
 
 .remark ion-card-subtitle {
