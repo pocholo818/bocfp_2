@@ -24,7 +24,7 @@
                         <ion-card>
                             <ion-card-header>
                                 <ion-card-title>Total Child</ion-card-title>
-                                <ion-card-subtitle style="font-size: 20px;">{{ childCount }}
+                                <ion-card-subtitle style="font-size: 23px;">{{ childCount }}
                                     children</ion-card-subtitle>
                             </ion-card-header>
                         </ion-card>
