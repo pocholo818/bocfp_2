@@ -38,22 +38,22 @@
                                     <ion-row class="remark">
                                         <ion-col>
                                             <ion-card-subtitle
-                                                style="background-color: #FFFF00; color: black;">Underweight: {{
+                                                style="background-color: #FFFF00; color: black;">Underweight: <br>{{
                                                     childRemarks.Underweight
                                                 }}</ion-card-subtitle>
                                         </ion-col>
                                         <ion-col>
-                                            <ion-card-subtitle style="background-color: #41B883; color: white;">Normal:
+                                            <ion-card-subtitle style="background-color: #41B883; color: white;">Normal: <br>
                                                 {{ childRemarks.Normal }}</ion-card-subtitle>
                                         </ion-col>
                                         <ion-col>
                                             <ion-card-subtitle
-                                                style="background-color: #FFA500; color: white;">Overweight: {{
+                                                style="background-color: #FFA500; color: white;">Overweight: <br>{{
                                                     childRemarks.Overweight
                                                 }}</ion-card-subtitle>
                                         </ion-col>
                                         <ion-col>
-                                            <ion-card-subtitle style="background-color: #FF0000; color: white;">Obese:
+                                            <ion-card-subtitle style="background-color: #FF0000; color: white;">Obese: <br>
                                                 {{ childRemarks.Obese }}</ion-card-subtitle>
                                         </ion-col>
                                     </ion-row>
@@ -265,6 +265,7 @@ ion-col>ion-card:nth-child(odd) {
 /* padding: 5px; */
     margin: 0;
     display: block;
+    height: 100%;
 }
 
 .remark ion-card-subtitle {
