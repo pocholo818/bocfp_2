@@ -177,7 +177,7 @@ export default defineComponent({
                                 sex: "",
                                 image: ""
                             }
-                            this.ionRouter.push("/child");
+                            this.ionRouter.back();
                         })
                         .catch((error) => {
                             toast.message = error

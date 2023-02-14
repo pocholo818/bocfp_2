@@ -175,7 +175,7 @@ export default defineComponent({
                             username: "",
                             admin_power: "",
                         }
-                        this.ionRouter.push("/user");
+                        this.ionRouter.back();
                     })
                     .catch((error) => {
                         toast.message = error
