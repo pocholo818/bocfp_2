@@ -770,10 +770,15 @@ app.put('/link/del/:guardian_id', (req, res) => {
 app.put('/user/del/:user_id', (req, res) => {
   const { user_id } = req.params;
 
-  connection.query(`UPDATE user SET soft_delete='1'  WHERE user_id=${user_id}`, (err, rows, fields) => {
-    if (err) throw err
-  })
-  res.send("success")
+  if(user_id == '1'){
+    res.json({"message": "Staff cannot be deleted"})
+  }
+  else{
+    connection.query(`UPDATE user SET soft_delete='1' WHERE user_id=${user_id}`, (err, rows, fields) => {
+      if (err) throw err
+    })
+    res.send("success")
+  }
 });
 // soft delete announcement
 app.put('/announcement/del/:annou_id', (req, res) => {

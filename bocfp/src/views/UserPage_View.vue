@@ -50,7 +50,7 @@
 
                         <!-- options -->
                         <ion-card-content style="display: flex; justify-content: end;">
-                            <ion-button color="warning" :router-link="('/user/edit/' + userId)"><ion-icon
+                            <ion-button v-if="!userDetails.admin_power == '1'" color="warning" :router-link="('/user/edit/' + userId)"><ion-icon
                                     :icon="createOutline"></ion-icon>&nbsp; Edit</ion-button>
                             <ion-button color="warning" :router-link="('/user/edit/password/' + userId)"><ion-icon
                                     :icon="createOutline"></ion-icon>&nbsp; Password</ion-button>
