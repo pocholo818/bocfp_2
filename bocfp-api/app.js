@@ -359,10 +359,10 @@ app.get('/link/:id', (req, res) => {
 app.get('/users', (req, res) => {
   const { limit, offset, search, filter } = req.query
 
-  let query = `SELECT * FROM user WHERE soft_delete = 0 ORDER BY user_id ASC LIMIT ${limit} OFFSET ${offset}`
+  let query = `SELECT * FROM user WHERE soft_delete = 0 ORDER BY lname ASC LIMIT ${limit} OFFSET ${offset}`
 
   if(filter === 'deleted') {
-    query = `SELECT * FROM user WHERE soft_delete = 1 ORDER BY user_id ASC LIMIT ${limit} OFFSET ${offset}`
+    query = `SELECT * FROM user WHERE soft_delete = 1 ORDER BY lname ASC LIMIT ${limit} OFFSET ${offset}`
   }
 
   if (search) {
