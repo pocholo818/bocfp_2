@@ -116,6 +116,9 @@ export default defineComponent({
       addOutline
     }
   },
+  ionViewWillEnter() {
+    this.logged_userId = localStorage.getItem('user_id') || ''
+  },
   data() {
     return {
       isOpen: false,
@@ -124,7 +127,8 @@ export default defineComponent({
       userFilter: "all",
       limit: 20,
       offset: 0,
-      isNextEnabled: true
+      isNextEnabled: true,
+      logged_userId: "",
     };
   },
   methods: {
@@ -152,6 +156,12 @@ export default defineComponent({
         .then((response) => response.json())
         .then((json) => {
           this.userList = json
+
+          if(this.logged_userId != '1' && this.userFilter == 'all'){
+            const noAdmin = this.userList.slice(1, this.userList.length)
+            // console.log(noAdmin)
+            this.userList = noAdmin
+          }
 
           if (json.message) {
             this.isNextEnabled = false

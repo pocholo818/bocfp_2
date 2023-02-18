@@ -82,6 +82,7 @@ export default defineComponent({
   ionViewWillEnter() {
     this.user_fname = localStorage.getItem('fname') || ''
     this.admin_power = localStorage.getItem('admin_power') || ''
+    this.user_id = localStorage.getItem('user_id') || ''
 
     const appPages = [
       {
@@ -107,7 +108,7 @@ export default defineComponent({
     ]
 
     // admin
-    if(this.admin_power && this.admin_power === '1') {
+    if(this.user_id === '1') {
       this.appPages = [
         ...appPages, // copy object content
         {
@@ -139,7 +140,8 @@ export default defineComponent({
       isLoaded: false,
       appPages: [{}],
       user_fname: '',
-      admin_power: ''
+      admin_power: '',
+      user_id: ""
     }
   },
   methods:{

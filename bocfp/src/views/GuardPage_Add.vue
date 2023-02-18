@@ -54,7 +54,6 @@
 
     </ion-content>
   </ion-page>
-
 </template>
   
 <script lang="ts">
@@ -129,36 +128,29 @@ export default defineComponent({
       // check if inputs r empty
       if (this.guardianDetails.fname && this.guardianDetails.lname && this.guardianDetails.contact
         && this.guardianDetails.address && this.guardianDetails.household_id) {
-        // check if household id is less than 7
-        if (this.guardianDetails.household_id.length == 7) {
-          const data = this.guardianDetails;
+        const data = this.guardianDetails;
 
-          fetch('http://localhost:5000/guardian', {
-            method: 'POST', // or 'PUT'
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
+        fetch('http://localhost:5000/guardian', {
+          method: 'POST', // or 'PUT'
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        })
+          .then((data) => {
+            toast.message = 'Success!'
+            this.guardianDetails = {
+              fname: "",
+              lname: "",
+              contact: "",
+              household_id: "",
+              address: ""
+            }
+            this.router.push("/guardian");
           })
-            .then((data) => {
-              toast.message = 'Success!'
-              this.guardianDetails = {
-                fname: "",
-                lname: "",
-                contact: "",
-                household_id: "",
-                address: ""
-              }
-              this.router.push("/guardian");
-            })
-            .catch((error) => {
-              toast.message = error
-            });
-
-        }
-        else {
-          toast.message = "Household ID is incomplete"
-        }
+          .catch((error) => {
+            toast.message = error
+          });
 
       }
       else {

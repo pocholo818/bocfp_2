@@ -359,10 +359,10 @@ app.get('/link/:id', (req, res) => {
 app.get('/users', (req, res) => {
   const { limit, offset, search, filter } = req.query
 
-  let query = `SELECT * FROM user WHERE soft_delete = 0 ORDER BY lname ASC LIMIT ${limit} OFFSET ${offset}`
+  let query = `SELECT * FROM user WHERE soft_delete = 0 ORDER BY user_id ASC LIMIT ${limit} OFFSET ${offset}`
 
   if(filter === 'deleted') {
-    query = `SELECT * FROM user WHERE soft_delete = 1 ORDER BY lname ASC LIMIT ${limit} OFFSET ${offset}`
+    query = `SELECT * FROM user WHERE soft_delete = 1 ORDER BY user_id ASC LIMIT ${limit} OFFSET ${offset}`
   }
 
   if (search) {
@@ -493,13 +493,14 @@ app.post('/guardian', (req, res) => {
   const { contact, address, household_id } = req.body;
   
   // search pre-existing household id
-  connection.query(`SELECT
-    (SELECT COUNT(*) FROM guardian WHERE household_id = "${household_id}") AS idResult`), (err, rows, fields) => {
-    if (err) throw err
-    else if (rows[0].idResult) {
-      res.status(404).send("Household ID already been taken")
-    }
-    else {
+  // connection.query(`SELECT
+  //   (SELECT COUNT(*) FROM guardian WHERE household_id = "${household_id}") AS idResult`), (err, rows, fields) => {
+  //     console.log(rows)
+    // if (err) throw err
+  //   else if (rows[0].idResult) {
+  //     res.send("Household ID already been taken")
+  //   }
+    // else {
       fname = nameFormat(fname)
       lname = nameFormat(lname)
     
@@ -507,9 +508,7 @@ app.post('/guardian', (req, res) => {
             VALUES ('${fname}', '${lname}', '${contact}', '${address}', '${household_id}')`, (err, rows, fields) => {
         if (err) throw err
       })
-      res.status(200).send("success")
-    }
-  }
+      res.send("success")
 });
 // add link to guardian & child #
 app.post('/link/add/:guardian_id', (req, res) => {

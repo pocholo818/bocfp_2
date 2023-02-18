@@ -50,14 +50,19 @@
 
                         <!-- options -->
                         <ion-card-content style="display: flex; justify-content: end;">
-                            <ion-button v-if="!userDetails.admin_power == '1'" color="warning" :router-link="('/user/edit/' + userId)"><ion-icon
+                            <ion-button color="warning" :router-link="('/user/edit/' + userId)"><ion-icon
                                     :icon="createOutline"></ion-icon>&nbsp; Edit</ion-button>
                             <ion-button color="warning" :router-link="('/user/edit/password/' + userId)"><ion-icon
                                     :icon="createOutline"></ion-icon>&nbsp; Password</ion-button>
-                            <ion-button v-if="userDetails.soft_delete === 0" color="danger"
-                                @click="user_delete(userId)"><ion-icon :icon="trashOutline">
-                                </ion-icon>&nbsp;
-                                Del<span>ete</span></ion-button>
+                            <!-- delete stuff -->
+                            <template v-if="userDetails.soft_delete === 0">
+                                <template v-if="userDetails.user_id != '1'">
+                                    <ion-button color="danger"
+                                    @click="user_delete(userId)"><ion-icon :icon="trashOutline">
+                                    </ion-icon>&nbsp;
+                                    Del<span>ete</span></ion-button>
+                                </template>
+                            </template>
                             <ion-button v-else color="success" @click="user_undo()"><ion-icon :icon="arrowUndoOutline">
                                 </ion-icon>&nbsp;
                                 Retrieve</ion-button>
@@ -119,7 +124,13 @@ export default defineComponent({
         return {
             userId: "",
             userDetails: "",
+            local_userId: "",
+            local_admin_power: ""
         }
+    },
+    ionViewWillEnter() {
+        this.local_userId = localStorage.getItem('user_id') || ''
+        this.local_admin_power = localStorage.getItem('admin_power') || ''
     },
     setup() {
         const router = useRoute();
