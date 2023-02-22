@@ -1046,19 +1046,6 @@ app.delete('/link/:id', (req, res) => {
 //   res.send("success")
 // });
 
-
-app.post('/login', (req, res) => {
-  // authenticate user
-  const { username, password } = req.body
-  const user = { name: username }
-
-  const accessToken = generateAccessToken(user)
-  refreshTokens.push(refreshToken)
-  res.json({ accessToken: accessToken, refreshToken: refreshToken })
-})
-
-let refreshTokens = []
-
 // 
 const start = async () => {
   try {
