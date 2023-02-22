@@ -81,6 +81,7 @@ import {
   modalController,
   useIonRouter,
   IonSelect, IonSelectOption,
+  IonRefresher, IonRefresherContent,
 } from '@ionic/vue';
 import HeaderBar from '@/components/HeaderBar.vue';
 import AnnouncementCard from '@/components/announcement/AnnouncementCard.vue'
@@ -107,6 +108,7 @@ export default defineComponent({
     IonCardHeader,
     IonList,
     IonSelect, IonSelectOption,
+    IonRefresher, IonRefresherContent,
   },
   setup() {
     const ionRouter = useIonRouter()

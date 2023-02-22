@@ -1,7 +1,9 @@
 const express = require('express');
 const app = express();
 const cors = require("cors");
-var moment = require('moment'); // require
+var moment = require('moment');
+const jwt = require('jsonwebtoken')
+require("dotenv").config();
 
 const port = 5000;
 app.use(cors())
@@ -17,6 +19,26 @@ const connection = mysql.createConnection({
   password: '',
   database: 'bocfp'
 })
+
+function authenticateToken(adminPower) {
+  return (req, res, next) => {
+
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+    if(token == null) return res.sendStatus(401)
+  
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, userInfo) =>{
+      if(err) return res.sendStatus(403)
+
+      req.user = userInfo
+      next()
+    })
+  }
+}
+
+function generateAccessToken(userInfo){
+  return accessToken = jwt.sign(userInfo, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30s' })
+}
 
 // funct
 function bmi(height, weight, output) {
@@ -44,9 +66,70 @@ function nameFormat(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+// get user login
+app.post('/user/login', (req, res) => {
+  const { username, password } = req.body
+
+  connection.query(`SELECT * FROM user WHERE username='${username}' AND password='${password}' AND soft_delete = 0`, (err, rows, fields) => {
+    // console.log(rows.length)
+    if (!rows.length) {
+      res.json({ "message": "Incorrect Username or Password" })
+    }
+    else if (rows[0].username == username && rows[0].password == password) {
+
+      const userInfo = {
+        fname: rows[0].fname,
+        role: rows[0].admin_power,
+        id: rows[0].user_id
+      }
+
+      const accessToken = generateAccessToken(userInfo)
+      const refreshToken = jwt.sign(userInfo, process.env.REFRESH_TOKEN_SECRET)
+
+      connection.query(`UPDATE user SET refresh_token = '${refreshToken}' WHERE user_id = ${userInfo.id}`, (err, rows, fields) => {
+        if (err) throw err
+      })
+      
+      res.json({ 
+        "message": "Success!", 
+        accessToken: accessToken, 
+        refreshToken: refreshToken,
+        user_id: rows[0].user_id,
+        fname: rows[0].fname,
+        admin_power: rows[0].admin_power,
+      })
+    }
+  })
+});
+
+app.post('/user/refresh', async (req, res) => {
+  const { refreshToken } = req.body
+  if(refreshToken == null) {
+    return res.sendStatus(401)
+  } 
+
+  connection.query(`SELECT refresh_token FROM user WHERE refresh_token = '${refreshToken}'`, (err, rows, fields) => {
+    if (err) throw err
+    else if(!rows[0]) {
+      return res.sendStatus(403)
+    }
+    
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, userInfo) => {
+      if(err) return res.sendStatus(403)
+      const accessToken = generateAccessToken({ fname: userInfo.fname, role: userInfo.role, id: userInfo.id })
+      res.json({ accessToken: accessToken })
+    })
+  })
+})
+
+app.delete('/user/logout', (req, res) => {
+  refreshTokens = refreshTokens.filter(token => token !== req.body.token)
+  res.sendStatus(204)
+})
+
 // GET
 // get all child
-app.get('/childs', (req, res) => {
+app.get('/childs', authenticateToken(0), (req, res) => {
   const { limit, offset, filter, search } = req.query
 
   let query = `SELECT * FROM child WHERE soft_delete = 0 ORDER BY lname ASC LIMIT ${limit} OFFSET ${offset}`
@@ -523,20 +606,6 @@ app.post('/link/add/:guardian_id', (req, res) => {
   })
   res.send("success")
 });
-// get user
-app.post('/user/login', (req, res) => {
-  const { username, password } = req.body
-
-  connection.query(`SELECT * FROM user WHERE username='${username}' AND password='${password}' AND soft_delete = 0`, (err, rows, fields) => {
-    // console.log(rows.length)
-    if (!rows.length) {
-      res.json({ "message": "Incorrect Username or Password" })
-    }
-    else if (rows[0].username == username && rows[0].password == password) {
-      res.json({ "message": "Success!", "id": `${rows[0].user_id}`, "fname": `${rows[0].fname}`, "admin_power": `${rows[0].admin_power}` })
-    }
-  })
-});
 // get specific user
 app.get('/user/profile/:id', (req, res) => {
   connection.query(`SELECT user_id, fname, lname, username, soft_delete, contact, admin_power,
@@ -976,6 +1045,19 @@ app.delete('/link/:id', (req, res) => {
 //   })
 //   res.send("success")
 // });
+
+
+app.post('/login', (req, res) => {
+  // authenticate user
+  const { username, password } = req.body
+  const user = { name: username }
+
+  const accessToken = generateAccessToken(user)
+  refreshTokens.push(refreshToken)
+  res.json({ accessToken: accessToken, refreshToken: refreshToken })
+})
+
+let refreshTokens = []
 
 // 
 const start = async () => {

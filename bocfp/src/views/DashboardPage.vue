@@ -86,7 +86,9 @@ import {
     IonCardContent,
     IonSearchbar,
     toastController,
-    alertController
+    alertController,
+    IonRefresher, IonRefresherContent,
+    IonCol, IonRow, IonGrid,
 } from '@ionic/vue';
 // icons
 import {
@@ -111,6 +113,8 @@ export default defineComponent({
         IonCardSubtitle,
         IonCardHeader,
         IonCardContent,
+        IonRefresher, IonRefresherContent,
+        IonCol, IonRow, IonGrid,
     },
     setup() {
         return {

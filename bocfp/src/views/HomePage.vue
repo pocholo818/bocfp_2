@@ -149,6 +149,9 @@ export default defineComponent({
       localStorage.removeItem('user_id')
       localStorage.removeItem('fname')
       localStorage.removeItem('admin_power')
+      localStorage.removeItem('access_token')
+      localStorage.removeItem('refresh_token')
+      localStorage.setItem('is_logged_in', 'false')
     }
   }
 });

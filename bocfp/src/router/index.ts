@@ -111,11 +111,17 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from) => {
-  const user_fname = localStorage.getItem('fname') as string
+  // const user_fname = localStorage.getItem('fname') as string
   const admin_power = localStorage.getItem('admin_power') as string
+  const isLoggedIn = localStorage.getItem('is_logged_in') as string
 
-  if (!user_fname && to.path !== '/login') {
+  if ((!isLoggedIn || isLoggedIn === 'false') && to.path !== '/login') {
     // redirect the user to the login page
+    localStorage.removeItem('user_id')
+    localStorage.removeItem('fname')
+    localStorage.removeItem('admin_power')
+    localStorage.removeItem('refresh_token')
+    localStorage.removeItem('access_token')
     return { path: '/login' }
   }
 

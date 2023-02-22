@@ -48,6 +48,7 @@ import {
 import { personOutline } from 'ionicons/icons';
 import router from '@/router';
 import SHA256 from 'crypto-js/sha256';
+import { instance as api } from "@/network/Network";
 
 export default defineComponent({
     name: 'ChildPage',
@@ -89,23 +90,27 @@ export default defineComponent({
             let data = Object.assign({}, this.loginDetails) // clone this.loginDetails, not reference
             data.password = SHA256(this.loginDetails.password).toString()
 
-            fetch('http://localhost:5000/user/login/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-                .then((response) => response.json())
-                .then(data => {
-                    // console.log(data)
+
+            // fetch('http://localhost:5000/user/login/', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify(data),
+            // })
+            api.post('/user/login', data)
+                .then(response => response.data)
+                .then(data => {                   
                     if (data.message == "Success!") {
                         // store data
-                        localStorage.setItem('user_id', data.id)
+                        localStorage.setItem('user_id', data.user_id)
                         localStorage.setItem('fname', data.fname)
                         localStorage.setItem('admin_power', data.admin_power)
+                        localStorage.setItem('access_token', data.accessToken)
+                        localStorage.setItem('refresh_token', data.refreshToken)
+                        localStorage.setItem('is_logged_in', 'true')
 
-                        toast.message = data.message
+                        toast.message = data['message']
                         this.loginDetails = {
                             username: "",
                             password: ""
@@ -115,6 +120,9 @@ export default defineComponent({
                     else {
                         toast.message = data.message
                     }
+                })
+                .catch(error => {
+                    console.log(error)
                 })
             await toast.present();
         },
@@ -126,7 +134,6 @@ export default defineComponent({
         // if(!sessionStorage.getItem('fname')){
         //     router.push('/dashboard')
         // }
-        
     }
 });
 </script>

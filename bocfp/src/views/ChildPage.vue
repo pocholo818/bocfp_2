@@ -117,7 +117,7 @@ import {
   IonTitle,
   useIonRouter,
   IonSelect, IonSelectOption,
-  // IonRefresher, IonRefresherContent
+  IonRefresher, IonRefresherContent
 } from '@ionic/vue';
 // icons
 import {
@@ -127,6 +127,7 @@ import {
   arrowUndoOutline
 } from 'ionicons/icons';
 import PageButtons from '@/components/PageButtons.vue';
+import { instance as api } from "@/network/Network";
 
 export default defineComponent({
   name: 'ChildPage',
@@ -147,7 +148,7 @@ export default defineComponent({
     IonButtons,
     IonTitle,
     IonSelect, IonSelectOption,
-    // IonRefresher, IonRefresherContent
+    IonRefresher, IonRefresherContent
   },
   setup() {
     const ionRouter = useIonRouter()
@@ -182,13 +183,13 @@ export default defineComponent({
       if (search.length) {
         clearTimeout(this.searchTimeout)
         this.searchTimeout = setTimeout(() => {
-          fetch(`http://localhost:5000/childs/?limit=${this.limit}&offset=${this.offset}&filter=${this.childFilter}&search=${search}`)
-            .then((response) => response.json())
-            .then((json) => {
+          api(`/childs?limit=${this.limit}&offset=${this.offset}&filter=${this.childFilter}&search=${search}`)
+            .then(response => response.data)
+            .then(data => {
               this.childList = { "image": "" },
-                this.childList = json
+                this.childList = data
 
-              if (json.message) {
+              if (data.message) {
                 this.isNextEnabled = false
                 return
               }
@@ -197,11 +198,14 @@ export default defineComponent({
               }
 
               if (this.childList.image) {
-                this.childList.image = `data:image/jpeg;base64,${json.image}`
+                this.childList.image = `data:image/jpeg;base64,${data.image}`
               }
               else {
                 this.childList.image = require("@/assets/images/noPic.png")
               }
+            }).
+            catch((error) => {
+              console.log(error)
             })
         }, 500)
       }
@@ -214,13 +218,13 @@ export default defineComponent({
       this.isOpen = isOpen;
     },
     fetchData() {
-      fetch(`http://localhost:5000/childs?limit=${this.limit}&offset=${this.offset}&filter=${this.childFilter}&search=${this.search}`)
-        .then((response) => response.json())
-        .then((json) => {
+      api(`/childs?limit=${this.limit}&offset=${this.offset}&filter=${this.childFilter}&search=${this.search}`)
+        .then(response => response.data)
+        .then(data => {
           this.childList = { "image": "" },
-            this.childList = json
+            this.childList = data
 
-          if (json.message) {
+          if (data.message) {
             this.isNextEnabled = false
             return
           }
@@ -229,11 +233,14 @@ export default defineComponent({
           }
 
           if (this.childList.image) {
-            this.childList.image = `data:image/jpeg;base64,${json.image}`
+            this.childList.image = `data:image/jpeg;base64,${data.image}`
           }
           else {
             this.childList.image = require("@/assets/images/noPic.png")
           }
+        })
+        .catch((error) => {
+          console.log(error)
         })
     },
     prevData() {
