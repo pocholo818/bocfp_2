@@ -20,15 +20,19 @@ const connection = mysql.createConnection({
   database: 'bocfp'
 })
 
-function authenticateToken(adminPower) {
+function authenticateToken(admin_power) {
   return (req, res, next) => {
-
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
     if(token == null) return res.sendStatus(401)
   
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, userInfo) =>{
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, userInfo) => {
       if(err) return res.sendStatus(403)
+
+      // wip
+      if(admin_power === 1 && userInfo.admin_power !== 1) {
+        return res.sendStatus(401)
+      }
 
       req.user = userInfo
       next()
@@ -37,7 +41,7 @@ function authenticateToken(adminPower) {
 }
 
 function generateAccessToken(userInfo){
-  return accessToken = jwt.sign(userInfo, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30s' })
+  return accessToken = jwt.sign(userInfo, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30m' })
 }
 
 // funct
@@ -79,7 +83,7 @@ app.post('/user/login', (req, res) => {
 
       const userInfo = {
         fname: rows[0].fname,
-        role: rows[0].admin_power,
+        admin_power: rows[0].admin_power,
         id: rows[0].user_id
       }
 
@@ -116,7 +120,7 @@ app.post('/user/refresh', async (req, res) => {
     
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, userInfo) => {
       if(err) return res.sendStatus(403)
-      const accessToken = generateAccessToken({ fname: userInfo.fname, role: userInfo.role, id: userInfo.id })
+      const accessToken = generateAccessToken({ fname: userInfo.fname, role: userInfo.role, id: userInfo.id, admin_power: userInfo.admin_power })
       res.json({ accessToken: accessToken })
     })
   })

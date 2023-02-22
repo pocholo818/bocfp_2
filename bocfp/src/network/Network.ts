@@ -55,6 +55,6 @@ setInterval(() => {
     localStorage.removeItem('access_token')
     localStorage.setItem('is_logged_in', 'false')
   }
-}, 3000);
+}, 1800000);
 
 export { instance };
