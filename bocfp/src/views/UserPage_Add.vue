@@ -57,8 +57,7 @@
 
                         <ion-item>
                             <ion-label position="floating">Confirm Password</ion-label>
-                            <ion-input type="password" placeholder="Password" v-model="confirmPass"
-                                required></ion-input>
+                            <ion-input type="password" placeholder="Password" v-model="confirmPass" required></ion-input>
                         </ion-item><br>
 
 
@@ -71,7 +70,6 @@
 
         </ion-content>
     </ion-page>
-
 </template>
   
 <script lang="ts">
@@ -102,6 +100,7 @@ import {
 } from '@ionic/vue';
 import { useRoute } from 'vue-router';
 import SHA256 from 'crypto-js/sha256';
+import { instance as api } from "@/network/Network";
 
 export default defineComponent({
     name: 'ChildPage',
@@ -161,53 +160,28 @@ export default defineComponent({
                 && this.userDetails.contact && this.userDetails.admin_power !== "" && this.confirmPass) {
                 // confirmation if user pass match
                 if (this.confirmPass == this.userDetails.password) {
-                    // checks fname, lname and username
-                    fetch(`http://localhost:5000/user/duplicate/name/username?fname=${this.userDetails.fname}
-                                &lname=${this.userDetails.lname}&username=${this.userDetails.username}`)
-                        .then((response) => response.json())
-                        .then((json) => {
-                            this.checker = json
 
-                            if (this.checker.nameResult == "1" && this.checker.usernameResult == "1") {
-                                toast.message = "User's name and Username already been taken"
-                            }
-                            else if (this.checker.nameResult == "1") {
-                                toast.message = "User's name already existed"
-                            }
-                            else if (this.checker.usernameResult == "1") {
-                                toast.message = "Username already taken"
-                            }
-                            else {
-                                const data = this.userDetails;
-                                data.password = SHA256(this.userDetails.password).toString()
+                    let data = Object.assign({}, this.userDetails)
+                    data.password = SHA256(this.userDetails.password).toString()
 
-                                fetch('http://localhost:5000/user', {
-                                    method: 'POST', // or 'PUT'
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                    },
-                                    body: JSON.stringify(data),
-                                })
-                                    .then((data) => {
-                                        toast.message = 'Success!'
-                                        this.userDetails = {
-                                            "username": "",
-                                            fname: "",
-                                            lname: "",
-                                            contact: "",
-                                            admin_power: "",
-                                            password: ""
-                                        }
-                                        this.confirmPass = ""
-                                        this.ionRouter.push("/user");
-                                    })
-                                    .catch((error) => {
-                                        toast.message = error
-                                    });
-
+                    api.post('http://localhost:5000/user', data)
+                        .then(response => response.data)
+                        .then((data) => {
+                            toast.message = 'Success!'
+                            this.userDetails = {
+                                "username": "",
+                                fname: "",
+                                lname: "",
+                                contact: "",
+                                admin_power: "",
+                                password: ""
                             }
+                            this.confirmPass = ""
+                            this.ionRouter.push("/user");
                         })
-
+                        .catch((error) => {
+                            toast.message = error.response.data
+                        });
                 }
                 else {
                     toast.message = "Password and Confirm Password does not match"

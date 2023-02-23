@@ -92,7 +92,7 @@ import {
 
 } from '@ionic/vue';
 import { useRoute } from 'vue-router';
-// import SHA256 from 'crypto-js/sha256';
+import { instance as api } from "@/network/Network";
 
 export default defineComponent({
     name: 'ChildPage',
@@ -142,10 +142,10 @@ export default defineComponent({
     methods: {
         fetchUser() {
             this.userId = this.router.params.id + "";
-            fetch('http://localhost:5000/user/profile/' + this.userId)
-                .then((response) => response.json())
-                .then((json) => {
-                    this.userDetails = json
+            api('/user/profile/' + this.userId)
+                .then((response) => response.data)
+                .then((data) => {
+                    this.userDetails = data
                 })
         },
         async user_edit() {
@@ -159,13 +159,8 @@ export default defineComponent({
                 && this.userDetails.contact) {
                 const data = this.userDetails;
 
-                fetch('http://localhost:5000/user/edit/:id', {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                })
+                api.put('/user/edit/' + this.userId, data)
+                    .then(response => response.data)
                     .then((data) => {
                         toast.message = 'Success!'
                         this.userDetails = {
@@ -178,7 +173,7 @@ export default defineComponent({
                         this.ionRouter.back();
                     })
                     .catch((error) => {
-                        toast.message = error
+                        toast.message = error.response.data
                     });
             }
             else {

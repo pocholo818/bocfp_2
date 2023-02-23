@@ -105,6 +105,7 @@ import {
 
 } from '@ionic/vue';
 import { useRoute } from 'vue-router';
+import { instance as api } from "@/network/Network";
 
 export default defineComponent({
     name: 'ChildPage',
@@ -153,10 +154,10 @@ export default defineComponent({
     },
     methods: {
         fetchUser() {
-            fetch('http://localhost:5000/user/profile/' + this.userId)
-                .then((response) => response.json())
-                .then((json) => {
-                    this.userDetails = json
+            api('/user/profile/' + this.userId)
+                .then((response) => response.data)
+                .then((data) => {
+                    this.userDetails = data
                 })
         },
         async user_delete(userId: string) {
@@ -177,9 +178,7 @@ export default defineComponent({
                             })
                             const user_id = this.userId
 
-                            fetch('http://localhost:5000/user/del/' + user_id, {
-                                method: 'put'
-                            })
+                            api.put('/user/del/' + user_id)
                                 .then((data) => {
                                     toast.message = 'Success!'
                                     this.ionRouter.push('/user')
@@ -215,9 +214,7 @@ export default defineComponent({
 
                             const user_id = this.userId
 
-                            fetch('http://localhost:5000/user/ret/' + user_id, {
-                                method: 'PUT'
-                            })
+                            api.put('/user/ret/' + user_id)
                                 .then((data) => {
                                     toast.message = 'Success!'
                                 })

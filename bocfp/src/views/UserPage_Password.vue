@@ -74,6 +74,7 @@ import {
 } from '@ionic/vue';
 import { useRoute } from 'vue-router';
 import SHA256 from 'crypto-js/sha256';
+import { instance as api } from "@/network/Network";
 
 export default defineComponent({
     name: 'ChildPage',
@@ -124,13 +125,8 @@ export default defineComponent({
                     password: SHA256(this.userNewPass).toString()
                 }
 
-                fetch(`http://localhost:5000/user/edit/password/${this.userId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                })
+                api.put(`/user/edit/password/${this.userId}`, data)
+                    .then(response => response.data)
                     .then((data) => {
                         toast.message = 'Success!'
                         this.userNewPass = ""

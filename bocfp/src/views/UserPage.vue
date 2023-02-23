@@ -42,7 +42,7 @@
 
                   <ion-card-header>
                     <ion-card-title>{{ user.fname }} {{ user.lname }}</ion-card-title>
-                    <!-- <ion-card-subtitle>ID: {{ user.user_id }}</ion-card-subtitle> -->
+                    <ion-card-subtitle>Contact Number: {{ user.contact }}</ion-card-subtitle>
                   </ion-card-header>
 
                 </ion-item>
@@ -91,6 +91,7 @@ import {
   addOutline
 } from 'ionicons/icons';
 import PageButtons from '@/components/PageButtons.vue';
+import { instance as api } from "@/network/Network";
 
 export default defineComponent({
   name: 'ChildPage',
@@ -137,10 +138,10 @@ export default defineComponent({
 
       if (search.length) {
         setTimeout(() => {
-          fetch(`http://localhost:5000/users?limit=${this.limit}&offset=${this.offset}&search=${search}&filter=${this.userFilter}`)
-            .then((response) => response.json())
-            .then((json) => {
-              this.userList = json
+          api((`/users?limit=${this.limit}&offset=${this.offset}&search=${search}&filter=${this.userFilter}`))
+            .then((response) => response.data)
+            .then((data) => {
+              this.userList = data
             })
         }, 500)
       }
@@ -152,18 +153,18 @@ export default defineComponent({
       this.isOpen = isOpen;
     },
     fetchData() {
-      fetch(`http://localhost:5000/users?limit=${this.limit}&offset=${this.offset}&search=${this.search}&filter=${this.userFilter}`)
-        .then((response) => response.json())
-        .then((json) => {
-          this.userList = json
+      api(`/users?limit=${this.limit}&offset=${this.offset}&search=${this.search}&filter=${this.userFilter}`)
+        .then((response) => response.data)
+        .then((data) => {
+          this.userList = data
 
-          if(this.logged_userId != '1' && this.userFilter == 'all'){
-            const noAdmin = this.userList.slice(1, this.userList.length)
-            // console.log(noAdmin)
-            this.userList = noAdmin
-          }
+          // if(this.logged_userId != '1' && this.userFilter == 'all'){
+          //   const noAdmin = this.userList.slice(1, this.userList.length)
+          //   // console.log(noAdmin)
+          //   this.userList = noAdmin
+          // }
 
-          if (json.message) {
+          if (data.message) {
             this.isNextEnabled = false
             return
           }
@@ -208,15 +209,6 @@ export default defineComponent({
 <style scoped>
 ion-button {
   --border-width: 100%;
-}
-
-.icon {
-  width: 60px;
-  height: 60px;
-}
-
-img[src=""] {
-  content: url('~@/assets/images/noPic.png');
 }
 
 @media only screen and (max-width: 768px) {

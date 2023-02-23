@@ -476,45 +476,6 @@ app.get('/users', (req, res) => {
     }
   })
 });
-// search user fname and lname
-app.get('/user/duplicate/', (req, res) => {
-  const { fname, lname } = req.query
-
-  connection.query(`SELECT * FROM user WHERE fname = "${fname}"
-    AND lname = "${lname}"`, (err, rows, fields) => {
-    if (rows.length) {
-      res.json(rows)
-    }
-    else {
-      res.json({ "message": "1" })
-    }
-  })
-});
-// search user username
-app.get('/user/username/duplicate/', (req, res) => {
-  const { username } = req.query
-
-  connection.query(`SELECT * FROM user WHERE username = "${username}"`, (err, rows, fields) => {
-    if (rows.length) {
-      res.json(rows)
-    }
-    else {
-      res.json({ "message": "1" })
-    }
-  })
-});
-// search user fname, lname
-app.get('/user/duplicate/name/username/', (req, res) => {
-  const { fname, lname, username } = req.query
-
-  connection.query(`SELECT
-  (SELECT COUNT(*) FROM user WHERE fname = "${fname}" AND lname = "${lname}") AS nameResult,
-  (SELECT COUNT(*) FROM user WHERE username = "${username}") AS usernameResult`, (err, rows, fields) => {
-    if (rows.length) {
-      res.json(rows[0])
-    }
-  })
-});
 // get all announcement
 app.get('/announcements', (req, res) => {
   const { limit, offset, search, filter } = req.query
@@ -635,7 +596,7 @@ app.get('/user/profile/:id', (req, res) => {
   })
 
 });
-// add new user
+// add user
 app.post('/user', (req, res) => {
   let { fname, lname } = req.body
   const { username, contact, admin_power, password } = req.body;
@@ -643,11 +604,19 @@ app.post('/user', (req, res) => {
   fname = nameFormat(fname)
   lname = nameFormat(lname)
 
-  connection.query(`INSERT INTO user (fname, lname, username, contact, admin_power, password) 
+  connection.query(`SELECT
+  (SELECT COUNT(*) FROM user WHERE f = "${username}") AS usernameResult`, (err, rows, fields) => {
+    if (rows[0].usernameResult) {
+      res.status(409).json("User's Username already been taken")
+    }
+    else {
+      connection.query(`INSERT INTO user (fname, lname, username, contact, admin_power, password) 
         VALUES ('${fname}', '${lname}', '${username}', '${contact}', '${admin_power}', '${password}')`, (err, rows, fields) => {
-    if (err) throw err
+        if (err) throw err
+      })
+      res.send("success")
+    }
   })
-  res.send("success")
 });
 // add new announcement
 app.post('/announcement/new', (req, res) => {
@@ -720,12 +689,19 @@ app.put('/user/edit/:id', (req, res) => {
   fname = nameFormat(fname)
   lname = nameFormat(lname)
 
-  connection.query(`UPDATE user SET fname = '${fname}', lname = '${lname}',
-      contact = '${contact}', admin_power = '${admin_power}', username = '${username}'
-      WHERE user_id=${user_id}`, (err, rows, fields) => {
-    if (err) throw err
+  connection.query(`SELECT user_id, username FROM user WHERE username = "${username}"`, (err, rows, fields) => {
+    if (rows[0] && rows[0].user_id != user_id && rows[0].username === username) {
+      res.status(409).json("User's Username already been taken")
+    }
+    else {
+      connection.query(`UPDATE user SET fname = '${fname}', lname = '${lname}',
+          contact = '${contact}', admin_power = '${admin_power}', username = '${username}'
+          WHERE user_id=${user_id}`, (err, rows, fields) => {
+        if (err) throw err
+      })
+      res.send("success")
+    }
   })
-  res.send("success")
 });
 // edit user password
 app.put('/user/edit/password/:id', (req, res) => {
@@ -852,7 +828,7 @@ app.put('/user/del/:user_id', (req, res) => {
     res.json({ "message": "Staff cannot be deleted" })
   }
   else {
-    connection.query(`UPDATE user SET soft_delete='1' WHERE user_id=${user_id}`, (err, rows, fields) => {
+    connection.query(`UPDATE user SET soft_delete = '1', refresh_token = '' WHERE user_id=${user_id}`, (err, rows, fields) => {
       if (err) throw err
     })
     res.send("success")
