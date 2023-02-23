@@ -4,7 +4,7 @@
       <ion-card-title>{{ title }}</ion-card-title>
       <ion-card-subtitle>{{ date.split("T")[0] }}</ion-card-subtitle>
 
-      <div id="actions" v-if='user_id === 1'>
+      <div id="actions" v-if="admin_power === '1'">
         <ion-button color="warning" @click="openEditAnnouncementModal()">
           <ion-icon :icon="createOutline"></ion-icon>
         </ion-button>
@@ -83,7 +83,14 @@ export default defineComponent({
     soft_delete: {
       type: Number,
       required: true
+    },
+    admin_power: {
+      type: String,
+      required: true
     }
+  },
+  mounted(){
+    console.log(this.admin_power)
   },
   methods: {
     async deleteAnnouncement() {

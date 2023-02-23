@@ -38,7 +38,7 @@
         <template v-else>
           <TransitionGroup name="fade">
             <AnnouncementCard v-for="annous in annou" :title="annous.title" :content="annous.content"
-              :date="format_date(annous.date)" :user_id="annous.user_id" :annou_id="annous.annou_id" :key="annous.annou_id"
+              :date="format_date(annous.date)" :user_id="annous.user_id" :admin_power="admin_power" :annou_id="annous.annou_id" :key="annous.annou_id"
               :soft_delete="annous.soft_delete"
               @update-announcement-list="fetchData()" />
           </TransitionGroup>
@@ -123,7 +123,7 @@ export default defineComponent({
     }
   },
   data() {
-    const user_id = localStorage.getItem('user_id')
+    const user_id = Number(localStorage.getItem('user_id'))
 
     return {
       search: "",
@@ -144,9 +144,10 @@ export default defineComponent({
   },
   mounted() {
     this.fetchData()
-  },
-  ionViewWillEnter() {
     this.user_id = Number(localStorage.getItem('user_id') || '')
+    this.admin_power = localStorage.getItem('admin_power') || ''
+  },
+  ionViewWillEnter(){
     this.admin_power = localStorage.getItem('admin_power') || ''
   },
   methods: {
