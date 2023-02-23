@@ -54,7 +54,6 @@
       </ion-content>
     </ion-content>
   </ion-page>
-
 </template>
   
 <script lang="ts">
@@ -83,6 +82,8 @@ import {
   IonCardHeader,
   IonCardTitle
 } from '@ionic/vue';
+
+import { instance as api } from "@/network/Network";
 
 export default defineComponent({
   name: 'ChildPage2',
@@ -132,10 +133,10 @@ export default defineComponent({
   },
   methods: {
     fetchGuardProfile() {
-      fetch('http://localhost:5000/guardian/profile/' + this.guardId)
-        .then((response) => response.json())
-        .then((json) => {
-          this.guardProfile = json
+      api('/guardian/profile/' + this.guardId)
+        .then((response) => response.data)
+        .then((data) => {
+          this.guardProfile = data
         })
     },
     async guardian_edit() {
@@ -150,38 +151,24 @@ export default defineComponent({
       if (this.guardProfile.fname && this.guardProfile.lname && this.guardProfile.contact
         && this.guardProfile.address && this.guardProfile.household_id) {
         // check if household id is less than 7
-        if (this.guardProfile.household_id.length == 7) {
-          fetch(`http://localhost:5000/guardUpdate/${this.guardId}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
+        api.put(`/guardUpdate/${this.guardId}`, data)
+          .then((response) => response.data)
+          .then((data) => {
+            
+            toast.message = 'Success!'
+            this.guardProfile = {
+              fname: "",
+              lname: "",
+              contact: "",
+              household_id: "",
+              address: ""
+            }
+            this.ionRouter.back()
           })
-            .then((response) => response.json())
-            .then((json) => { 
-              if(json.message !== 'success') {
-                toast.message = json.message
-                return
-              }
+          .catch((error) => {
+            toast.message = error.response.data.message
+          });
 
-              toast.message = 'Success!'
-              this.guardProfile = {
-                fname: "",
-                lname: "",
-                contact: "",
-                household_id: "",
-                address: ""
-              }
-              this.ionRouter.back()
-            })
-            .catch((error) => {
-              toast.message = error
-            });
-        }
-        else{
-          toast.message = "Household ID is incomplete"
-        }
       }
       else {
         toast.message = "Guardian's details are incomplete"

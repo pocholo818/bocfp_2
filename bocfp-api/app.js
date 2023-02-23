@@ -24,13 +24,13 @@ function authenticateToken(admin_power) {
   return (req, res, next) => {
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
-    if(token == null) return res.sendStatus(401)
-  
+    if (token == null) return res.sendStatus(401)
+
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, userInfo) => {
-      if(err) return res.sendStatus(403)
+      if (err) return res.sendStatus(403)
 
       // wip
-      if(admin_power === 1 && userInfo.admin_power !== 1) {
+      if (admin_power === 1 && userInfo.admin_power !== 1) {
         return res.sendStatus(401)
       }
 
@@ -40,7 +40,7 @@ function authenticateToken(admin_power) {
   }
 }
 
-function generateAccessToken(userInfo){
+function generateAccessToken(userInfo) {
   return accessToken = jwt.sign(userInfo, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30m' })
 }
 
@@ -93,10 +93,10 @@ app.post('/user/login', (req, res) => {
       connection.query(`UPDATE user SET refresh_token = '${refreshToken}' WHERE user_id = ${userInfo.id}`, (err, rows, fields) => {
         if (err) throw err
       })
-      
-      res.json({ 
-        "message": "Success!", 
-        accessToken: accessToken, 
+
+      res.json({
+        "message": "Success!",
+        accessToken: accessToken,
         refreshToken: refreshToken,
         user_id: rows[0].user_id,
         fname: rows[0].fname,
@@ -108,18 +108,18 @@ app.post('/user/login', (req, res) => {
 
 app.post('/user/refresh', async (req, res) => {
   const { refreshToken } = req.body
-  if(refreshToken == null) {
+  if (refreshToken == null) {
     return res.sendStatus(401)
-  } 
+  }
 
   connection.query(`SELECT refresh_token FROM user WHERE refresh_token = '${refreshToken}'`, (err, rows, fields) => {
     if (err) throw err
-    else if(!rows[0]) {
+    else if (!rows[0]) {
       return res.sendStatus(403)
     }
-    
+
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, userInfo) => {
-      if(err) return res.sendStatus(403)
+      if (err) return res.sendStatus(403)
       const accessToken = generateAccessToken({ fname: userInfo.fname, role: userInfo.role, id: userInfo.id, admin_power: userInfo.admin_power })
       res.json({ accessToken: accessToken })
     })
@@ -302,13 +302,13 @@ app.get('/child/profile/:id', (req, res) => {
 app.get('/records/:id', (req, res) => {
   const { limit, offset, filter } = req.query
 
-  let query 
+  let query
 
-  if(limit == 5){
+  if (limit == 5) {
     query = `SELECT * FROM record WHERE id=${req.params.id} AND record.soft_delete = 0 ORDER BY record_id ASC LIMIT ${limit} OFFSET ${offset}`
     // query = `SELECT * FROM record WHERE id=${req.params.id} ORDER BY record_id ASC LIMIT ${limit} OFFSET ${offset}`
   }
-  else if (limit == 10){
+  else if (limit == 10) {
     query = `SELECT * FROM record 
       JOIN user ON user.user_id = record.user_id
       WHERE id=${req.params.id} AND record.soft_delete = 0 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
@@ -317,7 +317,7 @@ app.get('/records/:id', (req, res) => {
     // JOIN user ON user.user_id = record.user_id
     // WHERE id=${req.params.id} ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
 
-    if(filter === 'deleted'){
+    if (filter === 'deleted') {
       query = `SELECT * FROM record WHERE id=${req.params.id} AND soft_delete = 1 ORDER BY record_id DESC LIMIT ${limit} OFFSET ${offset}`
     }
   }
@@ -347,7 +347,7 @@ app.get('/guardians', (req, res) => {
 
   let query = `SELECT * FROM guardian WHERE soft_delete = 0 ORDER BY lname ASC LIMIT ${limit} OFFSET ${offset}`
 
-  if(filter === 'deleted') {
+  if (filter === 'deleted') {
     query = `SELECT * FROM guardian WHERE soft_delete = 1 ORDER BY lname ASC LIMIT ${limit} OFFSET ${offset}`
   }
 
@@ -358,7 +358,7 @@ app.get('/guardians', (req, res) => {
       OR soft_delete = 0 AND lname LIKE "%${search}%" 
       OR soft_delete = 0 AND household_id LIKE "%${search}%" LIMIT ${limit} OFFSET ${offset}`
 
-    if(filter === 'deleted'){
+    if (filter === 'deleted') {
       query = `SELECT * FROM guardian WHERE 
         soft_delete = 1 AND guardian_id LIKE "${search}"
         OR soft_delete = 1 AND fname LIKE "%${search}%"
@@ -406,37 +406,37 @@ app.get('/link/:id', (req, res) => {
   let query
 
   // get linked child to guardian
-  if(type === 'child'){
+  if (type === 'child') {
     query = `SELECT guardian.fname, guardian.lname, guardian.address, 
       guardian.contact, link.relationship, guardian.guardian_id
       FROM link JOIN guardian ON link.guardian_id = guardian.guardian_id
       WHERE link.id = ${id} AND guardian.soft_delete = 0`
   }
   // get linked guardian to child
-  else if(type === 'guardian'){
+  else if (type === 'guardian') {
     query = `SELECT *
       FROM link JOIN child ON link.id = child.id
       WHERE link.guardian_id = ${id} AND child.soft_delete = 0`
   }
   // get link details
-  else if(type === 'link'){
+  else if (type === 'link') {
     query = `SELECT * FROM link WHERE link_id = ${id}`
   }
 
   connection.query(query, (err, rows, fields) => {
     if (rows.length) {
-      if(type === 'guardian'){
+      if (type === 'guardian') {
         res.json(rows)
       }
-      else{
+      else {
         res.json(rows[0])
       }
     }
     else {
-      if(type === 'child'){
+      if (type === 'child') {
         res.json({ "message": "No Linked Guardian Yet" })
       }
-      else if(type === 'guardian'){
+      else if (type === 'guardian') {
         res.json({ "message": "No Linked Child Yet" })
       }
     }
@@ -448,7 +448,7 @@ app.get('/users', (req, res) => {
 
   let query = `SELECT * FROM user WHERE soft_delete = 0 ORDER BY lname ASC LIMIT ${limit} OFFSET ${offset}`
 
-  if(filter === 'deleted') {
+  if (filter === 'deleted') {
     query = `SELECT * FROM user WHERE soft_delete = 1 ORDER BY lname ASC LIMIT ${limit} OFFSET ${offset}`
   }
 
@@ -459,13 +459,13 @@ app.get('/users', (req, res) => {
       OR soft_delete = 0 AND fname LIKE "%${search}%"
       OR soft_delete = 0 AND lname LIKE"%${search}%" GROUP BY user_id DESC LIMIT ${limit} OFFSET ${offset}`
 
-      if(filter === 'deleted'){
-        query = `SELECT * FROM user WHERE 
+    if (filter === 'deleted') {
+      query = `SELECT * FROM user WHERE 
           soft_delete = 1 AND user_id LIKE "${search}"
           OR soft_delete = 1 AND username LIKE "${search}"
           OR soft_delete = 1 AND fname LIKE "%${search}%"
           OR soft_delete = 1 AND lname LIKE"%${search}%" GROUP BY user_id DESC LIMIT ${limit} OFFSET ${offset}`
-      }
+    }
   }
   connection.query(query, (err, rows, fields) => {
     if (rows.length) {
@@ -521,7 +521,7 @@ app.get('/announcements', (req, res) => {
 
   let query = `SELECT * FROM announcement WHERE soft_delete = 0 ORDER BY annou_id DESC LIMIT ${limit} OFFSET ${offset}`
 
-  if(filter === 'deleted'){
+  if (filter === 'deleted') {
     query = `SELECT * FROM announcement WHERE soft_delete = 1 ORDER BY annou_id DESC LIMIT ${limit} OFFSET ${offset}`
   }
 
@@ -529,10 +529,10 @@ app.get('/announcements', (req, res) => {
     query = `SELECT * FROM announcement WHERE 
       soft_delete = 0 AND title LIKE "%${search}%" LIMIT ${limit} OFFSET ${offset}`
 
-      if(filter === 'deleted'){
-        query = `SELECT * FROM announcement WHERE 
+    if (filter === 'deleted') {
+      query = `SELECT * FROM announcement WHERE 
           soft_delete = 1 AND title LIKE "%${search}%" LIMIT ${limit} OFFSET ${offset}`
-      }
+    }
   }
 
   connection.query(query, (err, rows, fields) => {
@@ -578,37 +578,45 @@ app.post('/record/:id', (req, res) => {
 app.post('/guardian', (req, res) => {
   let { fname, lname } = req.body
   const { contact, address, household_id } = req.body;
-  
-  // search pre-existing household id
-  // connection.query(`SELECT
-  //   (SELECT COUNT(*) FROM guardian WHERE household_id = "${household_id}") AS idResult`), (err, rows, fields) => {
-  //     console.log(rows)
-    // if (err) throw err
-  //   else if (rows[0].idResult) {
-  //     res.send("Household ID already been taken")
-  //   }
-    // else {
-      fname = nameFormat(fname)
-      lname = nameFormat(lname)
-    
+
+  fname = nameFormat(fname)
+  lname = nameFormat(lname)
+
+  connection.query(`SELECT guardian_id, household_id FROM guardian WHERE household_id = '${household_id}'`, (err, rows, fields) => {
+    if (err) throw err
+    if (rows[0].household_id === household_id) {
+      res.status(409).json({ message: "Household ID already been taken" })
+    }
+    else {
       connection.query(`INSERT INTO guardian (fname, lname, contact, address, household_id) 
             VALUES ('${fname}', '${lname}', '${contact}', '${address}', '${household_id}')`, (err, rows, fields) => {
         if (err) throw err
       })
-      res.send("success")
+      res.status(200).json({ message: "success" })
+    }
+  })
 });
-// add link to guardian & child #
+// add link to guardian & child
 app.post('/link/add/:guardian_id', (req, res) => {
   const { relationship, id } = req.body;
   const { guardian_id } = req.params;
 
-
-
-  connection.query(`INSERT INTO link (guardian_id, id, relationship) 
-        VALUES ('${guardian_id}','${id}', '${relationship}')`, (err, rows, fields) => {
+  connection.query(`SELECT *
+    FROM link JOIN child ON link.id = child.id
+    WHERE link.guardian_id = ${id} AND child.soft_delete = 0`, (err, rows, fields) => {
     if (err) throw err
+    else if (rows[0]) {
+      res.status(409).json({ "message": "Child already been linked" })
+    }
+    else {
+      connection.query(`INSERT INTO link (guardian_id, id, relationship) 
+            VALUES ('${guardian_id}','${id}', '${relationship}')`, (err, rows, fields) => {
+        if (err) throw err
+      })
+      res.send("success")
+    }
   })
-  res.send("success")
+
 });
 // get specific user
 app.get('/user/profile/:id', (req, res) => {
@@ -689,11 +697,9 @@ app.put('/guardUpdate/:id', (req, res) => {
   fname = nameFormat(fname)
   lname = nameFormat(lname)
 
-  // (SELECT COUNT(*) FROM guardian WHERE fname = "${fname}" AND lname = "${lname}") AS nameResult,
-
-  connection.query(`SELECT guardian_id, household_id FROM guardian WHERE household_id = "${household_id}"`, (err, rows, fields) => {
+  connection.query(`SELECT guardian_id, household_id FROM guardian WHERE household_id = '${household_id}'`, (err, rows, fields) => {
     if (err) throw err
-    else if (rows[0].guardian_id != id && rows[0].household_id === household_id) {
+    if (rows[0] && rows[0].guardian_id != id && rows[0].household_id === household_id) {
       res.status(409).json({ message: "Household ID already been taken" })
     }
     else {
@@ -842,10 +848,10 @@ app.put('/link/del/:guardian_id', (req, res) => {
 app.put('/user/del/:user_id', (req, res) => {
   const { user_id } = req.params;
 
-  if(user_id == '1'){
-    res.json({"message": "Staff cannot be deleted"})
+  if (user_id == '1') {
+    res.json({ "message": "Staff cannot be deleted" })
   }
-  else{
+  else {
     connection.query(`UPDATE user SET soft_delete='1' WHERE user_id=${user_id}`, (err, rows, fields) => {
       if (err) throw err
     })
@@ -918,7 +924,7 @@ app.get('/child/data', async (req, res) => {
   ]
   const CHILD_LATEST_RECORDS_COLUMNS = [
     { width: 10 }, { width: 10 }, {}, {}, {}, { width: 10 }, {},
-    { width: 20 }, { width: 10}, { width: 10} // date
+    { width: 20 }, { width: 10 }, { width: 10 } // date
   ]
 
   connection.query(`SELECT
@@ -939,9 +945,9 @@ app.get('/child/data', async (req, res) => {
         { value: 'Guardian Household ID', fontWeight: 'bold' },
         { value: 'Relationship', fontWeight: 'bold' }
       ]
- 
+
       let DATA_ROWS = []
-      
+
       rows.forEach(row => {
         DATA_ROWS.push([
           { type: String, value: row.fname },
@@ -953,7 +959,7 @@ app.get('/child/data', async (req, res) => {
           { type: String, value: row.relationship }
         ])
       })
-      
+
       CHILD_LIST = [HEADER_ROW, ...DATA_ROWS]
     }
   })
@@ -980,9 +986,9 @@ app.get('/child/data', async (req, res) => {
         { value: 'User First Name', fontWeight: 'bold' },
         { value: 'User Last Name', fontWeight: 'bold' },
       ]
- 
+
       let DATA_ROWS = []
-      
+
       rows.forEach(row => {
         // console.log(row.date.toUTCString())
 
@@ -994,12 +1000,12 @@ app.get('/child/data', async (req, res) => {
           { type: Number, value: row.weight },
           { type: String, value: row.remark },
           { type: Number, value: row.output },
-          { type: String, value: moment(row.date).format('MMM DD, YYYY hh:mm A')},
+          { type: String, value: moment(row.date).format('MMM DD, YYYY hh:mm A') },
           { type: String, value: row.user_fname },
           { type: String, value: row.user_lname },
         ])
       })
-      
+
       CHILD_LATEST_RECORDS = [HEADER_ROW, ...DATA_ROWS]
     }
   })

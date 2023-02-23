@@ -138,6 +138,8 @@ import {
   useIonRouter,
 } from '@ionic/vue';
 
+import { instance as api } from "@/network/Network";
+
 export default defineComponent({
   name: 'ChildPage2',
   components: {
@@ -184,17 +186,17 @@ export default defineComponent({
   },
   methods: {
     fetchGuardProfile() {
-      fetch('http://localhost:5000/guardian/profile/' + this.guardId)
-        .then((response) => response.json())
-        .then((json) => {
-          this.guardProfile = json
+      api('/guardian/profile/' + this.guardId)
+        .then((response) => response.data)
+        .then((data) => {
+          this.guardProfile = data
         })
     },
     fetchChilds() {
-      fetch('http://localhost:5000/link/' + this.guardId + '?type=guardian')
-        .then((response) => response.json())
-        .then((json) => {
-          this.childData = json
+      api('/link/' + this.guardId + '?type=guardian')
+        .then((response) => response.data)
+        .then((data) => {
+          this.childData = data
         })
     },
     async guardian_delete(guardian_id: string) {
@@ -215,12 +217,7 @@ export default defineComponent({
               })
               const guard_id = guardian_id;
 
-              fetch('http://localhost:5000/guardianDel/' + guard_id, {
-                method: 'PUT',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-              })
+                api.put('/guardianDel/' + guard_id)
                 .then((data) => {
                   toast.message = 'Success!'
                 })
@@ -255,9 +252,7 @@ export default defineComponent({
 
               const guardian_id = this.guardId
 
-              fetch('http://localhost:5000/guardian/ret/' + guardian_id, {
-                method: 'PUT'
-              })
+              api.put('/guardian/ret/' + guardian_id)
                 .then((data) => {
                   toast.message = 'Success!'
                 })
@@ -293,9 +288,7 @@ export default defineComponent({
 
               const linkId = link
 
-              fetch('http://localhost:5000/link/' + linkId, {
-                method: 'DELETE'
-              })
+              api.delete('/link/' + linkId)
                 .then((data) => {
                   toast.message = 'Success!'
                   this.fetchChilds()

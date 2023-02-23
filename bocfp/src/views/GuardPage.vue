@@ -95,6 +95,7 @@ import {
     addOutline
 } from 'ionicons/icons';
 import PageButtons from '@/components/PageButtons.vue';
+import { instance as api } from "@/network/Network";
 
 export default defineComponent({
     name: 'ChildPage',
@@ -149,10 +150,10 @@ export default defineComponent({
             if (search.length) {
                 clearTimeout(this.searchTimeout)
                 this.searchTimeout = setTimeout(() => {
-                    fetch(`http://localhost:5000/guardians?limit=${this.limit}&offset=${this.offset}&search=${search}&filter=${this.guardFilter}`)
-                        .then((response) => response.json())
-                        .then((json) => {
-                            this.guardianList = json
+                    api(`/guardians?limit=${this.limit}&offset=${this.offset}&search=${search}&filter=${this.guardFilter}`)
+                        .then((response) => response.data)
+                        .then((data) => {
+                            this.guardianList = data
                         })
                 }, 500)
             }
@@ -161,12 +162,12 @@ export default defineComponent({
             }
         },
         fetchData() {
-            fetch(`http://localhost:5000/guardians?limit=${this.limit}&offset=${this.offset}&search=${this.search}&filter=${this.guardFilter}`)
-                .then((response) => response.json())
-                .then((json) => {
-                    this.guardianList = json
+            api(`/guardians?limit=${this.limit}&offset=${this.offset}&search=${this.search}&filter=${this.guardFilter}`)
+                .then((response) => response.data)
+                .then((data) => {
+                    this.guardianList = data
 
-                    if (json.message) {
+                    if (data.message) {
                         this.isNextEnabled = false
                         return
                     }

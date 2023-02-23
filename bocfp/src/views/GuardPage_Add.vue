@@ -81,6 +81,8 @@ import {
   IonCardTitle
 } from '@ionic/vue';
 
+import { instance as api } from "@/network/Network";
+
 export default defineComponent({
   name: 'ChildPage2',
   components: {
@@ -130,13 +132,8 @@ export default defineComponent({
         && this.guardianDetails.address && this.guardianDetails.household_id) {
         const data = this.guardianDetails;
 
-        fetch('http://localhost:5000/guardian', {
-          method: 'POST', // or 'PUT'
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        })
+          api.post('/guardian', data)
+          .then(response => response.data)
           .then((data) => {
             toast.message = 'Success!'
             this.guardianDetails = {
@@ -149,7 +146,7 @@ export default defineComponent({
             this.router.push("/guardian");
           })
           .catch((error) => {
-            toast.message = error
+            toast.message = error.response.data.message
           });
 
       }

@@ -62,8 +62,9 @@ import {
   useIonRouter,
   IonSelect, IonSelectOption,
 } from '@ionic/vue';
-import { stringLiteral } from '@babel/types';
+
 import { useRoute } from 'vue-router';
+import { instance as api } from "@/network/Network";
 
 export default defineComponent({
   name: 'ChildPage2',
@@ -111,13 +112,8 @@ export default defineComponent({
       })
 
       const data = this.linkDetails;
-      fetch('http://localhost:5000/link/' + this.linkId, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
+      api.put('/link/' + this.linkId, data)
+        .then(response => response.data)
         .then((data) => {
           toast.message = 'Success!'
           this.ionRouter.back()
@@ -129,10 +125,10 @@ export default defineComponent({
       await toast.present();
   },
   fetchLink() {
-    fetch(`http://localhost:5000/link/${this.linkId}?type=link`)
-      .then((response) => response.json())
-      .then((json) => {
-        this.linkDetails = json
+    api(`/link/${this.linkId}?type=link`)
+      .then((response) => response.data)
+      .then((data) => {
+        this.linkDetails = data
       })
   }
 }

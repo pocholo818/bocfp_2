@@ -73,7 +73,6 @@
 
     </ion-content>
   </ion-page>
-
 </template>
   
 <script lang="ts">
@@ -99,8 +98,9 @@ import {
   IonRadioGroup,
   IonRadio
 } from '@ionic/vue';
-import { stringLiteral } from '@babel/types';
+
 import { useRoute } from 'vue-router';
+import { instance as api } from "@/network/Network";
 
 export default defineComponent({
   name: 'ChildPage2',
@@ -158,42 +158,24 @@ export default defineComponent({
 
       // checks if empty
       if (this.linkDetails.id && this.linkDetails.relationship) {
-        // !empty
-        fetch('http://localhost:5000/link/' + this.linkDetails.id + '?type=child')
-          .then((response) => response.json())
-          .then((json) => {
-            this.check = json
+        const data = this.linkDetails;
 
-            // check if child has link
-            if (this.check.message) {
-              const data = this.linkDetails;
-
-              fetch('http://localhost:5000/link/add/' + this.guardId, {
-                method: 'POST', // or 'PUT'
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-              })
-               .then((data) => {
-                  toast.message = 'Success!'
-                  this.linkDetails = {
-                    "id": "",
-                    "guardian_id": "",
-                    "relationship": ""
-                  }
-                  this.ionRouter.push("/guardian_profile/" + this.guardId);
-                })
-                .catch((error) => {
-                  toast.message = error
-                });
-
-                toast.message = "Success!"
+        api.post('/link/add/' + this.guardId, data)
+          .then(response => response.data)
+          .then((data) => {
+            toast.message = 'Success!'
+            this.linkDetails = {
+              "id": "",
+              "guardian_id": "",
+              "relationship": ""
             }
-            else {
-              toast.message = "Child already been linked"
-            }
+            this.ionRouter.push("/guardian_profile/" + this.guardId);
           })
+          .catch((error) => {
+            toast.message = error.response.data.message
+          });
+
+        toast.message = "Success!"
       }
       else {
         toast.message = "Child Or Relationship is Empty"
@@ -208,11 +190,11 @@ export default defineComponent({
       if (search.length) {
         clearTimeout(this.searchTimeout)
         this.searchTimeout = setTimeout(() => {
-          fetch(`http://localhost:5000/childs?search=${search}&limit=${this.limit}&offset=${this.offset}`)
-            .then((response) => response.json())
-            .then((json) => {
+          api(`/childs?search=${search}&limit=${this.limit}&offset=${this.offset}`)
+            .then((response) => response.data)
+            .then((data) => {
               this.text = true
-              this.childList = json
+              this.childList = data
             })
         }, 500)
       }

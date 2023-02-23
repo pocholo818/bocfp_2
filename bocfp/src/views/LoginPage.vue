@@ -90,14 +90,6 @@ export default defineComponent({
             let data = Object.assign({}, this.loginDetails) // clone this.loginDetails, not reference
             data.password = SHA256(this.loginDetails.password).toString()
 
-
-            // fetch('http://localhost:5000/user/login/', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify(data),
-            // })
             api.post('/user/login', data)
                 .then(response => response.data)
                 .then(data => {                   
