@@ -102,6 +102,7 @@ import {
 import { useRoute } from 'vue-router';
 import PageButtons from '@/components/PageButtons.vue';
 import moment from 'moment'
+import { instance as api } from "@/network/Network";
 
 export default defineComponent({
   name: 'ChildPage2',
@@ -147,12 +148,12 @@ export default defineComponent({
   },
   methods: {
     fetchRecord() {
-      fetch(`http://localhost:5000/records/` + this.childId + `?limit=${this.limit}&offset=${this.offset}&filter=${this.recordFilter}`)
-        .then((response) => response.json())
-        .then((json) => {
-          this.childRecords = json
+      api(`/records/` + this.childId + `?limit=${this.limit}&offset=${this.offset}&filter=${this.recordFilter}`)
+        .then((response) => response.data)
+        .then((data) => {
+          this.childRecords = data
 
-          if (json.message) {
+          if (data.message) {
             this.isNextEnabled = false
             return
           }
@@ -218,10 +219,7 @@ export default defineComponent({
               })
               const recordId = record_id
 
-
-              fetch('http://localhost:5000/record/del/' + recordId, {
-                method: 'put'
-              })
+              api.put('/record/del/' + recordId)
                 .then((data) => {
                   toast.message = 'Success!'
                   this.fetchRecord();
@@ -257,9 +255,7 @@ export default defineComponent({
 
               const recordId = record_id
 
-              fetch('http://localhost:5000/record/ret/' + recordId, {
-                method: 'PUT'
-              })
+              api.put('/record/ret/' + recordId)
                 .then((data) => {
                   toast.message = 'Success!'
                   this.fetchRecord();

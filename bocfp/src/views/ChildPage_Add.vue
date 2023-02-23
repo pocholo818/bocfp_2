@@ -3,7 +3,7 @@
     <ion-header>
       <ion-toolbar style="">
         <ion-buttons slot="start">
-          <ion-back-button text="Back"></ion-back-button>
+          <ion-back-button text="Back" defaultHref="/child"></ion-back-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -92,11 +92,7 @@ import {
 } from '@ionic/vue';
 import CropModal from '@/components/CropModal.vue'
 import { FilePicker } from '@capawesome/capacitor-file-picker';
-// import HeaderBar from '@/components/HeaderBar.vue';
-// import {
-//   IonContent,
-//   IonPage,
-// } from '@ionic/vue';
+import { instance as api } from "@/network/Network";
 
 export default defineComponent({
   name: 'ChildPage2',
@@ -161,13 +157,8 @@ export default defineComponent({
           }
           else {
             toast.message = "Success!"
-            fetch('http://localhost:5000/child', {
-              method: 'POST', // or 'PUT'
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(data),
-            })
+              api.post('/child', data)
+              .then(response => response.data)
               .then((data) => {
                 toast.message = 'Success!'
                 this.childDetails = {
@@ -188,35 +179,6 @@ export default defineComponent({
       } else {
         toast.message = "Child's details are incomplete"
       }
-
-
-      // if(dateDifference > 12) { // no child greater than 12 years old 
-      //   toast.message = 'too old!'
-      //   await toast.present();
-      //   return
-      // }
-
-      // const data = this.childDetails;
-      // fetch('http://localhost:5000/child', {
-      //   method: 'POST', // or 'PUT'
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(data),
-      // })
-      //   .then((data) => {
-      //     toast.message = 'Success!'
-      //     this.childDetails = {
-      //       fname: "",
-      //       lname: "",
-      //       bdate: "",
-      //       image: ""
-      //     }
-      //     this.router.push("/child");
-      //   })
-      //   .catch((error) => {
-      //     toast.message = error
-      //   });
 
       await toast.present();
     },

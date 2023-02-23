@@ -3,7 +3,7 @@
         <ion-header>
             <ion-toolbar style="">
                 <ion-buttons slot="start">
-                    <ion-back-button text="Back"></ion-back-button>
+                    <ion-back-button text="Back" :defaultHref="('/child_view/' + childId)"></ion-back-button>
                 </ion-buttons>
             </ion-toolbar>
         </ion-header>
@@ -39,14 +39,7 @@
 
                         <ion-item>
                             <ion-label>Birth Date:</ion-label>
-                            <!-- <ion-datetime-button datetime="dateOfBirth"></ion-datetime-button> -->
-
                             <input type="date" v-model="childDetails.bdate" style="color: white;" max="2099-12-31" />
-
-                            <!-- <ion-modal :keep-contents-mounted="true" class="datetime-modal">
-                                <ion-datetime id="dateOfBirth" displayFormat="YYYY.MM.DD" presentation="date"
-                                    v-model="childDetails.bdate" class="dateStyle"></ion-datetime>
-                            </ion-modal> -->
                         </ion-item>
 
                         <ion-item>
@@ -91,6 +84,7 @@ import { useRoute } from 'vue-router';
 import { IonRouter } from '@ionic/core/components';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import CropModal from '@/components/CropModal.vue'
+import { instance as api } from "@/network/Network";
 
 export default defineComponent({
     name: 'ChildPage2',
@@ -135,10 +129,10 @@ export default defineComponent({
     mounted() {
         this.childId = this.router.params.id + "";
 
-        fetch('http://localhost:5000/child/profile/' + this.childId)
-            .then((response) => response.json())
-            .then((json) => {
-                this.childDetails = json
+        api('/child/profile/' + this.childId)
+            .then((response) => response.data)
+            .then((data) => {
+                this.childDetails = data
             })
     },
     methods: {
@@ -161,13 +155,8 @@ export default defineComponent({
                     toast.message = "Invalid Child Birthdate"
                 }
                 else {
-                    fetch('http://localhost:5000/childUpdate/:id', {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data),
-                    })
+                        api.patch('/childUpdate/:id', data)
+                        .then(response => response.data)
                         .then((data) => {
                             toast.message = 'Success!'
                             this.childDetails = {

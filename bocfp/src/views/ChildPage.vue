@@ -279,10 +279,7 @@ export default defineComponent({
               })
 
               const childId = id
-
-              fetch('http://localhost:5000/child/del/' + childId, {
-                method: 'PUT'
-              })
+                api.put('/child/del/' + childId)
                 .then((data) => {
                   toast.message = 'Success!'
                   this.$emit('deleted')
@@ -318,10 +315,7 @@ export default defineComponent({
               })
 
               const childId = id
-
-              fetch('http://localhost:5000/child/ret/' + childId, {
-                method: 'PUT'
-              })
+                api.put('/child/ret/' + childId)
                 .then((data) => {
                   toast.message = 'Success!'
                 })

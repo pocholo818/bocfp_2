@@ -3,7 +3,7 @@
     <ion-header>
       <ion-toolbar style="">
         <ion-buttons slot="start">
-          <ion-back-button text="Back"></ion-back-button>
+          <ion-back-button text="Back" :defaultHref="'/record_view/' + recordDetails.id"></ion-back-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -20,13 +20,13 @@
             <ion-list>
               <ion-item>
                 <ion-label position="floating">Height (cm):</ion-label>
-                <ion-input placeholder="Enter Height" @keypress="numOnly($event)" maxlength="3"
+                <ion-input placeholder="Enter Height" @keypress="numOnly($event)" maxlength="7"
                   v-model="recordDetails.height"></ion-input>
               </ion-item>
 
               <ion-item>
                 <ion-label position="floating">Weight (kg):</ion-label>
-                <ion-input placeholder="Enter Weight" @keypress="numOnly($event)" maxlength="3"
+                <ion-input placeholder="Enter Weight" @keypress="numOnly($event)" maxlength="6"
                   v-model="recordDetails.weight"></ion-input>
               </ion-item>
             </ion-list>
@@ -63,8 +63,8 @@ import {
   IonCardHeader, IonCardTitle,
   IonBackButton
 } from '@ionic/vue';
-import { stringLiteral } from '@babel/types';
 import { useRoute } from 'vue-router';
+import { instance as api } from "@/network/Network";
 
 export default defineComponent({
   name: 'ChildPage2',
@@ -112,10 +112,10 @@ export default defineComponent({
     fetchRecord() {
       this.record_id = this.router.params.id + "";
 
-      fetch('http://localhost:5000/record/' + this.record_id)
-        .then((response) => response.json())
-        .then((json) => {
-          this.recordDetails = json
+        api('/record/' + this.record_id)
+        .then((response) => response.data)
+        .then((data) => {
+          this.recordDetails = data
         })
     },
     async record_edit() {
@@ -127,13 +127,8 @@ export default defineComponent({
       // checks if empty
       if (this.recordDetails.height && this.recordDetails.weight) {
         const data = this.recordDetails;
-        fetch('http://localhost:5000/record/' + this.record_id, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        })
+          api.put('/record/' + this.record_id, data)
+          .then(response => response.data)
           .then((data) => {
             toast.message = 'Success!'
             this.ionRouter.back()
@@ -148,7 +143,7 @@ export default defineComponent({
       await toast.present();
     },
     numOnly(evt: KeyboardEvent): void {
-      const keysAllowed: string[] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+      const keysAllowed: string[] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
       const keyPressed: string = evt.key;
 
       if (!keysAllowed.includes(keyPressed)) {

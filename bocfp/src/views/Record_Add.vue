@@ -3,7 +3,7 @@
     <ion-header>
       <ion-toolbar style="">
         <ion-buttons slot="start">
-          <ion-back-button text="Back"></ion-back-button>
+          <ion-back-button text="Back" :defaultHref="'/record_view/' + childId"></ion-back-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -20,13 +20,13 @@
             <ion-list>
               <ion-item>
                 <ion-label position="floating">Height (cm):</ion-label>
-                <ion-input @keypress="numOnly($event)" maxlength="3" placeholder="Enter Height"
+                <ion-input @keypress="numOnly($event)" maxlength="7" placeholder="Enter Height"
                   v-model="recordDetails.height"></ion-input>
               </ion-item>
 
               <ion-item>
                 <ion-label position="floating">Weight (kg):</ion-label>
-                <ion-input @keypress="numOnly($event)" maxlength="3" placeholder="Enter Weight"
+                <ion-input @keypress="numOnly($event)" maxlength="6" placeholder="Enter Weight"
                   v-model="recordDetails.weight"></ion-input>
               </ion-item>
             </ion-list>
@@ -64,11 +64,7 @@ import {
 } from '@ionic/vue';
 import { stringLiteral } from '@babel/types';
 import { useRoute } from 'vue-router';
-// import HeaderBar from '@/components/HeaderBar.vue';
-// import {
-//   IonContent,
-//   IonPage,
-// } from '@ionic/vue';
+import { instance as api } from "@/network/Network";
 
 export default defineComponent({
   name: 'ChildPage2',
@@ -121,13 +117,8 @@ export default defineComponent({
       // checks if empty
       if (this.recordDetails.height && this.recordDetails.weight) {
         const data = this.recordDetails;
-        fetch('http://localhost:5000/record/' + this.childId, {
-          method: 'POST', // or 'PUT'
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        })
+        api.post('/record/' + this.childId, data)
+        .then(response => response.data)
           .then((data) => {
             toast.message = 'Success!'
             this.recordDetails = {
@@ -148,7 +139,7 @@ export default defineComponent({
       await toast.present();
     },
     numOnly(evt: KeyboardEvent): void {
-      const keysAllowed: string[] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+      const keysAllowed: string[] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
       const keyPressed: string = evt.key;
 
       if (!keysAllowed.includes(keyPressed)) {

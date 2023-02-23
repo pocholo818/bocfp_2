@@ -42,14 +42,8 @@
 
                         <ion-item>
                             <ion-label>Birth Date:</ion-label>
-                            <!-- <ion-datetime-button datetime="dateOfBirth"></ion-datetime-button> -->
-
-                            <input type="date" v-model="childDetails.bdate" style="color: white;" max="2099-12-31" readonly />
-
-                            <!-- <ion-modal :keep-contents-mounted="true" class="datetime-modal">
-                                <ion-datetime id="dateOfBirth" displayFormat="YYYY.MM.DD" presentation="date"
-                                    v-model="childDetails.bdate" class="dateStyle" readonly></ion-datetime>
-                            </ion-modal> -->
+                            <input type="date" v-model="childDetails.bdate" style="color: white;" max="2099-12-31"
+                                readonly />
                         </ion-item>
 
                         <ion-item>
@@ -86,8 +80,7 @@
                         <div v-else>
                             <ion-item>
                                 <ion-label position="floating">Guardian</ion-label>
-                                <ion-input placeholder="Enter Guardian Name" v-model="guardianName"
-                                    readonly></ion-input>
+                                <ion-input placeholder="Enter Guardian Name" v-model="guardianName" readonly></ion-input>
                             </ion-item>
 
                             <ion-item>
@@ -127,10 +120,6 @@
                             <PageButtons :prev="prevData" :next="nextData" />
                             <br>
                         </div>
-                        <!-- <div v-if="!childAllRecords.message">
-                            <PageButtons :prev="prevData" :next="nextData" />
-                            <br>
-                        </div> -->
 
                         <div v-if="childNewRecord.remark == ''">
                             <h2 style="text-align: center;">{{ childNewRecord.message }}</h2>
@@ -145,14 +134,12 @@
 
                             <ion-item>
                                 <ion-label position="floating">Height (cm):</ion-label>
-                                <ion-input placeholder="Enter Height" v-model="childNewRecord.height"
-                                    readonly></ion-input>
+                                <ion-input placeholder="Enter Height" v-model="childNewRecord.height" readonly></ion-input>
                             </ion-item>
 
                             <ion-item>
                                 <ion-label position="floating">Weight (kg):</ion-label>
-                                <ion-input placeholder="Enter Weight" v-model="childNewRecord.weight"
-                                    readonly></ion-input>
+                                <ion-input placeholder="Enter Weight" v-model="childNewRecord.weight" readonly></ion-input>
                             </ion-item>
                             <ion-button :router-link="('/record_view/' + childId)">View all
                                 Records</ion-button><br>
@@ -165,7 +152,6 @@
         </ion-content>
 
     </ion-page>
-
 </template>
   
 <script lang="ts">
@@ -190,7 +176,6 @@ import {
     IonButtons,
     IonHeader,
     IonToolbar,
-    // IonDatetime, IonDatetimeButton, IonModal,
     alertController, toastController,
     IonBackButton,
     useIonRouter,
@@ -200,6 +185,7 @@ import { useRoute } from 'vue-router';
 import LineChart from '@/components/LineChart.vue'
 import moment from 'moment'
 import PageButtons from '@/components/PageButtons.vue';
+import { instance as api } from "@/network/Network";
 
 export default defineComponent({
     name: 'ChildPage',
@@ -214,16 +200,15 @@ export default defineComponent({
         IonCardHeader,
         IonCardContent,
         IonButtons, IonHeader, IonToolbar,
-        // IonDatetime, IonDatetimeButton, IonModal,
         IonBackButton,
     },
     ionViewWillEnter() {
         this.childId = this.router.params.id + "";
 
-        fetch('http://localhost:5000/child/profile/' + this.childId)
-            .then((response) => response.json())
-            .then((json) => {
-                this.childDetails = json
+        api(('/child/profile/' + this.childId))
+            .then((response) => response.data)
+            .then((data) => {
+                this.childDetails = data
 
                 if (!this.childDetails.image) {
                     this.childDetails.image = require("@/assets/images/noPic.png")
@@ -278,85 +263,46 @@ export default defineComponent({
     },
     methods: {
         fetchGuardian() {
-            fetch('http://localhost:5000/link/' + this.childId + '?type=child')
-                .then((response) => response.json())
-                .then((json) => {
-                    this.guardianDetails = json
-                    this.guardianName = `${json.fname} ${json.lname}`
+            api('/link/' + this.childId + '?type=child')
+                .then((response) => response.data)
+                .then((data) => {
+                    this.guardianDetails = data
+                    this.guardianName = `${data.fname} ${data.lname}`
                 })
         },
         fetchLatestRecord() {
-            fetch('http://localhost:5000/child/newRecord/' + this.childId)
-                .then((response) => response.json())
-                .then((json) => {
-                    this.childNewRecord = json
+            api('/child/newRecord/' + this.childId)
+                .then((response) => response.data)
+                .then((data) => {
+                    this.childNewRecord = data
 
-                    if (json.remark == "") {
+                    if (data.remark == "") {
                         this.totalRemark = ""
                     }
                     else {
-                        this.totalRemark = `${json.remark} (${json.output.toFixed(2)})`
+                        this.totalRemark = `${data.remark} (${data.output.toFixed(2)})`
                     }
                 });
         },
         fetchRecords() {
-            fetch(`http://localhost:5000/records/` + this.childId + `?limit=${this.limit}&offset=${this.offset}`)
-                .then((response) => response.json())
-                .then((json) => {
-                    this.childAllRecords = json
+            api(`/records/` + this.childId + `?limit=${this.limit}&offset=${this.offset}`)
+                .then((response) => response.data)
+                .then((data) => {
+                    this.childAllRecords = data
 
-                    if (json.message) {
+                    if (data.message) {
                         this.isNextEnabled = false
                         return
                     }
                     else {
                         this.isNextEnabled = true
 
-                        this.data.labels = json.map((item: any) => moment(String(item.date)).format('MM/DD/YYYY'))
+                        this.data.labels = data.map((item: any) => moment(String(item.date)).format('MM/DD/YYYY'))
                         // this.data.labels = json.map((item: any) => item.remark)
-                        this.data.datasets[0].data = json.map((item: any) => item.output.toFixed(2))
+                        this.data.datasets[0].data = data.map((item: any) => item.output.toFixed(2))
                         // this.data.datasets[0].label = json.map((item: any) => item.remark)
                     }
                 })
-        },
-        async record_delete(record_id: string) {
-            const alert = await alertController.create({
-                header: 'Are you sure you want to delete?',
-                buttons: [
-                    {
-                        text: 'Cancel',
-                        role: 'cancel'
-                    },
-                    {
-                        text: 'DELETE',
-                        role: 'confirm',
-                        handler: async () => {
-                            const toast = await toastController.create({
-                                duration: 1500,
-                                position: 'top'
-                            })
-                            const recordId = record_id
-
-                            fetch('http://localhost:5000/record/del/' + recordId, {
-                                method: 'put'
-                            })
-                                .then((data) => {
-                                    toast.message = 'Success!'
-                                    // this.$emit('deleted')
-                                    this.fetchGuardian()
-                                })
-                                .catch((error) => {
-                                    toast.message = error
-                                });
-
-                            await toast.present();
-                        },
-                    },
-                ],
-            });
-
-            await alert.present();
-            this.fetchLatestRecord();
         },
         async child_delete(id: string) {
             const alert = await alertController.create({
@@ -377,9 +323,7 @@ export default defineComponent({
 
                             const childId = this.childId
 
-                            fetch('http://localhost:5000/child/del/' + childId, {
-                                method: 'PUT'
-                            })
+                            api.put('/child/del/' + childId)
                                 .then((data) => {
                                     toast.message = 'Success!'
                                     this.$emit('deleted')
@@ -416,9 +360,7 @@ export default defineComponent({
 
                             const childId = this.childId
 
-                            fetch('http://localhost:5000/child/ret/' + childId, {
-                                method: 'PUT'
-                            })
+                            api.put('/child/ret/' + childId)
                                 .then((data) => {
                                     toast.message = 'Success!'
                                 })
