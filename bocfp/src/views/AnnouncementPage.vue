@@ -142,12 +142,10 @@ export default defineComponent({
       admin_power: ""
     };
   },
-  mounted() {
+  ionViewWillEnter(){
+    this.admin_power = localStorage.getItem('admin_power') || ''
     this.fetchData()
     this.user_id = Number(localStorage.getItem('user_id') || '')
-    this.admin_power = localStorage.getItem('admin_power') || ''
-  },
-  ionViewWillEnter(){
     this.admin_power = localStorage.getItem('admin_power') || ''
   },
   methods: {

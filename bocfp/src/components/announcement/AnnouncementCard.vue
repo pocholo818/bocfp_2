@@ -89,9 +89,6 @@ export default defineComponent({
       required: true
     }
   },
-  mounted(){
-    console.log(this.admin_power)
-  },
   methods: {
     async deleteAnnouncement() {
       const alert = await alertController.create({
