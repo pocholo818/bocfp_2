@@ -271,7 +271,7 @@ app.get('/childs', authenticateToken(0), (req, res) => {
   })
 });
 // get specific child
-app.get('/child/profile/:id', (req, res) => {
+app.get('/child/profile/:id', authenticateToken(0), (req, res) => {
   const { id } = req.params
 
   connection.query(`SELECT *, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), bdate)), '%Y') + 0 AS age
@@ -299,7 +299,7 @@ app.get('/child/profile/:id', (req, res) => {
 //   })
 // });
 // get record
-app.get('/records/:id', (req, res) => {
+app.get('/records/:id', authenticateToken(0), (req, res) => {
   const { limit, offset, filter } = req.query
 
   let query
@@ -332,7 +332,7 @@ app.get('/records/:id', (req, res) => {
   })
 });
 // get specific record
-app.get('/record/:id', (req, res) => {
+app.get('/record/:id', authenticateToken(0), (req, res) => {
   connection.query(`SELECT * FROM record WHERE record_id=${req.params.id}`, (err, rows, fields) => {
     if (err) throw err
     else if (!rows[0]) {
@@ -342,7 +342,7 @@ app.get('/record/:id', (req, res) => {
   })
 });
 // get all guardian
-app.get('/guardians', (req, res) => {
+app.get('/guardians', authenticateToken(0), (req, res) => {
   const { limit, offset, search, filter } = req.query
 
   let query = `SELECT * FROM guardian WHERE soft_delete = 0 ORDER BY lname ASC LIMIT ${limit} OFFSET ${offset}`
@@ -377,7 +377,7 @@ app.get('/guardians', (req, res) => {
   })
 });
 // get specific guardian
-app.get('/guardian/profile/:id', (req, res) => {
+app.get('/guardian/profile/:id', authenticateToken(0), (req, res) => {
   connection.query(`SELECT * FROM guardian WHERE guardian_id=${req.params.id}`, (err, rows, fields) => {
     if (err) throw err
     else if (!rows[0]) {
@@ -399,7 +399,7 @@ app.get('/guardian/profile/:id', (req, res) => {
 //   })
 // });
 // link get
-app.get('/link/:id', (req, res) => {
+app.get('/link/:id', authenticateToken(0), (req, res) => {
   const { id } = req.params
   const { type } = req.query
 
@@ -443,7 +443,7 @@ app.get('/link/:id', (req, res) => {
   })
 });
 // get user
-app.get('/users', (req, res) => {
+app.get('/users', authenticateToken(1), (req, res) => {
   const { limit, offset, search, filter } = req.query
 
   let query = `SELECT * FROM user WHERE soft_delete = 0 ORDER BY lname ASC LIMIT ${limit} OFFSET ${offset}`
@@ -476,8 +476,8 @@ app.get('/users', (req, res) => {
     }
   })
 });
-// get all announcement
-app.get('/announcements', (req, res) => {
+// get announcement
+app.get('/announcements', authenticateToken(0), (req, res) => {
   const { limit, offset, search, filter } = req.query
 
   let query = `SELECT * FROM announcement WHERE soft_delete = 0 ORDER BY annou_id DESC LIMIT ${limit} OFFSET ${offset}`
@@ -510,7 +510,7 @@ app.get('/announcements', (req, res) => {
 
 // POST
 // add new child
-app.post('/child', (req, res) => {
+app.post('/child', authenticateToken(0), (req, res) => {
   let { fname, lname } = req.body
   const { bdate, sex, image } = req.body;
 
@@ -524,7 +524,7 @@ app.post('/child', (req, res) => {
   res.send("success")
 });
 // add new record
-app.post('/record/:id', (req, res) => {
+app.post('/record/:id', authenticateToken(0), (req, res) => {
   const { height, weight, user_id } = req.body;
   const { id } = req.params;
   let remark = bmi(height, weight)
@@ -536,7 +536,7 @@ app.post('/record/:id', (req, res) => {
   res.send("success")
 });
 // add new guardian
-app.post('/guardian', (req, res) => {
+app.post('/guardian', authenticateToken(0), (req, res) => {
   let { fname, lname } = req.body
   const { contact, address, household_id } = req.body;
 
@@ -558,7 +558,7 @@ app.post('/guardian', (req, res) => {
   })
 });
 // add link to guardian & child
-app.post('/link/add/:guardian_id', (req, res) => {
+app.post('/link/add/:guardian_id', authenticateToken(0), (req, res) => {
   const { relationship, id } = req.body;
   const { guardian_id } = req.params;
 
@@ -580,7 +580,7 @@ app.post('/link/add/:guardian_id', (req, res) => {
 
 });
 // get specific user
-app.get('/user/profile/:id', (req, res) => {
+app.get('/user/profile/:id', authenticateToken(1), (req, res) => {
   connection.query(`SELECT user_id, fname, lname, username, soft_delete, contact, admin_power,
     CASE 
       WHEN admin_power = 1 THEN 'YES'
@@ -597,7 +597,7 @@ app.get('/user/profile/:id', (req, res) => {
 
 });
 // add user
-app.post('/user', (req, res) => {
+app.post('/user', authenticateToken(1), (req, res) => {
   let { fname, lname } = req.body
   const { username, contact, admin_power, password } = req.body;
 
@@ -605,7 +605,7 @@ app.post('/user', (req, res) => {
   lname = nameFormat(lname)
 
   connection.query(`SELECT
-  (SELECT COUNT(*) FROM user WHERE f = "${username}") AS usernameResult`, (err, rows, fields) => {
+  (SELECT COUNT(*) FROM user WHERE username = "${username}") AS usernameResult`, (err, rows, fields) => {
     if (rows[0].usernameResult) {
       res.status(409).json("User's Username already been taken")
     }
@@ -619,8 +619,9 @@ app.post('/user', (req, res) => {
   })
 });
 // add new announcement
-app.post('/announcement/new', (req, res) => {
-  const { title, content, user_id } = req.body;
+app.post('/announcement/new/:user_id', authenticateToken(1), (req, res) => {
+  const { title, content } = req.body;
+  const { user_id } = req.params
 
   connection.query(`INSERT INTO announcement (title, content, user_id) 
         VALUES ('${title}', '${content}', '${user_id}')`, (err, rows, fields) => {
@@ -632,7 +633,7 @@ app.post('/announcement/new', (req, res) => {
 
 // PUT
 // update child
-app.patch('/childUpdate/:id', (req, res) => {
+app.patch('/childUpdate/:id', authenticateToken(0), (req, res) => {
   let { fname, lname } = req.body
   const { id, bdate, sex, image } = req.body;
 
@@ -646,7 +647,7 @@ app.patch('/childUpdate/:id', (req, res) => {
   res.send("success")
 });
 // update record
-app.put('/record/:id', (req, res) => {
+app.put('/record/:id', authenticateToken(0), (req, res) => {
   const { height, weight } = req.body;
   const { id } = req.params;
   let remark = bmi(height, weight)
@@ -658,7 +659,7 @@ app.put('/record/:id', (req, res) => {
   res.send("success")
 });
 // update guardian
-app.put('/guardUpdate/:id', (req, res) => {
+app.put('/guardUpdate/:id', authenticateToken(0), (req, res) => {
   let { fname, lname } = req.body
   const { contact, address, household_id } = req.body;
   const { id } = req.params
@@ -682,7 +683,7 @@ app.put('/guardUpdate/:id', (req, res) => {
   })
 });
 // edit user
-app.put('/user/edit/:id', (req, res) => {
+app.put('/user/edit/:id', authenticateToken(1), (req, res) => {
   let { fname, lname } = req.body
   const { user_id, contact, admin_power, username } = req.body;
 
@@ -704,7 +705,7 @@ app.put('/user/edit/:id', (req, res) => {
   })
 });
 // edit user password
-app.put('/user/edit/password/:id', (req, res) => {
+app.put('/user/edit/password/:id', authenticateToken(1), (req, res) => {
   const { id } = req.params
   const { password } = req.body;
 
@@ -714,7 +715,7 @@ app.put('/user/edit/password/:id', (req, res) => {
   res.send("success")
 });
 // edit announcement
-app.put('/announcement/edit/:annou_id', (req, res) => {
+app.put('/announcement/edit/:annou_id', authenticateToken(1), (req, res) => {
   const { annou_id } = req.params
   const { title, content } = req.body;
 
@@ -725,7 +726,7 @@ app.put('/announcement/edit/:annou_id', (req, res) => {
   res.send("success")
 });
 // edit link
-app.put('/link/:id', (req, res) => {
+app.put('/link/:id', authenticateToken(0), (req, res) => {
   const { id } = req.params
   const { relationship } = req.body;
 
@@ -738,7 +739,7 @@ app.put('/link/:id', (req, res) => {
 
 // UNDO
 // undo child
-app.put('/child/ret/:id', (req, res) => {
+app.put('/child/ret/:id', authenticateToken(0), (req, res) => {
   const { id } = req.params;
 
   connection.query(`UPDATE child SET soft_delete='0' WHERE id=${id}`, (err, rows, fields) => {
@@ -747,7 +748,7 @@ app.put('/child/ret/:id', (req, res) => {
   res.send("success")
 })
 // undo record
-app.put('/record/ret/:id', (req, res) => {
+app.put('/record/ret/:id', authenticateToken(0), (req, res) => {
   const { id } = req.params;
 
   connection.query(`UPDATE record SET soft_delete='0' WHERE record_id=${id}`, (err, rows, fields) => {
@@ -756,7 +757,7 @@ app.put('/record/ret/:id', (req, res) => {
   res.send("success")
 })
 // undo guardian
-app.put('/guardian/ret/:id', (req, res) => {
+app.put('/guardian/ret/:id', authenticateToken(0), (req, res) => {
   const { id } = req.params;
 
   connection.query(`UPDATE guardian SET soft_delete='0' WHERE guardian_id=${id}`, (err, rows, fields) => {
@@ -765,7 +766,7 @@ app.put('/guardian/ret/:id', (req, res) => {
   res.send("success")
 })
 // undo user
-app.put('/user/ret/:id', (req, res) => {
+app.put('/user/ret/:id', authenticateToken(1), (req, res) => {
   const { id } = req.params;
 
   connection.query(`UPDATE user SET soft_delete='0' WHERE user_id=${id}`, (err, rows, fields) => {
@@ -774,7 +775,7 @@ app.put('/user/ret/:id', (req, res) => {
   res.send("success")
 })
 // undo announcement
-app.put('/announcement/ret/:id', (req, res) => {
+app.put('/announcement/ret/:id', authenticateToken(1), (req, res) => {
   const { id } = req.params;
 
   connection.query(`UPDATE announcement SET soft_delete='0' WHERE annou_id=${id}`, (err, rows, fields) => {
@@ -785,7 +786,7 @@ app.put('/announcement/ret/:id', (req, res) => {
 
 // SOFT DELETE
 // soft delete child
-app.put('/child/del/:id', (req, res) => {
+app.put('/child/del/:id', authenticateToken(0), (req, res) => {
   const { id } = req.params;
 
   connection.query(`UPDATE child SET soft_delete='1'  WHERE id=${id}`, (err, rows, fields) => {
@@ -794,7 +795,7 @@ app.put('/child/del/:id', (req, res) => {
   res.send("success")
 })
 // soft delete guardian
-app.put('/guardianDel/:id', (req, res) => {
+app.put('/guardianDel/:id', authenticateToken(0), (req, res) => {
   const { id } = req.params;
 
   connection.query(`UPDATE guardian SET soft_delete='1'  WHERE guardian_id=${id}`, (err, rows, fields) => {
@@ -803,7 +804,7 @@ app.put('/guardianDel/:id', (req, res) => {
   res.send("success")
 });
 // soft delete record
-app.put('/record/del/:id', (req, res) => {
+app.put('/record/del/:id', authenticateToken(0), (req, res) => {
   const { id } = req.params;
 
   connection.query(`UPDATE record SET soft_delete='1'  WHERE record_id=${id}`, (err, rows, fields) => {
@@ -812,7 +813,7 @@ app.put('/record/del/:id', (req, res) => {
   res.send("success")
 });
 // soft delete link
-app.put('/link/del/:guardian_id', (req, res) => {
+app.put('/link/del/:guardian_id', authenticateToken(0), (req, res) => {
   const { guardian_id } = req.params;
 
   connection.query(`UPDATE link SET soft_delete='1'  WHERE guardian_id=${guardian_id}`, (err, rows, fields) => {
@@ -821,7 +822,7 @@ app.put('/link/del/:guardian_id', (req, res) => {
   res.send("success")
 });
 // soft delete user
-app.put('/user/del/:user_id', (req, res) => {
+app.put('/user/del/:user_id', authenticateToken(1), (req, res) => {
   const { user_id } = req.params;
 
   if (user_id == '1') {
@@ -835,7 +836,7 @@ app.put('/user/del/:user_id', (req, res) => {
   }
 });
 // soft delete announcement
-app.put('/announcement/del/:annou_id', (req, res) => {
+app.put('/announcement/del/:annou_id', authenticateToken(1), (req, res) => {
   const { annou_id } = req.params;
 
   connection.query(`UPDATE announcement SET soft_delete='1'  WHERE annou_id=${annou_id}`, (err, rows, fields) => {
@@ -1005,7 +1006,7 @@ app.get('/child/data', async (req, res) => {
 
 // HARD DELETE
 // delete link
-app.delete('/link/:id', (req, res) => {
+app.delete('/link/:id', authenticateToken(0), (req, res) => {
   const { id } = req.params;
 
   connection.query(`DELETE FROM link WHERE link_id=${id}`, (err, rows, fields) => {

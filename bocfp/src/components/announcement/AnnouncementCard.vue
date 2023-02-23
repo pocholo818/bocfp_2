@@ -4,7 +4,7 @@
       <ion-card-title>{{ title }}</ion-card-title>
       <ion-card-subtitle>{{ date.split("T")[0] }}</ion-card-subtitle>
 
-      <div id="actions" v-if='user_id === "1"'>
+      <div id="actions" v-if='user_id === 1'>
         <ion-button color="warning" @click="openEditAnnouncementModal()">
           <ion-icon :icon="createOutline"></ion-icon>
         </ion-button>
@@ -44,6 +44,8 @@ import {
   arrowUndoOutline
 } from 'ionicons/icons';
 
+import { instance as api } from "@/network/Network";
+
 export default defineComponent({
   name: 'AnnouncementCard',
   components: {
@@ -61,7 +63,7 @@ export default defineComponent({
     }
   },
   props: {
-    annou_id: String,
+    annou_id: Number,
     title: {
       type: String,
       required: true
@@ -75,7 +77,7 @@ export default defineComponent({
       required: true
     },
     user_id: {
-      type: String,
+      type: Number,
       required: true
     },
     soft_delete: {
@@ -101,9 +103,7 @@ export default defineComponent({
                 position: 'top'
               })
 
-              fetch('http://localhost:5000/announcement/del/' + this.annou_id, {
-                method: 'PUT'
-              })
+              api.put('/announcement/del/' + this.annou_id)
                 .then((data) => {
                   toast.message = 'Success!'
                   this.$emit('updateAnnouncementList')
@@ -137,9 +137,7 @@ export default defineComponent({
                 position: 'top'
               })
 
-              fetch('http://localhost:5000/announcement/ret/' + this.annou_id, {
-                method: 'PUT'
-              })
+              api.put('/announcement/ret/' + this.annou_id)
                 .then((data) => {
                   toast.message = 'Success!'
                   this.$emit('updateAnnouncementList')

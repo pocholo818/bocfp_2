@@ -38,7 +38,7 @@
         <template v-else>
           <TransitionGroup name="fade">
             <AnnouncementCard v-for="annous in annou" :title="annous.title" :content="annous.content"
-              :date="format_date(annous.date)" :user_id="user_id" :annou_id="annous.annou_id" :key="annous.annou_id"
+              :date="format_date(annous.date)" :user_id="annous.user_id" :annou_id="annous.annou_id" :key="annous.annou_id"
               :soft_delete="annous.soft_delete"
               @update-announcement-list="fetchData()" />
           </TransitionGroup>
@@ -55,7 +55,7 @@
     <PageButtons :prev="prevData" :next="nextData" />
 
     <!-- Add announcement button// only shows if user has admin_power -->
-    <template v-if='user_id === "1"'>
+    <template v-if='user_id === 1'>
       <ion-fab slot="fixed" vertical="bottom" horizontal="end">
         <ion-fab-button @click="openModal">
           <ion-icon :icon="addOutline"></ion-icon>
@@ -92,6 +92,8 @@ import {
   addOutline, createOutline, trashOutline
 } from 'ionicons/icons';
 import PageButtons from '@/components/PageButtons.vue';
+
+import { instance as api } from "@/network/Network";
 
 export default defineComponent({
   name: 'AnnouncementPage',
@@ -134,7 +136,7 @@ export default defineComponent({
         content: "",
         user_id: user_id,
       },
-      user_id: '',
+      user_id: 0,
       searchTimeout: 0,
       annouFilter: "all",
       admin_power: ""
@@ -144,7 +146,7 @@ export default defineComponent({
     this.fetchData()
   },
   ionViewWillEnter() {
-    this.user_id = localStorage.getItem('user_id') || ''
+    this.user_id = Number(localStorage.getItem('user_id') || '')
     this.admin_power = localStorage.getItem('admin_power') || ''
   },
   methods: {
@@ -157,10 +159,10 @@ export default defineComponent({
       if (search.length) {
         clearTimeout(this.searchTimeout)
         this.searchTimeout = setTimeout(() => {
-          fetch(`http://localhost:5000/announcements?limit=${this.limit}&offset=${this.offset}&search=${this.search}&filter=${this.annouFilter}`)
-            .then((response) => response.json())
-            .then((json) => {
-              this.annou = json
+          api(`/announcements?limit=${this.limit}&offset=${this.offset}&search=${this.search}&filter=${this.annouFilter}`)
+            .then((response) => response.data)
+            .then((data) => {
+              this.annou = data
             })
         }, 500)
       }
@@ -181,12 +183,12 @@ export default defineComponent({
       }
     },
     fetchData() {
-      fetch(`http://localhost:5000/announcements?limit=${this.limit}&offset=${this.offset}&search=${this.search}&filter=${this.annouFilter}`)
-        .then((response) => response.json())
-        .then((json) => {
-          this.annou = json
+      api(`/announcements?limit=${this.limit}&offset=${this.offset}&search=${this.search}&filter=${this.annouFilter}`)
+        .then((response) => response.data)
+        .then((data) => {
+          this.annou = data
 
-          if (json.message) {
+          if (data.message) {
             this.isNextEnabled = false
             return
           }

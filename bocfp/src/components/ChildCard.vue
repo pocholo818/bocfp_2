@@ -35,6 +35,8 @@ import {
   addOutline
 } from 'ionicons/icons';
 
+import { instance as api } from "@/network/Network";
+
 export default defineComponent({
   name: 'ChildCard',
   components: {
@@ -74,9 +76,7 @@ export default defineComponent({
 
               const childId = this.data?.id
 
-              fetch('http://localhost:5000/child/del/' + childId, {
-                method: 'PUT'
-              })
+              api.put('/child/del/' + childId)
                 .then((data) => {
                   toast.message = 'Success!'
                   this.$emit('deleted')

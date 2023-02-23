@@ -42,6 +42,8 @@ import {
   toastController,
 } from '@ionic/vue';
 
+import { instance as api } from "@/network/Network";
+
 export default defineComponent({
   name: 'PostEditAnnouncementModal',
   components: {
@@ -55,22 +57,24 @@ export default defineComponent({
   },
   data() {
     return {
+      userId: '',
       announcementDetails: {
         title: '',
-        content: ''
+        content: '',
       }
     }
   },
   props: {
     isEdit: Boolean,
-    annou_id: String,
+    annou_id: Number,
     title: String,
-    content: String
+    content: String,
   },
   mounted() {
+    this.userId = localStorage.getItem('user_id') || ''
     this.announcementDetails = {
       title: this?.title || '',
-      content: this.content || ''
+      content: this.content || '',
     }
   },
   methods: {
@@ -80,18 +84,11 @@ export default defineComponent({
         position: 'top'
       })
 
-      const data = this.announcementDetails;
-
       // checks if empty post details
       if (this.announcementDetails.title && this.announcementDetails.content) {
-
-        fetch('http://localhost:5000/announcement/new', {
-          method: 'POST', // or 'PUT'
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        })
+        const data = this.announcementDetails;
+        api.post('/announcement/new/' + this.userId, data)
+          .then(response => response.data)
           .then((data) => {
             this.clearInputs()
             toast.message = "Announcement Posted!"
@@ -116,13 +113,8 @@ export default defineComponent({
 
       if (this.announcementDetails.title && this.announcementDetails.content) {
         const data = this.announcementDetails;
-        fetch('http://localhost:5000/announcement/edit/' + this.annou_id, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        })
+        api.put('/announcement/edit/' + this.annou_id, data)
+        .then(response => response.data)
         .then((data) => {
           toast.message = 'Success!'
         })

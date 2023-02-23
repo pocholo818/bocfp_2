@@ -102,6 +102,7 @@ import HeaderBar from '@/components/HeaderBar.vue';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 ChartJS.register(ArcElement, Tooltip, Legend)
 import PieChart from '@/components/PieChart.vue'
+import { instance as api } from "@/network/Network";
 
 export default defineComponent({
     name: 'ChildPage',
@@ -191,23 +192,23 @@ export default defineComponent({
                 this.isOpen = isOpen;
             },
             fetchChildRemarks() {
-                fetch('http://localhost:5000/child/remarks/')
-                    .then((response) => response.json())
-                    .then((json) => {
-                        this.childRemarks = json
-                        this.data.datasets[0].data = [json.Underweight, json.Normal, json.Overweight, json.Obese]
+                api('/child/remarks/')
+                    .then((response) => response.data)
+                    .then((data) => {
+                        this.childRemarks = data
+                        this.data.datasets[0].data = [data.Underweight, data.Normal, data.Overweight, data.Obese]
                         // console.log(this.data)
                     })
             },
             fetchChildCount() {
-                fetch('http://localhost:5000/child/count')
-                    .then((response) => response.json())
-                    .then((json) => {
-                        this.childCount = json
+                api('/child/count')
+                    .then((response) => response.data)
+                    .then((data) => {
+                        this.childCount = data
                     })
             },
             fetchChildData() {
-                fetch('http://localhost:5000/child/data')
+                api('/child/data')
             },
             handleRefresh(event: any) {
                 setTimeout(() => {
@@ -222,11 +223,6 @@ export default defineComponent({
                 this.fetchChildData()
             }
         },
-        // get data
-        // mounted() {
-        //     this.fetchChildRemarks()
-        //     this.fetchChildCount()
-        // },
         ionViewDidEnter() {
             this.fetchChildRemarks()
             this.fetchChildCount()
