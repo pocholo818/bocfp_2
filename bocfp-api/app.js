@@ -480,19 +480,39 @@ app.get('/users', authenticateToken(1), (req, res) => {
 app.get('/announcements', authenticateToken(0), (req, res) => {
   const { limit, offset, search, filter } = req.query
 
-  let query = `SELECT * FROM announcement WHERE soft_delete = 0 ORDER BY annou_id DESC LIMIT ${limit} OFFSET ${offset}`
+  let query = `SELECT announcement.title, announcement.content, announcement.annou_id, announcement.date, announcement.soft_delete,
+    user.fname, user.lname
+    FROM announcement 
+    INNER JOIN user ON user.user_id = announcement.user_id
+    WHERE announcement.soft_delete = 0 ORDER BY annou_id DESC LIMIT ${limit} OFFSET ${offset}`
 
   if (filter === 'deleted') {
-    query = `SELECT * FROM announcement WHERE soft_delete = 1 ORDER BY annou_id DESC LIMIT ${limit} OFFSET ${offset}`
+    query = `SELECT announcement.title, announcement.content, announcement.annou_id, announcement.date, announcement.soft_delete,
+    user.fname, user.lname 
+    FROM announcement 
+    INNER JOIN user ON user.user_id = announcement.user_id
+    WHERE announcement.soft_delete = 1 ORDER BY annou_id DESC LIMIT ${limit} OFFSET ${offset}`
   }
 
   if (search) {
-    query = `SELECT * FROM announcement WHERE 
-      soft_delete = 0 AND title LIKE "%${search}%" LIMIT ${limit} OFFSET ${offset}`
+    query = `SELECT announcement.title, announcement.content, announcement.annou_id, announcement.date,  announcement.soft_delete,
+      user.fname, user.lname 
+      FROM announcement 
+      INNER JOIN user ON user.user_id = announcement.user_id
+      WHERE announcement.soft_delete = 0 AND announcement.title LIKE "%${search}%" 
+      OR announcement.soft_delete = 0 AND user.fname LIKE "%${search}%" 
+      OR announcement.soft_delete = 0 AND user.lname LIKE "%${search}%" 
+      LIMIT ${limit} OFFSET ${offset}`
 
     if (filter === 'deleted') {
-      query = `SELECT * FROM announcement WHERE 
-          soft_delete = 1 AND title LIKE "%${search}%" LIMIT ${limit} OFFSET ${offset}`
+      query = `SELECT announcement.title, announcement.content, announcement.annou_id, announcement.date,  announcement.soft_delete,
+        user.fname, user.lname 
+        FROM announcement 
+        INNER JOIN user ON user.user_id = announcement.user_id
+        WHERE announcement.soft_delete = 1 AND announcement.title LIKE "%${search}%" 
+        OR announcement.soft_delete = 1 AND user.fname LIKE "%${search}%" 
+        OR announcement.soft_delete = 1 AND user.lname LIKE "%${search}%" 
+        LIMIT ${limit} OFFSET ${offset}`
     }
   }
 

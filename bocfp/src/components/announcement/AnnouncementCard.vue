@@ -3,6 +3,7 @@
     <ion-card-header>
       <ion-card-title>{{ title }}</ion-card-title>
       <ion-card-subtitle>{{ date.split("T")[0] }}</ion-card-subtitle>
+      <ion-card-subtitle>Posted By:{{ fname }}  {{ lname }}</ion-card-subtitle>
 
       <div id="actions" v-if="admin_power === '1'">
         <ion-button color="warning" @click="openEditAnnouncementModal()">
@@ -63,6 +64,14 @@ export default defineComponent({
     }
   },
   props: {
+    fname: {
+      type: String,
+      required: true
+    },
+    lname: {
+      type: String,
+      required: true
+    },
     annou_id: Number,
     title: {
       type: String,
@@ -74,10 +83,6 @@ export default defineComponent({
     },
     date: {
       type: String,
-      required: true
-    },
-    user_id: {
-      type: Number,
       required: true
     },
     soft_delete: {

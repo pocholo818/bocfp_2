@@ -38,7 +38,8 @@
         <template v-else>
           <TransitionGroup name="fade">
             <AnnouncementCard v-for="annous in annou" :title="annous.title" :content="annous.content"
-              :date="format_date(annous.date)" :user_id="annous.user_id" :admin_power="admin_power" :annou_id="annous.annou_id" :key="annous.annou_id"
+              :date="format_date(annous.date)" :user_id="annous.user_id" :admin_power="admin_power" :annou_id="annous.annou_id" 
+              :fname="annous.fname" :lname="annous.lname" :key="annous.annou_id"
               :soft_delete="annous.soft_delete"
               @update-announcement-list="fetchData()" />
           </TransitionGroup>
@@ -55,7 +56,7 @@
     <PageButtons :prev="prevData" :next="nextData" />
 
     <!-- Add announcement button// only shows if user has admin_power -->
-    <template v-if='user_id === 1'>
+    <template v-if='admin_power === "1"'>
       <ion-fab slot="fixed" vertical="bottom" horizontal="end">
         <ion-fab-button @click="openModal">
           <ion-icon :icon="addOutline"></ion-icon>
@@ -123,7 +124,7 @@ export default defineComponent({
     }
   },
   data() {
-    const user_id = Number(localStorage.getItem('user_id'))
+    const user_id = localStorage.getItem('user_id')
 
     return {
       search: "",
@@ -136,7 +137,7 @@ export default defineComponent({
         content: "",
         user_id: user_id,
       },
-      user_id: 0,
+      user_id: "",
       searchTimeout: 0,
       annouFilter: "all",
       admin_power: ""
@@ -145,7 +146,7 @@ export default defineComponent({
   ionViewWillEnter(){
     this.admin_power = localStorage.getItem('admin_power') || ''
     this.fetchData()
-    this.user_id = Number(localStorage.getItem('user_id') || '')
+    this.user_id = localStorage.getItem('user_id') || ''
     this.admin_power = localStorage.getItem('admin_power') || ''
   },
   methods: {
