@@ -41,7 +41,7 @@ function authenticateToken(admin_power) {
 }
 
 function generateAccessToken(userInfo) {
-  return accessToken = jwt.sign(userInfo, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30m' })
+  return accessToken = jwt.sign(userInfo, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '31m' })
 }
 
 // funct
