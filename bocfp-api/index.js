@@ -15,9 +15,9 @@ const mysql = require('mysql');
 const { json, query } = require('express');
 const connection = mysql.createConnection({
   host: 'auth-db946.hstgr.io',
-  user: process.env.USER,
-  password: process.env.PASSWORD,
-  database: process.env.DBASE
+  user: 'u621496327_bocfp',
+  password: 'Bocfp2022$',
+  database: 'u621496327_bocfp'
 })
 
 function authenticateToken(admin_power) {
