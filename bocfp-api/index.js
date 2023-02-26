@@ -71,7 +71,10 @@ function nameFormat(string) {
 }
 
 app.get('/test', (req, res) => {
-    res.json('api is working :3')
+  connection.query(`SELECT * FROM child WHERE soft_delete = 0`, (err, rows, fields) => {
+    if(err) throw err
+    res.json(rows)
+  })
 })
 
 // get user login
