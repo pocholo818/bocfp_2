@@ -5,10 +5,9 @@
             "use": "@vercel/node"
         }
     ],
-    "routes": [
+    "headers": [
         {
-            "src": "/(.*)",
-            "dest": "index.js",
+            "source": "/(.*)",
             "headers": [
                 {
                     "key": "Access-Control-Allow-Credentials",
@@ -16,7 +15,7 @@
                 },
                 {
                     "key": "Access-Control-Allow-Origin",
-                    "value": "*"
+                    "value": ""
                 },
                 {
                     "key": "Access-Control-Allow-Methods",
