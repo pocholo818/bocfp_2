@@ -14,10 +14,10 @@ app.use(express.json({ limit: '50mb' }));
 const mysql = require('mysql');
 const { json, query } = require('express');
 const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'bocfp'
+  host: 'auth-db946.hstgr.io',
+  user: process.env.USER,
+  password: process.env.PASSWORD,
+  database: process.env.DBASE
 })
 
 function authenticateToken(admin_power) {
@@ -41,7 +41,7 @@ function authenticateToken(admin_power) {
 }
 
 function generateAccessToken(userInfo) {
-  return accessToken = jwt.sign(userInfo, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '31m' })
+  return accessToken = jwt.sign(userInfo, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30m' })
 }
 
 // funct
@@ -70,13 +70,20 @@ function nameFormat(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+app.get('/test', (req, res) => {
+  connection.query(`SELECT * FROM user`, (err, rows,fields) => {
+    if(err) throw err
+    res.json(rows)
+  })
+})
+
 // get user login
 app.post('/user/login', (req, res) => {
   const { username, password } = req.body
 
   connection.query(`SELECT * FROM user WHERE username='${username}' AND password='${password}' AND soft_delete = 0`, (err, rows, fields) => {
-    // console.log(rows.length)
-    if (!rows.length) {
+    console.log(rows)
+    if (!rows) {
       res.json({ "message": "Incorrect Username or Password" })
     }
     else if (rows[0].username == username && rows[0].password == password) {
