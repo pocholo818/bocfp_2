@@ -7,17 +7,14 @@ require("dotenv").config();
 
 const port = 5000;
 app.use(cors())
-// app.use(express.urlencoded({limit: "10mb", extended: true}));
 app.use(express.json({ limit: '50mb' }));
 
-// 
 const mysql = require('mysql');
-const { json, query } = require('express');
 const connection = mysql.createConnection({
   host: 'auth-db946.hstgr.io',
-  user: 'u621496327_bocfp',
-  password: 'Bocfp2022$',
-  database: 'u621496327_bocfp'
+  user: process.env.USER,
+  password: process.env.PASSWORD,
+  database: process.env.DBASE
 })
 
 function authenticateToken(admin_power) {
