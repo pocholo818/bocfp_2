@@ -71,10 +71,7 @@ function nameFormat(string) {
 }
 
 app.get('/test', (req, res) => {
-  connection.query(`SELECT * FROM user`, (err, rows,fields) => {
-    if(err) throw err
-    res.json(rows)
-  })
+    res.json('api is working :3')
 })
 
 // get user login
